@@ -23,3 +23,4 @@ def define_file(dataname="GC"):
 #ExcelRead = pd.read_excel(define_file("GC"))
 #type (ExcelRead)
 #print(ExcelRead)
+#este programa es un rollo
