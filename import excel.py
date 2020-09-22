@@ -18,8 +18,8 @@ def define_file(dataname="GC"):
     #logging
     return filename
 
+#we need to create the collect_data function
 
-
-ExcelRead = pd.read_excel(define_file("GC"))
-type (ExcelRead)
-print(ExcelRead)
+#ExcelRead = pd.read_excel(define_file("GC"))
+#type (ExcelRead)
+#print(ExcelRead)
