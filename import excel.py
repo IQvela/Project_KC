@@ -14,6 +14,8 @@ def define_file(dataname="GC"):
     #SCADA
     #GC Inferno
     #SPA
+    #GCs
+    #logging
     return filename
 
 
