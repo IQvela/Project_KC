@@ -5,7 +5,7 @@
 import numpy as np
 import pandas as pd 
 
-
+#Function which defines the filename
 def define_file(dataname="SCADA"):
     if dataname=="SCADA":
         filename="190201_mGC.xlsx"
