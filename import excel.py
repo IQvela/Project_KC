@@ -24,3 +24,4 @@ def define_file(dataname="GC"):
 #type (ExcelRead)
 #print(ExcelRead)
 #este programa es un rollo
+#claro que si
