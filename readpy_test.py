@@ -5,7 +5,7 @@ Created on Wed Nov 18 12:20:12 2020
 @author: refor
 """
 import sys
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 
 #from GUIs import GUI_SPA
@@ -15,7 +15,7 @@ import GUIs.GUI_SPA #the empty file __init__.py was added to the GUIs folder to 
 #sys.path.insert(1,"C:\\Users\\refor\\OneDrive - Chalmers University of Technology\\PhD Research\\Python Course\\Python Project\\KC_project_Python\\Windows")
 #import GUI_SPA
 
-
+app=QtWidgets.QApplication(sys.argv)
 ui= GUIs.GUI_SPA.Ui_MainWindow()
 ui.setupUi()
 
