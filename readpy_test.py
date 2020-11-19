@@ -19,7 +19,7 @@ app=QtWidgets.QApplication(sys.argv)
 ui= GUIs.GUI_SPA.Ui_MainWindow()
 ui.setupUi()
 
-filename="430_190201_G_190123.xls"
+filename="430_190201_G_190123.xls" #SPA xls test file
 ui.get_sheets(filename)
 
 ui.MainWindow.show()
@@ -33,17 +33,9 @@ try:
     b=ui.sh_dates
 except:
     GUIs.GUI_SPA.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
-    #GUI_SPA.Message_popup("")
+
     
 print("Done")
-# MainWindow = QtWidgets.QMainWindow()
-# ui = Ui_MainWindow()
-# ui.setupUi(MainWindow)
-# #MainWindow.show()
+
 #     #sys.exit(app.exec_())
 
-# filename="430_190201_G_190123.xls"
-# ui.get_sheets(filename)
-# #table_sh=ui.read_table()
-
-# MainWindow.show()
