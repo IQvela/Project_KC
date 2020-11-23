@@ -21,6 +21,7 @@ def define_file(dataname="GC"):
 #we need to create the collect_data function
 
 ExcelRead = pd.read_excel(define_file("GC"))
+print(ExcelRead)
 #type (ExcelRead)
 #print(ExcelRead)
 #este programa es un rollo
