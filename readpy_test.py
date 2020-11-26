@@ -16,7 +16,7 @@ import GUIs.GUI_SPA1 #the empty file __init__.py was added to the GUIs folder to
 #import GUI_SPA
 
 app=QtWidgets.QApplication(sys.argv)
-ui= GUIs.GUI_SPA.Ui_MainWindow()
+ui= GUIs.GUI_SPA1.Ui_MainWindow()
 ui.setupUi()
 
 filename="430_190201_G_190123.xls" #SPA xls test file
