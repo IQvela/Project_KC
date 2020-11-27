@@ -1,7 +1,7 @@
 ###
 #Importing data from excel
 ###
-
+import sys
 import numpy as np
 import pandas as pd 
 import tkinter as tk
@@ -9,7 +9,7 @@ import random
 from datetime import datetime,timedelta
 import time
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore,QtGui,QtWidgets
 
 import GUIs.GUI_SPA as guiSPA
 
@@ -64,60 +64,27 @@ class timeinterval: #this is the most elemental and general class
 #        return "no associated experiment"
         
         
-    def get_data_fromfile(self,data_type,filename, dates=None): #it should be added a list "dates" for the cases where there are several measurement sets (e.g. GC)
-        
-        if data_type=="SCADA":
-            ExcelTable=pd.read_excel(filename,sheet_name="_DATA")
-            name_timecolumn="TIME"
-            ExcelTable[name_timecolumn]=pd.to_datetime(ExcelTable[name_timecolumn])
-            d_t0=ExcelTable[name_timecolumn]>=self.date_ini ## d_t0=ExcelTable["Acquisition Date & Time"].dt.strftime("%H:%M")>t0 (when t0 is in HH:MM format)
-            d_t1=ExcelTable[name_timecolumn]<=self.date_end
-            Table_timeinterval=ExcelTable[d_t0 & d_t1]
-        
-        elif data_type=="GC1" or data_type=="INFERNO":#this must to be checkd because it could exist several measurements sets within the experiment time  
-            ExcelTable=pd.read_excel(filename)
-            name_timecolumn="Acquisition Date & Time"
-            ExcelTable[name_timecolumn]=pd.to_datetime(ExcelTable[name_timecolumn])
-            d_t0=ExcelTable[name_timecolumn]>=dates[0]
-            d_t1=ExcelTable[name_timecolumn]<=dates[1]     
-            Table_timeinterval=ExcelTable[d_t0 & d_t1]
 
-        elif data_type=="SPA":#this must to be checked because it could exist several measurements sets within the experiment time  
-            spa_win=guiSPA.Ui_MainWindow()
-            spa_win.get_sheets(filename)
-            spa_win.MainWindow.show() #displays a window where the different sheets are assigned to the different times when the sample was collected   
-            while spa_win.finish_window==False:
-                QtCore.QCoreApplication.processEvents()
-                time.sleep(0.01)
-            try:
-                sheets_dates=spa_win.sh_dates
-            except:
-                guiSPA.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
-                #sheets_dates is a dictionary where the key is the time => dict["YYY-MM-DD HH:MM:SS"]. the kays must be sorted by the time
-                #the value is a list. list[0]=GPX, list[1]=FR/CR, list[2]=sheet_name of R. (R is the repetition of the GC, X is the spa sample number, P is the point) 
-            else:
-                for tm,v in sheets_dates.items():
-                    Table_timeinterval={tm:[v[0],v[1],pd.read_excel(filename,sheet_name=v[2])]}
-            
-        return Table_timeinterval 
         
 
 class Point:
 
     time_db_fields=["DATE","POINT_ROUTE","SCADA","GC1","INFERNO","SPA"] #fileds (or columns) of the database time_db
-    def __init__(self,point_comments):
+    
+    def __init__(self,point_name,point_comments):
         #self.date_ini=date_ini
         #self.date_end=date_end
+        self.point_name=point_name
         self.point_comments=point_comments
         self.data_added={}
 
-    def add_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment,name_timecolumn):
+    def set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment,name_timecolumn): #delete data_type
         #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #time_type (str)= SCADA or GC
         #date_ini (str) = initial date of the point
         #date_end (str) = end date of the point
         #delay (str) = delay in minutes respect the SCADA time (SCADA -> delay=0 minutes)
-        #db_experiment = dictionary with all the data added to the experiment        
+        #db_experiment = dictionary with all the data added to the experiment given by the attribute data_experiment of the Experiment class      
         
         #this method defines the attributes of the point created and add the data to the time_db
         
@@ -131,21 +98,22 @@ class Point:
         self.point_route=point_route#it is a string with Project:project_name/Season:season_name/experiment_#/point_# 
         
         delay_db={k:0 for k in ["SCADA","GC1","INFERNO","SPA"]}
-        if time_type=="GC":#if the time is the time of the GC file then the SCADA must to be read at time-delay from file           
-            delay_db["SCADA"]=-delay
-            date_i=self.date_ini-delay
-            date_e=self.date_end-delay
+        if time_type=="GC":#if the time is the time of the GC file then the SCADA must to be read at time-delay from scada file. (however the point date will be always the scada time)           
+            delay_db["SCADA"]=-delay #it is negative because the SCADA is the real time
+            date_i=self.date_ini-delay #the point date will be always the scada time
+            date_e=self.date_end-delay #the point date will be always the scada time
         elif time_type=="SCADA":#if the time is the one of the SCADA file then the GC and inferno must to be read at time+delay             
             delay_db["GC1"]=delay_db["INFERNO"]=delay_db["SPA"]=delay
             date_i=self.date_ini
             date_e=self.date_end
         #minutes0=date_ini.minute
-        time_db_pnt={fd:[] for fd in Point.time_db_fields} #generating the drectory time_db for the evaluated point (this later will be added to the global time_db directory)
+        time_db_pnt={fd:[] for fd in Point.time_db_fields} #initializing the directory time_db for the evaluated point (this later will be added to the global time_db directory)
+        #time_dp_pnt will be transformed into a pandas dataframe 
         
         #key="DATE" => creates a list of rounded time (floor minute) from date_ini to date_end
         #date_i=self.date_ini
         while date_i<=date_e:
-            t_rounded=datetime(date_i.day,date_i.month,datetime.day,date_i.hour,date_i.minute,00)#time floor-rounded to the minute
+            t_rounded=datetime(date_i.year,date_i.month,date_i.day,date_i.hour,date_i.minute,00)#time floor-rounded to the minute (this is in order to create the point time slot list)
             time_db_pnt["DATE"].append(t_rounded)
             time_db_pnt["POINT_ROUTE"].append(self.point_route)
             date_i+=datetime.timedelta(minutes=1)
@@ -160,7 +128,7 @@ class Point:
                 #    continue
                 if len(db_experiment[k])==0:
                     #pop up a message saying that the database k is missing
-                    tk.messagebox.showwarning("Missed Database", f"the database {k} is missing, please add it to the experiment")
+                    guiSPA.Message_popup("Error","Missed Database", f"the database {k} is missing, please add it to the experiment")
                     continue
                 if k in ["SCADA","GC1","INFERNO"]: #this must to be taken from a function (to generalize for the case when data_type!=automatic) 
                     d_t0,d_t1=None,None
@@ -176,48 +144,44 @@ class Point:
                         for t_i in time_db_pnt["DATE"]:
                             t0=db[name_timecolumn[k]]>=t_i+timedelta(minutes=delay_db[k])
                             t1=db[name_timecolumn[k]]<=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
-                            time_db_pnt[k].append(db[t0 & t1])
+                            time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
                             Nentries+=1
                                                 
                     if d_t0==None or d_t1==None:
-                        tk.messagebox.showwarning("time error", 
+                        guiSPA.Message_popup("Warning","time error", 
                                                   f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")    
                         continue                                                
                 elif k=="SPA":
                     Nentries=0 #number of entries of the database k
-                    for t_i in time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt
+                    for t_i in time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt (each date will be at each row of the pandas dataframe)
                         t0=t_i+timedelta(minutes=delay_db[k])
                         t1=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
                         #self.data_point[k]={}
                         fv=0 #number of entries found
                         G_PX0="G_None"
                         #temp=time_db_pnt[k]
-                        FC_samples=[]
-                        for t_spa,v in db_experiment[k].items():
-                            time_SPA=datetime.strptime(t_spa,"%Y-%m-%d %H:%M:%S") #gets the time from the keys of the SPA data (check method get_data_fromfile)
-                            if t0<=time_SPA<=t1:
-                                if fv==0:
-                                    G_PX0=v[0]
-                                G_PX1=v[0]
-                                if G_PX1 == G_PX0:                                
-                                    FC_samples.append([t_spa,v[0],v[1],v[2]]) #collect the different F/C matrices for the evaluated time 
-                                    fv+=1
-                                    Nentries+=1
-                                else:
-                                    tk.messagebox.showwarning("Time error",f"The evaluated point is {G_PX0} but at the time {t_spa} corresponds with {G_PX1}. Please check the dates or the G_labels and try to add again the SPA data for {G_PX0}")
-                                    FC_samples=[]
-                                    #close the window
-                                    break
-                                
-                            else:
-                                #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1] 
-                                tk.messagebox.showwarning("time error",f"the time {t_spa} is not within the interval {str(t0)} and {str(t1)}, please check the SPA dates")
-                                FC_samples=[]
-                                continue
+                        SPA_samples=[]                        
+                        for db in db_experiment[k]: #conisdering that several SPA files were added in that experiment
+                            
+                            for t_spa,v_list in db.items():
+                                time_SPA=datetime.strptime(t_spa,"%Y-%m-%d %H:%M:%S") #gets the time from the keys of the SPA data (check method get_data_fromfile)
+                                if t0<=time_SPA<=t1:                               
+                                    SPA_samples.append([[t_spa,v[0],v[1],v[2]] for v in v_list]) #collect the different F/C matrices for the evaluated time 
+                                    #each SPA file has its data grouped into cetain times, then once the time is found it must to jump to the other SPA file added
+                                    break # maybe not <- the loop must continue because it must allow the case when 2 SPA syringes are used (both are marked at the same hour)                        
                         
-                        if fv>0:
-                            tk.message.showinfo("SPA Added",f"It has been added {fv} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
-                            time_db_pnt[k].append(FC_samples)
+                        #at the end, all the list fields should be joined together into just one list (not a list of lists as it is right know (one list for each SPA file))  
+                        tk.message.showinfo("SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
+                        time_db_pnt[k].append(SPA_samples)                            
+                            
+                        if len(SPA_samples)>0:
+                            Nentries+=1
+                        else:
+                            #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1] 
+                            guiSPA.Message_popup("Error","time error",
+                                                 f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+
+                            #continue                            
                         #else:
                         #    tk.message.showinfo("No SPA Added","No data of SPA was added at time t_i=. Please check the SPA dates")
                 
@@ -247,14 +211,16 @@ class Experiment(timeinterval):
                      "GC1":"TIME",
                      "INFERNO":"TIME"} #the name of the time column for each databese
     
-    def __init__(self,date_ini,date_end,fuel_type,bed_type,exp_comments):
+    def __init__(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments):
         #Experiment_name,Temp_particle_distrib_,... (many attributes to be included maybe this can be done through a pandas or directory read from an excel sheet (check ideas_CLasses.docx))
         #instead it can be a list that be read from the pandas column titles
         super().__init__(date_ini,date_end)
+        self.exp_name=exp_name
         self.fuel_type=fuel_type
         self.exp_comments=exp_comments
         self.bed_type=bed_type
         self.data_experiment={k:[] for k in Experiment.db_names} #results collected from the different databases
+        self.points=[] #list with all points
         
         
     def modify_Exp_attributes(self,date_ini,date_end,fuel_type,exp_comments):
@@ -262,9 +228,12 @@ class Experiment(timeinterval):
         self.fuel_type=fuel_type
         self.exp_comments=exp_comments        
     
+    def add_Point(self,point_name,point_description):
+        self.points.append(Point(point_name,point_description))
+    
     #this method will be used to generate the table we create with the different database
     #this method is triggered by a button that directs to other window where the kind of database is chosen
-    def add_data(self,data_type,filename,dates=None):
+    def add_data(self,data_type,filename):
         #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #filename (str)= this is the route of the file where the information will be extracted out (user defined through a explorer window)
         #dates (list)=it is a list of the initial and final date of the GC file [file start date, file end date] (maybe this is not needed because the pandas can load all dates)
@@ -275,13 +244,59 @@ class Experiment(timeinterval):
         
         if data_type=="SCADA":
             self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename)) #it must to search all the files which are within the dates given (maybe not)
-        if data_type=="GC1" or data_type=="INFERNO": #The time interval of the GC corresponds with the whole time registered in the file 
-            self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename,dates)) #maybe this one 
-        if data_type=="SPA":
+        elif data_type=="GC1" or data_type=="INFERNO": #The time interval of the GC corresponds with the whole time registered in the file 
+            self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename)) #maybe this one 
+        elif data_type=="SPA":
             self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename))
         
-        #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the itmes the different databases at that time)
+        #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the values the different databases at that time)
         #this is in order to build the "concept" table 
+    
+    def get_data_fromfile(self,data_type,filename):#, dates=None): #it should be added a list "dates" for the cases where there are several measurement sets (e.g. GC)
+        
+        if data_type=="SCADA":
+            ExcelTable=pd.read_excel(filename,sheet_name="_DATA")
+            name_timecolumn="TIME"
+            ExcelTable[name_timecolumn]=pd.to_datetime(ExcelTable[name_timecolumn])
+            d_t0=ExcelTable[name_timecolumn]>=self.date_ini ## d_t0=ExcelTable["Acquisition Date & Time"].dt.strftime("%H:%M")>t0 (when t0 is in HH:MM format)
+            d_t1=ExcelTable[name_timecolumn]<=self.date_end
+            Table_timeinterval=ExcelTable[d_t0 & d_t1]
+            return Table_timeinterval
+        
+        elif data_type=="GC1" or data_type=="INFERNO":#this must to be checkd because it could exist several measurements sets within the experiment time  
+            ExcelTable=pd.read_excel(filename)
+            name_timecolumn="Acquisition Date & Time"
+            ExcelTable[name_timecolumn]=pd.to_datetime(ExcelTable[name_timecolumn])
+            d_t0=ExcelTable[name_timecolumn]>=self.date_ini #dates[0]  #It must to be read the whole file (this is why it is important tha the experiment dates be wider enough)
+            d_t1=ExcelTable[name_timecolumn]<=self.date_end #dates[1]     
+            Table_timeinterval=ExcelTable[d_t0 & d_t1]
+            return Table_timeinterval
+
+        elif data_type=="SPA":#this must to be checked because it could exist several measurements sets within the experiment time  
+            #app=QtWidgets.QApplication(sys.argv)
+            spa_win=guiSPA.Ui_MainWindow()
+            spa_win.setupUi()
+            spa_win.read_file(filename)
+            spa_win.MainWindow.show() #displays a window where the different sheets are assigned to the different times when the sample was collected   
+            while spa_win.finish_window==False:
+                QtCore.QCoreApplication.processEvents()
+                time.sleep(0.01)
+            try:
+                sheets_dates=spa_win.sh_dates
+            except:
+                guiSPA.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
+                #sheets_dates is a dictionary where the key is the time => dict["YYY-MM-DD HH:MM:SS"]. the kays must be sorted by the time
+                #the value is a list. list[0]=GPX, list[1]=FR/CR, list[2]=sheet_name of R. (R is the repetition of the GC, X is the spa sample number, P is the point) 
+            else: #read the excel tables from the respective files
+                print("done with the SPA file!")
+                Table_timeinterval={}
+                for tm,v_list in sheets_dates.items():                    
+                    #print("V[2]={}".format(v1[2]))
+                    Table_timeinterval[tm]=[[v[0],v[1],pd.read_excel(filename,sheet_name=v[2])] for v in v_list]
+                print("SPA directory created")
+                #     #sys.exit(app.exec_())
+                return Table_timeinterval 
+    
     
 class Season:
     def __init__(self,season_name,season_description=""):
@@ -290,11 +305,11 @@ class Season:
         self.experiments=[]
         
  
-    def add_Experiment(self,date_ini,date_end,fuel_type,exp_comments=""):
+    def add_Experiment(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments=""):
         #shows a window were the arguments date_ini, date_end, fuel_type and commments will be collected
         #or maybe the window calls this method instead, once the button ok is pressed after all the required values are filled and 
         #win_new_experiment()
-        new_experiment=Experiment(date_ini,date_end,fuel_type,exp_comments)#entry)
+        new_experiment=Experiment(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments)#entry)
         self.experiments.append(new_experiment)
     
     #this method is called after ok is pressed in a window that allows to change the attributes of the season
@@ -347,6 +362,7 @@ class Project:
         self.project_description=project_description
         self.seasons=[]#this should be a dictionary?? (maybe not because we are saving classes)
         
+        # ui=gui_project
         #self.date_ini=date_ini 
         #self.date_end=date_end
         #self.fuel_type=fuel_type #can this change for the same project and season?
@@ -418,123 +434,56 @@ class Project:
 
 
 
-def randomclasses(a,b):
-    global seed
-    seed+=1
-    random.seed(17*seed)
-    return random.randint(a,b)
+# def randomclasses(a,b):
+#     global seed
+#     seed+=1
+#     random.seed(17*seed)
+#     return random.randint(a,b)
 
-seed=10
+# seed=10
 
-Projects_list=[]
-N_P=randomclasses(1,5)
-P=list(range(N_P))
-for p in range(0,N_P):
-    P[p]=Project(f"Proj{p}",f"this is project {p}")
-    for s in range(0,randomclasses(1,5)):
-        P[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
-#    P1.add_Season("Ses1_2","this is season 1_2") #check that the names are not the same
-#    P1.add_Season("Ses1_3","this is season 1_3")
-        for e in range(0,randomclasses(1,10)):
-            d_0="11:00"#"2020-10-18"
-            d_1="13:00"#"2020-10-20"
-            descrp=["added some moisture","the bed was with iron"]
-            ind=random.randint(0,1)
-            P[p].seasons[s].add_Experiment(d_0,d_1,"Polyethylene",descrp[ind])
-        #P1.seasons[0].add_Experiment("2020-10-21","2020-10-23","Polyethylene","the bed was with iron")  
-    Projects_list.append(P[p])
-
-
-
-window=False
-#results=""
+# Projects_list=[]
+# N_P=randomclasses(1,5)
+# P=list(range(N_P))
+# for p in range(0,N_P):
+#     P[p]=Project(f"Proj{p}",f"this is project {p}")
+#     for s in range(0,randomclasses(1,5)):
+#         P[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
+# #    P1.add_Season("Ses1_2","this is season 1_2") #check that the names are not the same
+# #    P1.add_Season("Ses1_3","this is season 1_3")
+#         for e in range(0,randomclasses(1,10)):
+#             d_0="11:00"#"2020-10-18"
+#             d_1="13:00"#"2020-10-20"
+#             descrp=["added some moisture","the bed was with iron"]
+#             ind=random.randint(0,1)
+#             P[p].seasons[s].add_Experiment(d_0,d_1,"Polyethylene",descrp[ind])
+#         #P1.seasons[0].add_Experiment("2020-10-21","2020-10-23","Polyethylene","the bed was with iron")  
+#     Projects_list.append(P[p])
 
 
 
-def win_new_experiment():
-    #global window,entries
-    window=tk.Tk()
-    window.title("Add new experiment")
-    window.geometry("370x300")
-    
-    rc,cc=0,0
-    L_title=tk.Label(window,text="Introduce new Experiment info")
-    L_title.grid(row=rc,column=cc+1,sticky="e")
-    
-    L1=tk.Label(window,text="Date Start",anchor="e")
-    L1.grid(row=rc+2,column=cc,sticky="e")
+# In[1]:
 
-    L1=tk.Label(window,text="Date End",anchor="e")
-    L1.grid(row=rc+3,column=cc,sticky="e")
-    
-    L2=tk.Label(window,text="Date (YYYY-MM-DD)")
-    L2.grid(row=rc+1,column=cc+1)
-    
-    L2=tk.Label(window,text="Time (HH:MM:SS)")
-    L2.grid(row=rc+1,column=cc+2)
-   
-    D1=tk.Entry(window,width=15) #Date Start
-    D1.grid(row=rc+2,column=cc+1)
-    T1=tk.Entry(window,width=10) #Time Start
-    T1.grid(row=rc+2,column=cc+2)    
 
-    D2=tk.Entry(window,width=15) #Date End
-    D2.grid(row=rc+3,column=cc+1)
-    T2=tk.Entry(window,width=10) #Time End
-    T2.grid(row=rc+3,column=cc+2)       
-    
-    L1=tk.Label(window,text="") #blank row
-    L1.grid(row=rc+4,column=cc) 
-    
-    L1=tk.Label(window,text="Fuel Type")
-    L1.grid(row=rc+5,column=cc,sticky="e")    
-    Fuel=tk.Entry(window,width=20)
-    Fuel.grid(row=rc+5,column=cc+1)
-    
-    L1=tk.Label(window,text="")#blank row
-    L1.grid(row=rc+6,column=cc)  
-    
-    L1=tk.Label(window,text="Comments")
-    L1.grid(row=rc+7,column=cc,sticky="e")    
-    Comment=tk.Text(window,height=5,width=30)
-    Comment.grid(row=rc+7,column=cc+1,columnspan=2)#padx=1,pady=5)
-    
-    entries=[D1,T1,D2,T2,Fuel,Comment]
-    
-    add_button=tk.Button(window,text="Add Experiment",command=lambda: getdatafromboxes(window,entries,"new_experiment"))
-    add_button.grid(row=rc+9,column=cc+1)
-    
-    cancel_button=tk.Button(window,text="Cancel",command=window.destroy)
-    cancel_button.grid(row=rc+9,column=cc+2)   
-    
-    window.mainloop()
-    
 
-    
-def getdatafromboxes(windw,entry0,wtype=""): #action="collect_data"
-    global entry#window,entries#results,D1,T1,D2,T2,Fuel,Comment
-    entry=entry0
-    if wtype=="new_experiment":
-        #window=False
-        date_ini=entry[0].get()+" "+entry[1].get()#D1.get()+" "+T1.get()
-        date_end=entry[2].get()+" "+entry[3].get()
-        fuel_type=entry[4].get()#Fuel.get()
-        exp_comments=entry[5].get("1.0",tk.END) #retrieves all the text (from row 1 and letter in position 0 until the end)  
-        entry=(date_ini,date_end,fuel_type,exp_comments)
-    if wtype=="":
-        tk.messagebox.showinfo(title="Caution",text="No wtype defined")
-    windw.destroy()
-    #window.mainloop()
-
+P={}
+P[0]=Project("Proj1","This is the test project 1")
+P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
+P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
+P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
+P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190123.xls")
+P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
+#P[0].seasons[0].experiments[0].points[0].set_point_data()
 
 #type (ExcelRead)
 #print(ExcelRead)
 #win_new_experiment()
 #print(entry)
 
-# In[1]:
+
     
-db="SCADA"
-P[0].seasons[0].experiments[0].add_results_database(db,define_file(db))
+#db="SCADA"
+#P[0].seasons[0].experiments[0].add_results_database(db,define_file(db))
 
 

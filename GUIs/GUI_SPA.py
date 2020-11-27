@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     
     def setupUi(self):
         self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(670, 387)
+        self.MainWindow.resize(700, 350)
         self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Label1_Title = QtWidgets.QLabel(self.centralwidget)
@@ -42,12 +42,12 @@ class Ui_MainWindow(object):
         
         self.GPX_filled=0 #samples filled
         self.Label3_GPX=QtWidgets.QLabel(self.centralwidget)
-        self.Label3_GPX.setGeometry(QtCore.QRect(450,60,250,31))
+        self.Label3_GPX.setGeometry(QtCore.QRect(450,65,200,20))
         self.Label3_GPX.setText("GPX samples filled: {}".format(self.GPX_filled))
         
         self.Table_Sheets = QtWidgets.QTableWidget(self.centralwidget)
-        self.Table_Sheets.setGeometry(QtCore.QRect(50, 90, 650, 192))
-        self.Table_Sheets.setMaximumSize(QtCore.QSize(521, 16777215))
+        self.Table_Sheets.setGeometry(QtCore.QRect(50, 90, 600, 192))
+        self.Table_Sheets.setMaximumSize(QtCore.QSize(600, 16777215))
         self.Table_Sheets.setShowGrid(True)
         self.Table_Sheets.setRowCount(1)
         self.Table_Sheets.setObjectName("Table_Sheets")
@@ -95,6 +95,21 @@ class Ui_MainWindow(object):
         self.Button_Cancel.setText("Cancel")
         self.Button_Cancel.clicked.connect(self.cancel_window)
         
+        #change the collection date button
+        self.Button_ChangeDate=QtWidgets.QPushButton(self.centralwidget)
+        self.Button_ChangeDate.setGeometry(QtCore.QRect(570,45,80,20))
+        self.Button_ChangeDate.setText("Change Date")
+        self.Button_ChangeDate.clicked.connect(self.change_date)
+        
+        #Entry box  of the date
+        self.inputdate=QtWidgets.QLineEdit(self.centralwidget)
+        self.inputdate.setGeometry(QtCore.QRect(580,20,70,20))
+
+        #label of the data collection date
+        self.label_date=QtWidgets.QLabel(self.centralwidget)
+        self.label_date.setGeometry(QtCore.QRect(480,20,90,20))  
+        self.label_date.setText("Data collected:")
+        
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 623, 21))
@@ -119,18 +134,40 @@ class Ui_MainWindow(object):
         for k,v in Ui_MainWindow.column_names.items():            
             item = self.Table_Sheets.horizontalHeaderItem(v[0])
             item.setText(_translate("MainWindow", v[1]))
-
+        
+        self.Table_Sheets.setColumnWidth(0, 200)
+        self.Table_Sheets.setColumnWidth(3, 80)
+        self.Table_Sheets.setColumnWidth(4, 70)
+        #item.
         __sortingEnabled = self.Table_Sheets.isSortingEnabled()
         self.Table_Sheets.setSortingEnabled(False)
 
         self.Table_Sheets.setSortingEnabled(__sortingEnabled)
 
-    
-    def get_sheets(self,fname):
-        cnum=Ui_MainWindow.column_names
+
+
+    def read_file(self,fname):
         # _translate = QtCore.QCoreApplication.translate
         excel_file=pd.ExcelFile(fname)
-        sheets=excel_file.sheet_names
+        sheets=excel_file.sheet_names        
+
+        sheet_Date=str(fname.split("_")[-1].split(".")[0])
+        if len(sheet_Date)==6:
+            sheet_Date="20"+sheet_Date
+        elif len(sheet_Date)!=6 or len(sheet_Date)!=8:
+            #print("Error, the date written at the end of the file´s title has no date format YYYYMMDD or YYMMDD. cf. {}".format(sheet_Date))   
+            Message_popup("Error","Format Error, the date written at the end of the file´s title has no date format YYYYMMDD or YYMMDD. cf. {}".format(sheet_Date)) 
+        self.measure_Date=sheet_Date[:4]+"-"+sheet_Date[4:6]+"-"+sheet_Date[6:8] #date where the data was collected
+        
+        self.inputdate.setText(self.measure_Date)
+        self.get_sheets(sheets)
+        #return sheets
+        
+    def get_sheets(self,sheets_list):
+        cnum=Ui_MainWindow.column_names
+        # _translate = QtCore.QCoreApplication.translate
+        #excel_file=pd.ExcelFile(fname)
+        sheets=sheets_list#excel_file.sheet_names
         self.Table_Sheets.setRowCount(len(sheets))
         for r in range(0,self.Table_Sheets.rowCount()):
             for c in range(0,self.Table_Sheets.columnCount()):
@@ -145,27 +182,27 @@ class Ui_MainWindow(object):
             sheet_name_splitted=sheets[i].split("_")
             item_FR=self.Table_Sheets.item(i,cnum["BialR"][0]) #F/C_Repetition Value (3 repetitions are taken by the GC of the bial(F or C) per each sample)
             item_GPX=self.Table_Sheets.item(i,cnum["GPX"][0]) #G_Point_Sample Value (4 samples are collected per point)
-            
-            sheet_Date=str(fname.split("_")[-1].split(".")[0])
-            if len(sheet_Date)==6:
-                sheet_Date="20"+sheet_Date
-            elif len(sheet_Date)!=6 or len(sheet_Date)!=8:
-                #print("Error, the date written at the end of the file´s title has no date format YYYYMMDD or YYMMDD. cf. {}".format(sheet_Date))   
-                Message_popup("Error","Format Error, the date written at the end of the file´s title has no date format YYYYMMDD or YYMMDD. cf. {}".format(sheet_Date)) 
-                
-            sheet_Date1=sheet_Date[:4]+"-"+sheet_Date[4:6]+"-"+sheet_Date[6:8]    
+              
             item_date=self.Table_Sheets.item(i,cnum["Date"][0])
             
             if sheet_name_splitted[-4].find("G")!=-1: #-1 means that there is no G               
                 item_FR.setText(sheet_name_splitted[-3]+"_"+sheet_name_splitted[-1])                
                 item_GPX.setText(sheet_name_splitted[-4])
-                item_date.setText(sheet_Date1)#"2019-01-23")#sheet_date)        
+                item_date.setText(self.measure_Date)#sheet_Date1)#"2019-01-23")#sheet_date)        
             else:
                 item_FR.setText("N/A")                
                 item_GPX.setText("N/A")  
                 item_date.setText("N/A")
             
-            
+    def change_date(self):
+        cnum=Ui_MainWindow.column_names
+        #get from the entrybox the date
+        self.measure_Date=self.inputdate.text()        
+        for i in range(0,self.Table_Sheets.rowCount()):  
+            item_date=self.Table_Sheets.item(i,cnum["Date"][0])
+            if item_date.text()!="N/A":
+                item_date.setText(self.measure_Date)
+
         
     def fill_fields(self):
         cnum=Ui_MainWindow.column_names
@@ -262,14 +299,14 @@ class Ui_MainWindow(object):
                
             else:
                 sh_table1=pd.DataFrame.from_dict(sh_table)
-                sh_table2=sh_table1.sort_values(by=["Time","BialR"],ascending=[True,False])
+                sh_table2=sh_table1.sort_values(by=["Time","GPX","BialR"],ascending=[True,True,False])
                 temp="start"
                 for index,row in sh_table2.iterrows():
-                    if row["Time"]!=temp:
-                        self.sh_dates[row["Time"]]=[[row["GPX"],row["BialR"],row["Sheets"]]]
+                    if row["Time"]!=temp: #this is done to make that the first element be also a list as will be the others
+                        self.sh_dates["{} {}".format(row["Date"],row["Time"])]=[[row["GPX"],row["BialR"],row["Sheets"]]]
                     else:
-                        self.sh_dates[row["Time"]].append([row["GPX"],row["BialR"],row["Sheets"]])
-                    temp=row["Time"]
+                        self.sh_dates["{} {}".format(row["Date"],row["Time"])].append([row["GPX"],row["BialR"],row["Sheets"]]) #each element is a list
+                    temp=row["Time"] #this is done to make that the first element be also a list as the others
                 Message_popup("Info","Done","Table succesfully read")
         
         self.cancel_window()
@@ -280,7 +317,11 @@ class Ui_MainWindow(object):
         #sys.exit(app.exec_())
         #self.centralwidget.close()
             
-        
+    # def add_project_ok(self):
+    #     global P
+    #     P={}
+    #     P[0]=Project("Proj1","This is the test project 1")
+    
 class Message_popup:
     def __init__(self,m_type,m_title="",m_text=""):
         self.msg=QMessageBox()
@@ -321,7 +362,7 @@ class Message_popup:
 #     #sys.exit(app.exec_())
 
 # filename="430_190201_G_190123.xls"
-# ui.get_sheets(filename)
+# ui.read_file(filename)
 # #table_sh=ui.read_table()
 
 # MainWindow.show()
