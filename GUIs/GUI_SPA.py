@@ -19,9 +19,9 @@ import datetime
 class Ui_MainWindow(object):
     column_names={"Sheets":(0,"Sheets"),"Date":(1,"(YYYY-MM-DD)"),"Time":(2,"(HH:MM:SS)"),"BialR":(3,"Bial/Repet."),"GPX":(4,"G Label")}
     
-    def __init__(self):
-        self.MainWindow=QtWidgets.QMainWindow()
-        self.finish_window=False
+    #def __init__(self):
+        #self.MainWindow=QtWidgets.QMainWindow()
+        #self.finish_window=False
     
     def setupUi(self):
         self.MainWindow.setObjectName("MainWindow")
@@ -351,18 +351,26 @@ class Message_popup:
         #self.msg.standardButton()
         return self.msg.exec_()    
     
-#if __name__ == "__main__":
-# import sys
-# table_sh={}
-#app = QtWidgets.QApplication(sys.argv)
-# MainWindow = QtWidgets.QMainWindow()
-# ui = Ui_MainWindow()
-# ui.setupUi(MainWindow)
-# #MainWindow.show()
-#     #sys.exit(app.exec_())
 
+<<<<<<< Updated upstream
 # filename="430_190201_G_190123.xls"
 # ui.read_file(filename)
 # #table_sh=ui.read_table()
+=======
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi()
+    MainWindow.show()
+    sys.exit(app.exec_())
 
-# MainWindow.show()
+ #table_sh={}
+#filename="430_190201_G_190123.xls"
+#ui.get_sheets(filename)
+#table_sh=ui.read_table()
+
+ #MainWindow.show()
+>>>>>>> Stashed changes
+
