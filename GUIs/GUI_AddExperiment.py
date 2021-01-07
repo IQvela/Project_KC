@@ -12,7 +12,7 @@ class Ui_MainWindow(object):
 
         self.experiments_attributes=0
 
-    def setupUi(self):
+   def setupUi(self):
         self.MainWindow.setObjectName("MainWindow")
         self.MainWindow.resize(759, 655)
         self.centralwidget = QtWidgets.QWidget(self.MainWindow)
@@ -142,21 +142,21 @@ class Ui_MainWindow(object):
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(590, 510, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 759, 26))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
-    def retranslateUi(self, MainWindow):
+   def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_season.setText(_translate("MainWindow", "Season"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -274,6 +274,11 @@ class Message_popup:
         #self.msg.standardButton()
         return self.msg.exec_()    
 
+<<<<<<< HEAD
+=======
+ui=Ui_MainWindow()
+ui.setupUi()
+>>>>>>> e8f37e5c169a53a8fb45a3d6c83f9ed4dfe8895c
 
 ui=Ui_MainWindow()
 ui.setupUi()
