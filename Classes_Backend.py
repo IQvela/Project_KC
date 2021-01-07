@@ -74,15 +74,20 @@ class Point:
     #each row corresponds with a minute
     
     time_db_fields=["DATE","POINT_ROUTE","SCADA","GC1","INFERNO","SPA"] #fields (or columns) of the database time_db
+    time_db_global=pd.DataFrame(columns=time_db_fields)
     
-    def __init__(self,point_name,point_comments):
+    def __init__(self,point_name,point_comments,point_route):
         #self.date_ini=date_ini
         #self.date_end=date_end
         self.point_name=point_name
         self.point_comments=point_comments
         self.data_added={}
-
-    def set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
+        self.point_route=point_route #String which contains the indexes of the Project/Season/Experiment/Point
+    
+    def get_point_route(self):
+        pn=enumerate()
+    
+    def set_point_data(self,data_type,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
         #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #time_type (str)= SCADA or GC
         #date_ini (str) = initial date of the point
@@ -99,7 +104,7 @@ class Point:
         self.delay=delay
         self.date_ini=date_ini
         self.date_end=date_end
-        self.point_route=point_route#it is a string with Project:project_name/Season:season_name/experiment_#/point_# 
+        #self.point_route=point_route#it is a string with the indexes of Project/Season/experiment/point 
         
         delay_db={k:0 for k in ["SCADA","GC1","INFERNO","SPA"]}
         if time_type=="GC":#if the time is the time of the GC file then the SCADA must to be read at time-delay from scada file. (however the point date will be always the scada time)           
@@ -111,21 +116,21 @@ class Point:
             date_i=self.date_ini
             date_e=self.date_end
         #minutes0=date_ini.minute
-        time_db_pnt={fd:[] for fd in Point.time_db_fields} #initializing the directory time_db for the evaluated point (this later will be added to the global time_db directory)
+        self.time_db_pnt={fd:[] for fd in Point.time_db_fields} #initializing the directory time_db for the evaluated point (this later will be added to the global time_db directory)
         #time_dp_pnt will be transformed into a pandas dataframe 
         
         #key="DATE" => creates a list of rounded time (floor minute) from date_ini to date_end
         #date_i=self.date_ini
         while date_i<=date_e:
             t_rounded=datetime(date_i.year,date_i.month,date_i.day,date_i.hour,date_i.minute,00)#time floor-rounded to the minute (this is in order to create the point time slot list)
-            time_db_pnt["DATE"].append(t_rounded)
-            time_db_pnt["POINT_ROUTE"].append(self.point_route)
-            date_i+=datetime.timedelta(minutes=1)
+            self.time_db_pnt["DATE"].append(t_rounded)
+            self.time_db_pnt["POINT_ROUTE"].append(self.point_route)
+            date_i+=timedelta(minutes=1)
         
         
         if data_type=="AUTOMATIC": #the time taken by the point is the SCADA time      
             #collect data from all databases
-            Nentries=0
+            Nentries={k:0 for k in Experiment.db_names}
             for k in db_experiment.keys():
                 #if k in self.data_point.keys(): #the data from the database k has already added to the point
                 #    tk.messagebox.showwarning("Database already added", f"the database {k} has been already added to this point")
@@ -136,28 +141,27 @@ class Point:
                     continue
                 if k in ["SCADA","GC1","INFERNO"]: #this must to be taken from a function (to generalize for the case when data_type!=automatic) 
                     d_t0,d_t1=None,None
+                    Nentries[k]=0
                     #search which of the list elements added to the db_experiment[k] has the time interval it is being looking for
                     for db in db_experiment[k]: #db_experiment[k] is a dictionary with a list per each key (when more that one SCADA or GC has been added to the experiment)
                         d_t0=db[Experiment.name_timecolumn[k]]>=self.date_ini+timedelta(minutes=delay_db[k]) 
                         d_t1=db[Experiment.name_timecolumn[k]]<=self.date_end+timedelta(minutes=delay_db[k])
-                        if all(d_t0)==False or all(d_t1)==False: #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
-                            d_t0,d_t1=None,None
+                        if all(d_t0==False) and all(d_t1==False): #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
+                            guiSPA.Message_popup("Warning","time error", 
+                                                  f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")                                
                             continue                                                    
-                        #data_point=db[d_t0 & d_t1] #search in the list where the timslto is
-                        #extracts the row dataframes from the different databases to create time_db_pnt[database] 
-                        for t_i in time_db_pnt["DATE"]:
+
+                        #extracts the row dataframes from the different databases to create self.time_db_pnt[database] 
+                        for t_i in self.time_db_pnt["DATE"]:
                             t0=db[Experiment.name_timecolumn[k]]>=t_i+timedelta(minutes=delay_db[k])
                             t1=db[Experiment.name_timecolumn[k]]<=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
-                            time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
-                            Nentries+=1
-                                                
-                    if d_t0==None or d_t1==None:
-                        guiSPA.Message_popup("Warning","time error", 
-                                                  f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")    
-                        continue                                                
-                elif k=="SPA":
-                    Nentries=0 #number of entries of the database k
-                    for t_i in time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt (each date will be at each row of the pandas dataframe)
+                            self.time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
+                            if len(self.time_db_pnt[k][-1])>0:
+                                Nentries[k]+=1
+                                               
+                elif k=="SPA": 
+                    Nentries[k]=0 #number of entries of the database k
+                    for t_i in self.time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt (each date will be at each row of the pandas dataframe)
                         t0=t_i+timedelta(minutes=delay_db[k])
                         t1=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
                         #self.data_point[k]={}
@@ -165,25 +169,28 @@ class Point:
                         G_PX0="G_None"
                         #temp=time_db_pnt[k]
                         SPA_samples=[]                        
-                        for db in db_experiment[k]: #conisdering that several SPA files were added in that experiment
+                        for db in db_experiment[k]: #considering that several SPA files were added in that experiment
                             
+                            #When two SPA's are in series both share the same time, therefore two dataframes must to be in the db_experiment["SPA"] dictionary for a specific key (since the key is the time)
                             for t_spa,v_list in db.items():
                                 time_SPA=datetime.strptime(t_spa,"%Y-%m-%d %H:%M:%S") #gets the time from the keys of the SPA data (check method get_data_fromfile)
                                 if t0<=time_SPA<=t1:                               
                                     SPA_samples.append([[t_spa,v[0],v[1],v[2]] for v in v_list]) #collect the different F/C matrices for the evaluated time 
-                                    #each SPA file has its data grouped into cetain times, then once the time is found it must to jump to the other SPA file added
+                                    #each SPA file has its data grouped into certain times, then once the time is found it must to jump to the other SPA file added
+                                    
                                     break # maybe not <- the loop must continue because it must allow the case when 2 SPA syringes are used (both are marked at the same hour)                        
                         
                         #at the end, all the list fields should be joined together into just one list (not a list of lists as it is right know (one list for each SPA file))  
-                        tk.message.showinfo("SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
-                        time_db_pnt[k].append(SPA_samples)                            
+                        #guiSPA.Message_popup("Info","SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
+                        self.time_db_pnt[k].append(SPA_samples)                            
                             
                         if len(SPA_samples)>0:
-                            Nentries+=1
-                        else:
-                            #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1] 
-                            guiSPA.Message_popup("Error","time error",
-                                                 f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+                            Nentries[k]+=1
+                        #else:
+                            #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1]
+                            #print(f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+                            # guiSPA.Message_popup("Error","time error",
+                            #                      f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
 
                             #continue                            
                         #else:
@@ -194,12 +201,20 @@ class Point:
                 
                 self.data_added[k]=[self.date_ini+timedelta(minutes=delay_db[k]),
                                     self.date_end+timedelta(minutes=delay_db[k]),
-                                    delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries] 
-
-        ############################################################################
-        #add the data acquired of the point to the global time_db database
-        ############################################################################
-        self.time_db_global=time_db_pnt #the time_db_pnt must to be appended to the global data
+                                    delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k]] 
+        
+        for k,v in self.time_db_pnt.items():
+            if len(v)==0:
+                self.time_db_pnt[k]=["No Data" for i in self.time_db_pnt["DATE"]]
+                
+        self.update_db_global()
+    ############################################################################
+    #add the data acquired of the point to the global time_db database
+    ############################################################################
+    @classmethod
+    def update_db_global(cls,self):
+        
+        cls.time_db_global=cls.time_db_global.append(self.time_db_pnt,ignore_index=True,sort=False) #the time_db_pnt must to be appended to the global data
     
     #def point_attributes(self,times...):
         #takes the maximum and minimum (SCADA) time to define the point that will be shown in the list presented in the experiment window 
@@ -213,11 +228,11 @@ class Experiment(timeinterval):
     
     db_names=["SCADA","GC1","INFERNO","SPA"]#,"Logging"] #here it is possible to add new methods
     
-    name_timecolumn={"SCADA":"Acquisition Date & Time",
-                     "GC1":"TIME",
+    name_timecolumn={"SCADA":"TIME",
+                     "GC1":"Acquisition Date & Time",
                      "INFERNO":"TIME"} #the name of the time column for each databese
     
-    def __init__(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments):
+    def __init__(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,exp_route):
         #Experiment_name,Temp_particle_distrib_,... (many attributes to be included maybe this can be done through a pandas or directory read from an excel sheet (check ideas_CLasses.docx))
         #instead it can be a list that be read from the pandas column titles
         super().__init__(date_ini,date_end)
@@ -227,6 +242,7 @@ class Experiment(timeinterval):
         self.bed_type=bed_type
         self.data_experiment={k:[] for k in Experiment.db_names} #results collected from the different databases
         self.points=[] #list with all points
+        self.exp_route=exp_route
         
         
     def modify_Exp_attributes(self,date_ini,date_end,fuel_type,exp_comments):
@@ -235,7 +251,8 @@ class Experiment(timeinterval):
         self.exp_comments=exp_comments        
     
     def add_Point(self,point_name,point_description):
-        self.points.append(Point(point_name,point_description))
+        newpoint_route=self.exp_route+"/"+len(self.points)
+        self.points.append(Point(point_name,point_description,newpoint_route))
     
     #this method will be used to generate the table we create with the different database
     #this method is triggered by a button that directs to other window where the kind of database is chosen
@@ -305,17 +322,20 @@ class Experiment(timeinterval):
     
     
 class Season:
-    def __init__(self,season_name,season_description=""):
+    def __init__(self,season_name,season_description,season_route):
         self.season_name=season_name
         self.season_description=season_description #this cannot be empty (a message should appear)
         self.experiments=[]
+        self.season_route=season_route
         
  
     def add_Experiment(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments=""):
         #shows a window were the arguments date_ini, date_end, fuel_type and commments will be collected
         #or maybe the window calls this method instead, once the button ok is pressed after all the required values are filled and 
         #win_new_experiment()
-        new_experiment=Experiment(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments)#entry)
+        
+        newexp_route=self.season_route+"/"+len(self.experiments)
+        new_experiment=Experiment(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,newexp_route)#entry)
         self.experiments.append(new_experiment)
     
     #this method is called after ok is pressed in a window that allows to change the attributes of the season
@@ -367,6 +387,7 @@ class Project:
         self.project_name=project_name
         self.project_description=project_description
         self.seasons=[]#this should be a dictionary?? (maybe not because we are saving classes)
+        self.project_route=Project.Totalnumberprojects #this corresponds with the project_index
         
         # ui=gui_project
         #self.date_ini=date_ini 
@@ -392,7 +413,8 @@ class Project:
     #after this there should be a button "add experiment" where the dates (ini,end) and the fuel type is introduced
     #another button, "show experiments", opens a list with the different experiments done on each season
     def add_Season(self,season_name,season_description=""):
-        new_Season=Season(season_name,season_description)
+        newseason_route=self.project_route+"/"+len(self.seasons)
+        new_Season=Season(season_name,season_description,newseason_route)
         self.seasons.append(new_Season)
         
     #this method is called after ok is pressed in a window that allows to change the attributes of the Project
@@ -437,7 +459,9 @@ class Project:
     def get_numberprojects(cls):
         return cls.Totalnumberprojects
 
-
+    @classmethod
+    def modify_numberprojects(cls,new_number):
+        cls.Totalnumberprojects=new_number
 
 
 # def randomclasses(a,b):
@@ -472,19 +496,19 @@ class Project:
 
 
 
-P={}
-P[0]=Project("Proj1","This is the test project 1")
-P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
-P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
-P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
-P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
-P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190123.xls")
-P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
-
-#set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
-pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
-db_exp=P[0].seasons[0].experiments[0].data_experiment
-P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","SCADA","2019-02-01 11:55","2019-02-01 12:27",3,db_exp)
+# P={}
+# P[0]=Project("Proj1","This is the test project 1")
+# P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
+# P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+# P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
+# P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
+# P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls")
+# P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# # In[1]:
+# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=P[0].seasons[0].experiments[0].data_experiment
+# P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
 
 #type (ExcelRead)
 #print(ExcelRead)
@@ -495,5 +519,16 @@ P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","S
     
 #db="SCADA"
 #P[0].seasons[0].experiments[0].add_results_database(db,define_file(db))
+
+# In[1]:
+# k="SCADA"
+# date_i=datetime.strptime("2019-02-01 16:55:00","%Y-%m-%d %H:%M:%S")#P[0].seasons[0].experiments[0].points[0].date_ini
+# date_e=datetime.strptime("2019-02-01 17:00:00","%Y-%m-%d %H:%M:%S")#P[0].seasons[0].experiments[0].points[0].date_end
+# delay_db={i:0 for i in ["SCADA","GC1","INFERNO","SPA"]}
+# delay_db["GC1"]=delay_db["INFERNO"]=delay_db["SPA"]=P[0].seasons[0].experiments[0].points[0].delay
+# db=db_exp[k][0]
+# d_t0=db[Experiment.name_timecolumn[k]]>=date_i+timedelta(minutes=delay_db[k]) 
+# d_t1=db[Experiment.name_timecolumn[k]]<=date_e+timedelta(minutes=delay_db[k])
+# a=db[d_t0 & d_t1]
 
 
