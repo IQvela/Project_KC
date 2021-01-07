@@ -11,10 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ProjectWin(object):
-    def setupUi(self, ProjectWin):
-        ProjectWin.setObjectName("ProjectWin")
-        ProjectWin.resize(900, 550)
+class Ui_MainWindow(object):
+    
+    def __init__(self):
+        self.MainWindow=QtWidgets.QMainWindow()
+        self.finish_window=False 
+        
+    def setupUi(self):
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(900, 550)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -151,8 +156,8 @@ class Ui_ProjectWin(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        ProjectWin.setPalette(palette)
-        self.centralwidget = QtWidgets.QWidget(ProjectWin)
+        self.MainWindow.setPalette(palette)
+        self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 340, 100, 40))
@@ -202,62 +207,68 @@ class Ui_ProjectWin(object):
         font.setPointSize(10)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
-        ProjectWin.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(ProjectWin)
+        self.MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 900, 26))
         self.menubar.setObjectName("menubar")
         self.menu1 = QtWidgets.QMenu(self.menubar)
         self.menu1.setObjectName("menu1")
-        ProjectWin.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(ProjectWin)
+        self.MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
         self.statusbar.setObjectName("statusbar")
-        ProjectWin.setStatusBar(self.statusbar)
-        self.actionOpen = QtWidgets.QAction(ProjectWin)
+        self.MainWindow.setStatusBar(self.statusbar)
+        self.actionOpen = QtWidgets.QAction(self.MainWindow)
         self.actionOpen.setObjectName("actionOpen")
         self.menu1.addAction(self.actionOpen)
         self.menu1.addSeparator()
         self.menubar.addAction(self.menu1.menuAction())
 
-        self.retranslateUi(ProjectWin)
-        QtCore.QMetaObject.connectSlotsByName(ProjectWin)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
-    def retranslateUi(self, ProjectWin):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        ProjectWin.setWindowTitle(_translate("ProjectWin", "MainWindow"))
-        self.Button_AnalyseData.setText(_translate("ProjectWin", "ANALYZE DATA"))
-        self.Button_ModifyData.setText(_translate("ProjectWin", "MODIFY DATA"))
-        self.Button_AddData.setText(_translate("ProjectWin", "ADD DATA"))
-        self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
-        self.Title.setText(_translate("ProjectWin", "Project example PE"))
-        self.treeWidget.headerItem().setText(0, _translate("ProjectWin", "Project_PE"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
+        self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
+        self.Button_ModifyData.setText(_translate("MainWindow", "MODIFY DATA"))
+        self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
+        self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
+        self.Title.setText(_translate("MainWindow", "Project example PE"))
+        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "Project_PE"))
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
-        self.treeWidget.topLevelItem(0).setText(0, _translate("ProjectWin", "Season 2020-2021"))
-        self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("ProjectWin", "Experiment 1"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("ProjectWin", "Point1.1_LowT"))
-        self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("ProjectWin", "Point1.2_HighT"))
-        self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("ProjectWin", "Experiment 2"))
-        self.treeWidget.topLevelItem(0).child(1).child(0).setText(0, _translate("ProjectWin", "Increasing T"))
-        self.treeWidget.topLevelItem(1).setText(0, _translate("ProjectWin", "Season 2019-2020"))
-        self.treeWidget.topLevelItem(1).child(0).setText(0, _translate("ProjectWin", "Experiment Day1"))
-        self.treeWidget.topLevelItem(1).child(0).child(0).setText(0, _translate("ProjectWin", "Point A_SFR=1"))
-        self.treeWidget.topLevelItem(1).child(0).child(1).setText(0, _translate("ProjectWin", "Point B_SFR=2"))
+        self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "Season 2020-2021"))
+        self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "Experiment 1"))
+        self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "Point1.1_LowT"))
+        self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("MainWindow", "Point1.2_HighT"))
+        self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("MainWindow", "Experiment 2"))
+        self.treeWidget.topLevelItem(0).child(1).child(0).setText(0, _translate("MainWindow", "Increasing T"))
+        self.treeWidget.topLevelItem(1).setText(0, _translate("MainWindow", "Season 2019-2020"))
+        self.treeWidget.topLevelItem(1).child(0).setText(0, _translate("MainWindow", "Experiment Day1"))
+        self.treeWidget.topLevelItem(1).child(0).child(0).setText(0, _translate("MainWindow", "Point A_SFR=1"))
+        self.treeWidget.topLevelItem(1).child(0).child(1).setText(0, _translate("MainWindow", "Point B_SFR=2"))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
-        self.textEdit.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">This project includes the cracking of PE, objective is to study all the operation conditions possible and find where is the maximum yield of ethylene </span></p></body></html>"))
-        self.label_5.setText(_translate("ProjectWin", "Description"))
-        self.menu1.setTitle(_translate("ProjectWin", "1"))
-        self.actionOpen.setText(_translate("ProjectWin", "Open"))
+        self.label_5.setText(_translate("MainWindow", "Description"))
+        self.menu1.setTitle(_translate("MainWindow", "1"))
+        self.actionOpen.setText(_translate("MainWindow", "Open"))
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ProjectWin = QtWidgets.QMainWindow()
-    ui = Ui_ProjectWin()
-    ui.setupUi(ProjectWin)
-    ProjectWin.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     self.MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_ProjectWin()
+#     ui.setupUi(ProjectWin)
+#     ProjectWin.show()
+#     sys.exit(app.exec_())
+
+
+ui=Ui_MainWindow()
+ui.setupUi()
+
+ui.MainWindow.show()

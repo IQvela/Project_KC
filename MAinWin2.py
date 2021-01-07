@@ -309,8 +309,14 @@ class Ui_MainWindow(object):
         Pr[len(Pr.keys())]=KCbckend.Project(project_attributes)        
         
     def open_project(self):
+        ui_openproject=gui_openproject.UiMainWindow()
+        ui_openproject.setupUi()
+        ui_openproject.MainWindow.show()
         
-        pass
+        while ui_openproject.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.01)    
+            
         
     def cancel_window(self):
         self.finish_window=True
