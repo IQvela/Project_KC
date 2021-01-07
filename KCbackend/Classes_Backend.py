@@ -496,19 +496,19 @@ class Project:
 
 
 
-P={}
-P[0]=Project("Proj1","This is the test project 1")
-P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
-P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
-P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
-P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
-P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls")
-P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
-# In[1]:
-#set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
-pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
-db_exp=P[0].seasons[0].experiments[0].data_experiment
-P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# P={}
+# P[0]=Project("Proj1","This is the test project 1")
+# P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
+# P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+# P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
+# P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
+# P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls")
+# P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# # In[1]:
+# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=P[0].seasons[0].experiments[0].data_experiment
+# P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
 
 #type (ExcelRead)
 #print(ExcelRead)
