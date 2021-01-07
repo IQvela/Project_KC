@@ -17,10 +17,11 @@ import GUIs.GUI_NewProject as gui_newproject
 import GUIs.GUI_OpenProject as gui_openproject
 
 
-Pr={} #dictionary containing all the projects (this must to be initialized from a previous file where all the projects were saved)
+Pr=[] #dictionary containing all the projects (this must to be initialized from a previous file where all the projects were saved)
+Pr.append(KCbckend.Project("Proj1","This is Project 1","Sam"))
 
 class Ui_MainWindow(object):
-    Table_Project_headers=["Project name","Timeframe","Description","Responsible"]
+    Table_Project_headers=["Index","Project Name","Timeframe","Description","Responsible"]
     def __init__(self):
         self.MainWindow=QtWidgets.QMainWindow()
         self.finish_window=False
@@ -198,39 +199,23 @@ class Ui_MainWindow(object):
         self.Table_Project_list = QtWidgets.QTableWidget(self.centralwidget)
         self.Table_Project_list.setGeometry(QtCore.QRect(20, 60, 571, 201))
         self.Table_Project_list.setObjectName("Table_Project_list")
-        col= self.Table_Project_list.setColumnCount(len(Ui_MainWindow.Table_Project_headers)) #number of columns
-        raw = self.Table_Project_list.setRowCount(5) #number of rows --- need to change by list length
-        #vertical header
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setVerticalHeaderItem(4, item)
+        self.Table_Project_list.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) #the selection behaviour is by rows 
+        self.Table_Project_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers) #disable text editing
+        #self.Table_Project_list.setUpdatesEnabled(False)
+        
+        self.Table_Project_list.setColumnCount(len(Ui_MainWindow.Table_Project_headers)) #number of columns
+        self.Table_Project_list.setRowCount(len(Pr)+1) #number of rows --- need to change by list length
+        
+        #vertical headers
+        for i in range(len(Pr)+1):            
+            item = QtWidgets.QTableWidgetItem()
+            self.Table_Project_list.setVerticalHeaderItem(i, item)
+
         #horizontal header
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.Table_Project_list.setHorizontalHeaderItem(3, item)
-        #items inside table --- more need to be defined to add thing inside table
-        i=0
-        j=0
-        for i in [0,1,2,3,4]:
-            for j in [0,1,2,3]:
-                item = QtWidgets.QTableWidgetItem()
-                self.Table_Project_list.setItem(i, j, item)
-        #item = QtWidgets.QTableWidgetItem()
-        #self.Table_Project_list.setItem(0, 1, item)
-        #item = QtWidgets.QTableWidgetItem()
-        #self.Table_Project_list.setItem(1, 0, item)
+        for i in range(self.Table_Project_list.columnCount()):
+            item = QtWidgets.QTableWidgetItem()
+            self.Table_Project_list.setHorizontalHeaderItem(i, item)
+
         #other table defs
         self.Table_Project_list.horizontalHeader().setMinimumSectionSize(36)
         self.MainWindow.setCentralWidget(self.centralwidget)
@@ -257,42 +242,42 @@ class Ui_MainWindow(object):
         self.Button_CheckData.setText(_translate("MainWindow", "CHECK DATA"))
         #table info definition
         #vertical header names
-        item = self.Table_Project_list.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "1"))
-        item = self.Table_Project_list.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "2"))
-        item = self.Table_Project_list.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "3"))
-        item = self.Table_Project_list.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "4"))
-        item = self.Table_Project_list.verticalHeaderItem(4)
-        item.setText(_translate("MainWindow", "5"))
+
+
         #horizontal header names
-        item = self.Table_Project_list.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Project name"))
-        item = self.Table_Project_list.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Timeframe"))
-        item = self.Table_Project_list.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Description"))
-        item = self.Table_Project_list.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "??"))
-        #things inside table --- need to be changed with function calling class/list, more items need to be added here and above
-        __sortingEnabled = self.Table_Project_list.isSortingEnabled()
-        self.Table_Project_list.setSortingEnabled(False)
-        i=0
-        j=0
-        for i in [0,1,2,3,4]:
-            for j in [0,1,2,3]:
-                item = self.Table_Project_list.item(i, j)
-                item.setText(_translate("MainWindow", "a"))
+        for i,n in list(enumerate(Ui_MainWindow.Table_Project_headers)):
+            item = self.Table_Project_list.horizontalHeaderItem(i)
+            item.setText(_translate("MainWindow", n))
         
-        #item = self.Table_Project_list.item(0, 0)
-        #item.setText(_translate("MainWindow", "a"))
-        #item = self.Table_Project_list.item(0, 1)
-        #item.setText(_translate("MainWindow", "21 namez"))
-        #item = self.Table_Project_list.item(1, 0)
-        #item.setText(_translate("MainWindow", "12 namey"))
-        self.Table_Project_list.setSortingEnabled(__sortingEnabled)
+        if len(Pr)>0:
+            for i in range(len(Pr)):         
+                item = self.Table_Project_list.verticalHeaderItem(i)
+                item.setText(_translate("MainWindow", f"{i}"))
+                item=self.Table_Project_list.item(i,0)
+            
+            attr={}
+            for i,p in list(enumerate(Pr)):
+                attr[0]=str(i)
+                attr[1]=p.project_name
+                attr[3]=p.project_description
+                attr[4]=p.project_responsible
+                print(attr)
+                for j,v in attr.items():
+                    item = QtWidgets.QTableWidgetItem()
+                    self.Table_Project_list.setItem(i, j, item)
+                    item=self.Table_Project_list.item(i,j)
+                    item.setText(_translate("MainWindow", v))
+        # #things inside table --- need to be changed with function calling class/list, more items need to be added here and above
+        # __sortingEnabled = self.Table_Project_list.isSortingEnabled()
+        # self.Table_Project_list.setSortingEnabled(False)
+        # i=0
+        # j=0
+        # for i in [0,1,2,3,4]:
+        #     for j in [0,1,2,3]:
+        #         item = self.Table_Project_list.item(i, j)
+        #         item.setText(_translate("MainWindow", "a"))
+
+        # self.Table_Project_list.setSortingEnabled(__sortingEnabled)
 
     
     def new_project(self):
@@ -306,7 +291,7 @@ class Ui_MainWindow(object):
         
         project_attributes=ui_newproject.project_attributes
         
-        Pr[len(Pr.keys())]=KCbckend.Project(project_attributes)        
+        Pr.append(KCbckend.Project(project_attributes))      
         
     def open_project(self):
         ui_openproject=gui_openproject.Ui_MainWindow()

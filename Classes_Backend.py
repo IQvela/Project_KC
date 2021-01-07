@@ -382,10 +382,11 @@ class Project:
     
     #allprojects=[] #the initial value of this variable should be loaded from a special python .pkl file which contains the objects (projects) with its resepctive attributes
     
-    def __init__(self,project_name,project_description=""):
+    def __init__(self,project_name,project_description,project_responsible=""):
         
         self.project_name=project_name
         self.project_description=project_description
+        self.project_responsible=project_responsible
         self.seasons=[]#this should be a dictionary?? (maybe not because we are saving classes)
         self.project_route=Project.Totalnumberprojects #this corresponds with the project_index
         
