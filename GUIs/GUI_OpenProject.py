@@ -9,7 +9,7 @@
 
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
-import GUI_AddExperiment as gui_addexperiment
+from . import GUI_AddExperiment as gui_addexperiment
 
 
 class Ui_MainWindow(object):
@@ -169,6 +169,7 @@ class Ui_MainWindow(object):
         self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddData.setGeometry(QtCore.QRect(720, 400, 100, 40))
         self.Button_AddData.setObjectName("Button_AddData")
+        self.Button_AddData.clicked.connect(self.adddata)
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(720, 220, 100, 40))
         self.Button_ViewData.setObjectName("Button_ViewData")
@@ -279,7 +280,7 @@ class Ui_MainWindow(object):
 #     sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow()
-ui.setupUi()
+# ui=Ui_MainWindow()
+# ui.setupUi()
 
-ui.MainWindow.show()
+# ui.MainWindow.show()

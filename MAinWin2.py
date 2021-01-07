@@ -309,7 +309,7 @@ class Ui_MainWindow(object):
         Pr[len(Pr.keys())]=KCbckend.Project(project_attributes)        
         
     def open_project(self):
-        ui_openproject=gui_openproject.UiMainWindow()
+        ui_openproject=gui_openproject.Ui_MainWindow()
         ui_openproject.setupUi()
         ui_openproject.MainWindow.show()
         
