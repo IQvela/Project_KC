@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import Classes_Backend as KCbckend
 
 import GUIs.GUI_NewProject as gui_newproject
+import GUIs.GUI_OpenProject as gui_openproject
 
 
 Pr={} #dictionary containing all the projects (this must to be initialized from a previous file where all the projects were saved)
@@ -308,6 +309,7 @@ class Ui_MainWindow(object):
         Pr[len(Pr.keys())]=KCbckend.Project(project_attributes)        
         
     def open_project(self):
+        
         pass
         
     def cancel_window(self):
