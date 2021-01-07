@@ -2,6 +2,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from . import GUI_MessageBoxKC as msgbox
 
 
 class Ui_MainWindow(object):
@@ -226,7 +227,7 @@ def create_experiment(self):
         print("creating experiment")
         if self.text_TimeStart.toPlainText()=="" or self.text_TimeEnd.toPlainText()=="":
             print("No text was written")
-            Message_popup("Error","No Text","No text was written")
+            msgbox.Message_popup("Error","No Text","No text was written")
         else:
             self.experiments_attributes=(self.text_DateStart.toPlainText(),self.text_DateEnd.toPlainText(), self.text_fuel.toPlainText()) #add more and order desired
             print("the text was read")
@@ -239,47 +240,8 @@ def cancel_window(self):
 #if __name__ == "__main__":
 #    import sys
 #    app = QtWidgets.QApplication(sys.argv)
-#    MainWindow = QtWidgets.QMainWindow()
 #    ui = Ui_MainWindow()
-#    ui.setupUi(MainWindow)
-#    MainWindow.show()
+#    ui.setupUi()
+#    ui.MainWindow.show()
 #    sys.exit(app.exec_())
 
-class Message_popup:
-    def __init__(self,m_type,m_title="",m_text=""):
-        self.msg=QMessageBox()
-        self.msg.setWindowTitle(m_title)
-        self.msg.setText(m_text)
-        if m_type=="Error":
-            self.msgError()            
-        elif m_type=="Warning":
-            self.msgWarning()
-        elif m_type=="Info":
-            self.msgInfo()         
-        elif m_type=="YesorNo":
-            self.msgYesNo()
-        
-    def msgError(self):
-        self.msg.setIcon(QMessageBox.Critical)
-        return self.msg.exec_()
-    def msgWarning(self):
-        self.msg.setIcon(QMessageBox.Warning)
-        return self.msg.exec_()
-    def msgInfo(self): 
-        self.msg.setIcon(QMessageBox.Information)
-        return self.msg.exec_()       
-    def msgYesNo(self): 
-        self.msg.setIcon(QMessageBox.Question)
-        self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        #self.msg.standardButton()
-        return self.msg.exec_()    
-
-<<<<<<< HEAD
-=======
-ui=Ui_MainWindow()
-ui.setupUi()
->>>>>>> e8f37e5c169a53a8fb45a3d6c83f9ed4dfe8895c
-
-ui=Ui_MainWindow()
-ui.setupUi()
-ui.MainWindow.show()
