@@ -195,7 +195,8 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:7.8pt;\">write commment here</span></p></body></html>"))
         self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
         self.label_fuel.setText(_translate("MainWindow", "Fuel"))
-        self.Button_AddExperiment.setText(_translate("MainWindow", "OK"))
+        self.Button_AddExperiment.setText(_translate("MainWindow", "Create"))
+        self.Button_AddExperiment.clicked.connect(self.create_experiment)
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         self.label_time.setText(_translate("MainWindow", "TIME (HH:MM)"))
         self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -219,6 +220,17 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">23:59</span></p></body></html>"))
         self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
+        self.Button_Cancel.clicked.connect(self.cancel_window)
+
+def create_experiment(self):
+        print("creating experiment")
+        if self.text_TimeStart.toPlainText()=="" or self.text_TimeEnd.toPlainText()=="":
+            print("No text was written")
+            Message_popup("Error","No Text","No text was written")
+        else:
+            self.experiments_attributes=(self.text_DateStart.toPlainText(),self.text_DateEnd.toPlainText(), self.text_fuel.toPlainText()) #add more and order desired
+            print("the text was read")
+            self.cancel_window()
 
 def cancel_window(self):
         self.finish_window=True
@@ -233,8 +245,36 @@ def cancel_window(self):
 #    MainWindow.show()
 #    sys.exit(app.exec_())
 
+class Message_popup:
+    def __init__(self,m_type,m_title="",m_text=""):
+        self.msg=QMessageBox()
+        self.msg.setWindowTitle(m_title)
+        self.msg.setText(m_text)
+        if m_type=="Error":
+            self.msgError()            
+        elif m_type=="Warning":
+            self.msgWarning()
+        elif m_type=="Info":
+            self.msgInfo()         
+        elif m_type=="YesorNo":
+            self.msgYesNo()
+        
+    def msgError(self):
+        self.msg.setIcon(QMessageBox.Critical)
+        return self.msg.exec_()
+    def msgWarning(self):
+        self.msg.setIcon(QMessageBox.Warning)
+        return self.msg.exec_()
+    def msgInfo(self): 
+        self.msg.setIcon(QMessageBox.Information)
+        return self.msg.exec_()       
+    def msgYesNo(self): 
+        self.msg.setIcon(QMessageBox.Question)
+        self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        #self.msg.standardButton()
+        return self.msg.exec_()    
+
 
 ui=Ui_MainWindow()
- ui.setupUi()
-
+ui.setupUi()
 ui.MainWindow.show()
