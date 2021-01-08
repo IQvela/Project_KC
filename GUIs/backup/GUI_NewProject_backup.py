@@ -14,35 +14,31 @@ from PyQt5.QtWidgets import QMessageBox
 from . import GUI_MessageBoxKC as msgbox
 
 
-class Ui_MainWindow(QtWidgets.QMainWindow):
+class Ui_MainWindow(object):
     def __init__(self):
-        super(Ui_MainWindow,self).__init__()        
-        #self.MainWindow=QtWidgets.QMainWindow()
+        self.MainWindow=QtWidgets.QMainWindow()
         self.finish_window=False        
         
         self.project_attributes=0
         
-    def closeEvent(self, event):
-        self.finish_window=True
-        self.close()      
-        
+                
     def setupUi(self):
-        self.setObjectName("MainWindow")
-        self.resize(781, 347)
-        self.label_7 = QtWidgets.QLabel(self)
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(781, 347)
+        self.label_7 = QtWidgets.QLabel(self.MainWindow)
         self.label_7.setGeometry(QtCore.QRect(120, 190, 221, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_7.setFont(font)
         self.label_7.setObjectName("label_7")
         
-        self.Textbox_name = QtWidgets.QTextEdit(self)
+        self.Textbox_name = QtWidgets.QTextEdit(self.MainWindow)
         self.Textbox_name.setGeometry(QtCore.QRect(190, 110, 541, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Textbox_name.setFont(font)
         
-        self.Title_2 = QtWidgets.QLabel(self)
+        self.Title_2 = QtWidgets.QLabel(self.MainWindow)
         self.Title_2.setGeometry(QtCore.QRect(260, 30, 311, 41))
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -53,33 +49,33 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Title_2.setFont(font)
         self.Title_2.setAlignment(QtCore.Qt.AlignCenter)
         self.Title_2.setObjectName("Title_2")
-        self.label_6 = QtWidgets.QLabel(self)
+        self.label_6 = QtWidgets.QLabel(self.MainWindow)
         self.label_6.setGeometry(QtCore.QRect(120, 110, 55, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_6.setFont(font)
         self.label_6.setObjectName("label_6")
         
-        self.Textbox_description = QtWidgets.QTextEdit(self)
+        self.Textbox_description = QtWidgets.QTextEdit(self.MainWindow)
         self.Textbox_description.setGeometry(QtCore.QRect(220, 180, 511, 81)) 
         font = QtGui.QFont()
         font.setPointSize(10)
         self.Textbox_description.setFont(font)
         
-        self.Button_Create = QtWidgets.QPushButton(self)
+        self.Button_Create = QtWidgets.QPushButton(self.MainWindow)
         self.Button_Create.setGeometry(QtCore.QRect(450, 290, 100, 40))
         self.Button_Create.clicked.connect(self.create_project)
         
-        self.Button_Cancel = QtWidgets.QPushButton(self)
+        self.Button_Cancel = QtWidgets.QPushButton(self.MainWindow)
         self.Button_Cancel.setGeometry(QtCore.QRect(630, 290, 100, 40))
         self.Button_Cancel.clicked.connect(self.cancel_window)
 
         self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "New Project"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "New Project"))
         self.label_7.setText(_translate("MainWindow", "Description"))
         self.Title_2.setText(_translate("MainWindow", "New project"))
         self.label_6.setText(_translate("MainWindow", "Name"))
@@ -100,7 +96,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
     def cancel_window(self):
         self.finish_window=True
-        self.close()
+        self.MainWindow.close()
 
 
 # class Message_popup:
@@ -145,4 +141,4 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 # ui=Ui_MainWindow()
 # ui.setupUi()
 
-# ui.show()
+# ui.MainWindow.show()

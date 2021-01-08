@@ -12,22 +12,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from . import GUI_AddExperiment as gui_addexperiment
 
 
-class Ui_MainWindow(QtWidgets.QMainWindow):
+class Ui_MainWindow(object):
     
     def __init__(self):
-        # self.MainWindow=QtWidgets.QMainWindow()
-        super(Ui_MainWindow,self).__init__()
+        self.MainWindow=QtWidgets.QMainWindow()
         self.finish_window=False 
     
     def closeEvent(self, event):
-        self.finish_window=True
-        self.close()
-        # print(self.finish_window)
-        # print("closing OpenProject window")
+        # event.ignore()
+        self.finish_window==True
+        print("closing OpenProject window")
         
     def setupUi(self,project_index):
-        self.setObjectName("MainWindow")
-        self.resize(900, 550)
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(900, 550)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -164,8 +162,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        self.setPalette(palette)
-        self.centralwidget = QtWidgets.QWidget(self)
+        self.MainWindow.setPalette(palette)
+        self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 340, 100, 40))
@@ -216,28 +214,28 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(10)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
-        self.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(self)
+        self.MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 900, 26))
         self.menubar.setObjectName("menubar")
         self.menu1 = QtWidgets.QMenu(self.menubar)
         self.menu1.setObjectName("menu1")
-        self.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(self)
+        self.MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
         self.statusbar.setObjectName("statusbar")
-        self.setStatusBar(self.statusbar)
-        self.actionOpen = QtWidgets.QAction(self)
+        self.MainWindow.setStatusBar(self.statusbar)
+        self.actionOpen = QtWidgets.QAction(self.MainWindow)
         self.actionOpen.setObjectName("actionOpen")
         self.menu1.addAction(self.actionOpen)
         self.menu1.addSeparator()
         self.menubar.addAction(self.menu1.menuAction())
 
         self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
         self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
         self.Button_ModifyData.setText(_translate("MainWindow", "MODIFY DATA"))
         self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
@@ -270,7 +268,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def adddata(self):
         ui_addexperiment=gui_addexperiment.Ui_MainWindow()
         ui_addexperiment.setupUi()
-        ui_addexperiment.show()
+        ui_addexperiment.MainWindow.show()
         
         while ui_addexperiment.finish_window==False:
             QtCore.QCoreApplication.processEvents()
@@ -284,14 +282,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 # if __name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
-#     self = QtWidgets.QMainWindow()
+#     self.MainWindow = QtWidgets.QMainWindow()
 #     ui = Ui_ProjectWin()
 #     ui.setupUi(ProjectWin)
 #     ProjectWin.show()
 #     sys.exit(app.exec_())
 
 
-# ui=Ui_MainWindow()
-# ui.setupUi(0)
+ui=Ui_MainWindow()
+ui.setupUi(0)
 
-# ui.show()
+ui.MainWindow.show()
