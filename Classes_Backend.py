@@ -326,6 +326,9 @@ class Season:
     def __init__(self,season_name,season_description,season_route):
         self.season_name=season_name
         self.season_description=season_description #this cannot be empty (a message should appear)
+        self.date_ini="ND" #this is the minimum date of the seasons
+        self.date_end="ND" #this is the maximum date of the seasons
+        self.fuel_type="ND" ##this depends on the fuel type of the seasons        
         self.experiments=[]
         self.season_route=season_route
         
@@ -338,6 +341,9 @@ class Season:
         newexp_route=self.season_route+"/"+str(len(self.experiments))
         new_experiment=Experiment(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,newexp_route)#entry)
         self.experiments.append(new_experiment)
+
+        # (self.date_ini,self.date_end)=self.get_dates_total()
+        # self.fuel_type=self.get_fuel_total()
     
     #this method is called after ok is pressed in a window that allows to change the attributes of the season
     #the arguments are read from boxes that after ok is pressed will send the value to the arguments
@@ -376,7 +382,31 @@ class Season:
         else:
             tk.messagebox.showinfo("Delete Experiment", "None experiment will be deleted")
             
-            
+    def get_dates_total(self): #get the date of the object given the subclasses that are within it
+        if len(self.experiments)>0:
+            d_ini,d_end=[],[]
+            for a in self.experiments:
+                # print(a.date_ini)
+                # print(a.date_end)
+                if a.date_ini!="ND" and a.date_ini!="ND":           
+                    d_ini.append(datetime.strptime(a.date_ini,"%Y-%m-%d %H:%M:%S"))
+                    d_end.append(datetime.strptime(a.date_end,"%Y-%m-%d %H:%M:%S"))
+        if len(d_ini)!=0 and len(d_end)!=0:
+            # print(type(min(d_ini)))
+            # print(type(max(d_end))) 
+            self.date_ini,self.date_end=min(d_ini).strftime("%Y-%m-%d %H:%M:%S"),max(d_end).strftime("%Y-%m-%d %H:%M:%S")#datetime.strftime(min(d_ini)),datetime.strftime(max(d_end))
+        return (self.date_ini,self.date_end)
+    
+    def get_fuel_total(self):
+        if len(self.experiments)>0:
+            fuel=[a.fuel_type for a in self.experiments]
+            if all(f==fuel[0] for f in fuel):
+                self.fuel_type=fuel[0]
+            else:
+                self.fuel_type="Mix"
+        return self.fuel_type
+    
+    
 class Project:
     
     Totalnumberprojects=0 #stores the total number of projects
@@ -388,6 +418,9 @@ class Project:
         self.project_name=project_name
         self.project_description=project_description
         self.project_responsible=project_responsible
+        self.date_ini="ND" #this is the minimum date of the seasons
+        self.date_end="ND" #this is the maximum date of the seasons
+        self.fuel_type="ND" ##this depends on the fuel type of the seasons
         self.seasons=[]#this should be a dictionary?? (maybe not because we are saving classes)
         self.project_route=Project.Totalnumberprojects #this corresponds with the project_index
         
@@ -418,6 +451,9 @@ class Project:
         newseason_route=str(self.project_route)+"/"+str(len(self.seasons))
         new_Season=Season(season_name,season_description,newseason_route)
         self.seasons.append(new_Season)
+        
+        # (self.date_ini,self.date_end)=self.get_dates_total()
+        # self.fuel_type=self.get_fuel_total()
         
     #this method is called after ok is pressed in a window that allows to change the attributes of the Project
     #the arguments are read from boxes that after ok is pressed will send the value to the arguments        
@@ -456,6 +492,30 @@ class Project:
         else:
             tk.messagebox.showinfo("Delete Season", "None season will be transfered")
 
+    def get_dates_total(self): #get the date of the object given the subclasses that are within it
+        if len(self.seasons)>0:
+            d_ini,d_end=[],[]
+            for a in self.seasons:
+                # print(a.date_ini)
+                # print(a.date_end)
+                if a.date_ini!="ND" and a.date_ini!="ND":           
+                    d_ini.append(datetime.strptime(a.date_ini,"%Y-%m-%d %H:%M:%S"))
+                    d_end.append(datetime.strptime(a.date_end,"%Y-%m-%d %H:%M:%S"))
+        if len(d_ini)!=0 and len(d_end)!=0:
+            # print(type(min(d_ini)))
+            # print(type(max(d_end)))            
+            self.date_ini,self.date_end=min(d_ini).strftime("%Y-%m-%d %H:%M:%S"),max(d_end).strftime("%Y-%m-%d %H:%M:%S")#datetime.strftime(min(d_ini)),datetime.strftime(max(d_end))
+
+        return (self.date_ini,self.date_end)
+
+    def get_fuel_total(self):
+        if len(self.seasons)>0:
+            fuel=[a.fuel_type for a in self.seasons]
+            if all(f==fuel[0] for f in fuel):
+                self.fuel_type=fuel[0]
+            else:
+                self.fuel_type="Mix"
+        return self.fuel_type
 
     @classmethod
     def get_numberprojects(cls):

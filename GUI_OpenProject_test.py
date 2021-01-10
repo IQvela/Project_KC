@@ -11,7 +11,9 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 # from . import GUI_AddExperiment as gui_addexperiment
 # from . import Classes_Backend
-# import GUI_AddExperiment as gui_addexperiment
+import GUIs.GUI_NewSeason as gui_newseason
+import GUIs.GUI_NewExperiment as gui_newexperiment
+import GUIs.GUI_OpenExperiment as gui_openexperiment
 import Classes_Backend as KCbckend
 import random
 
@@ -199,23 +201,47 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(11)
         self.Textbox_Description.setFont(font)  
         
+        
+        #GroupBox
+        self.groupBox_season=QtWidgets.QGroupBox((self.centralwidget))
+        self.groupBox_season.setGeometry(QtCore.QRect(710, 240, 120, 65))        
+        
+        self.groupBox_exp=QtWidgets.QGroupBox((self.centralwidget))
+        self.groupBox_exp.setGeometry(QtCore.QRect(710, 320, 120, 110))
+        
+                
         #Buttons---------------------------------------------------------------------------------
+        #New Season
+        self.Button_NewSeason = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_NewSeason.setGeometry(QtCore.QRect(720, 195, 100, 40))
+        self.Button_NewSeason.clicked.connect(self.new_season) 
+        
+        #Add experiment < GroupBox_season
+        self.Button_NewExperiment = QtWidgets.QPushButton(self.groupBox_season)
+        self.Button_NewExperiment.setGeometry(QtCore.QRect(10, 15, 100, 40))
+        self.Button_NewExperiment.clicked.connect(self.new_experiment)        
+        
+        #view data button < GrouoBox Experiment
+        self.Button_ViewData = QtWidgets.QPushButton(self.groupBox_exp)
+        self.Button_ViewData.setGeometry(QtCore.QRect(10, 15, 100, 40))
+        self.Button_ViewData.setObjectName("Button_ViewData")
+        self.Button_ViewData.clicked.connect(self.open_experiment)
+
+        #Delete Experiment button < GrouoBox Experiment
+        self.Button_DeleteExp = QtWidgets.QPushButton(self.groupBox_exp)
+        self.Button_DeleteExp.setGeometry(QtCore.QRect(10, 60, 100, 40))
+        self.Button_DeleteExp.setObjectName("Button_ModifyData")
+        self.Button_DeleteExp.clicked.connect(self.delete_experiment)        
+        
+        #Analysis
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 340, 100, 40))
+        self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 440, 100, 40))
         self.Button_AnalyseData.setObjectName("Button_AnalyseData")
-        
-        self.Button_ModifyData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ModifyData.setGeometry(QtCore.QRect(720, 280, 100, 40))
-        self.Button_ModifyData.setObjectName("Button_ModifyData")
-        
-        self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AddData.setGeometry(QtCore.QRect(720, 400, 100, 40))
-        self.Button_AddData.setObjectName("Button_AddData")        
+        self.Button_AnalyseData.clicked.connect(self.data_analysis)
+       
         # self.Button_AddData.clicked.connect(self.adddata)
         
-        self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ViewData.setGeometry(QtCore.QRect(720, 220, 100, 40))
-        self.Button_ViewData.setObjectName("Button_ViewData")
+
         
         #Treeview---------------------------------------------------------------------------------
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
@@ -265,10 +291,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # p_selected.add_Season("Season 2020-11","This is the 2020_11 test season") #CHECK!!!!
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
-        self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
-        self.Button_ModifyData.setText(_translate("MainWindow", "MODIFY DATA"))
-        self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
+        
+        self.Button_NewSeason.setText(_translate("MainWindow", "NEW SEASON"))
+        self.Button_NewExperiment.setText(_translate("MainWindow", "NEW EXPERIMENT"))
+        
         self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
+        self.Button_DeleteExp.setText(_translate("MainWindow", "DELETE EXP"))
+        self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
+
 
         self.Label_Description.setText(_translate("MainWindow", "Description"))
         self.menu1.setTitle(_translate("MainWindow", "Project"))
@@ -311,28 +341,57 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.treeWidget.setSortingEnabled(__sortingEnabled)
         
         self.Textbox_Description.setText(p_selected.project_description)
-        
-#         self.Textbox_Description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-# "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-# "p, li { white-space: pre-wrap; }\n"
-# "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-# "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">This project includes the cracking of PE, objective is to study all the operation conditions possible and find where is the maximum yield of ethylene </span></p></body></html>"))
-        
+               
+        self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
+        self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
 
+    
+    def new_season(self):
+        ui_newseason=gui_newseason.Ui_MainWindow()
+        ui_newseason.setupUi()
+        ui_newseason.show()
 
+        while ui_newseason.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.02) 
 
-    # def adddata(self):
-    #     ui_addexperiment=gui_addexperiment.Ui_MainWindow()
-    #     ui_addexperiment.setupUi()
-    #     ui_addexperiment.show()
+    #Opens Add Experiment window
+    def new_experiment(self):
+        ui_newexperiment=gui_newexperiment.Ui_MainWindow()
+        ui_newexperiment.setupUi()
+        ui_newexperiment.show()
         
-    #     while ui_addexperiment.finish_window==False:
-    #         QtCore.QCoreApplication.processEvents()
-    #         time.sleep(0.01)  
+        while ui_newexperiment.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.02)  
         
-    #     print("add experiment window opened")
+        print("add experiment window opened")
         
+    #Delete experiment    
+    def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment
+        pass
+    
+    #Opens window Experiment 
+    def open_experiment(self):
+        #print(self.treeWidget.selectedItems())
+        #print(self.treeWidget.selectedIndexes())
+        exp_selected=self.treeWidget.selectedIndexes()[0]
+        print("{},{}".format(exp_selected.child(),exp_selected.row()))
+        print("opening the open_experiment window")
+        #ui_openexperiment=gui_openexperiment.Ui_MainWindow()
+        #ui_openexperiment.setupUi(0)
+        #ui_openexperiment.show()
 
+        #print("window openned")
+        #while ui_openexperiment.finish_window==False:
+        #    QtCore.QCoreApplication.processEvents()
+        #    time.sleep(0.02)  
+            
+    #opens the window to analysis of the data    
+    def data_analysis(self):
+        pass
+    
+    
 def randomclasses(a,b):
     global seed
     seed+=1
@@ -368,10 +427,9 @@ for p in range(0,N_P):
 # if __name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
-#     self = QtWidgets.QMainWindow()
-#     ui = Ui_ProjectWin()
-#     ui.setupUi(ProjectWin)
-#     ProjectWin.show()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(Pr[1])
+#     ui.show()
 #     sys.exit(app.exec_())
 
 

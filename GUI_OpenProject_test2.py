@@ -11,17 +11,12 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 # from . import GUI_AddExperiment as gui_addexperiment
 # from . import Classes_Backend
-from . import GUI_NewSeason as gui_newseason
-from . import GUI_NewExperiment as gui_newexperiment
-from . import GUI_OpenExperiment as gui_openexperiment
-from . import GUI_MessageBoxKC as msgbox
-
-# import GUIs.GUI_NewSeason as gui_newseason
-# import GUIs.GUI_NewExperiment as gui_newexperiment
-# import GUIs.GUI_OpenExperiment as gui_openexperiment
-# import GUIs.GUI_MessageBoxKC as msgbox
-# import Classes_Backend as KCbckend
-# import random
+import GUIs.GUI_NewSeason as gui_newseason
+import GUIs.GUI_NewExperiment as gui_newexperiment
+import GUIs.GUI_OpenExperiment as gui_openexperiment
+import GUIs.GUI_MessageBoxKC as msgbox
+import Classes_Backend as KCbckend
+import random
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -356,7 +351,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
         
-        # max_desc_length=50 #maximum number of caracteres to show in the description
+        max_desc_length=50 #maximum number of caracteres to show in the description
         for s_i,s in enumerate(self.project_selected.seasons):
             col_content=[s.season_name,s.get_dates_total()[0],s.get_dates_total()[1],str(len(s.experiments)),s.get_fuel_total(),s.season_description,str(s_i)]            
             for c in range(len(tree_titles)):
@@ -443,48 +438,48 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         pass
     
     
-# def randomclasses(a,b):
-#     global seed
-#     seed+=1
-#     random.seed(17*seed)
-#     return random.randint(a,b)
+def randomclasses(a,b):
+    global seed
+    seed+=1
+    random.seed(17*seed)
+    return random.randint(a,b)
 
-# seed=25
+seed=25
 
-# Pr=[]
-# N_P=randomclasses(1,5)
-# #P=list(range(N_P))
-# for p in range(0,N_P):
-#     Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
-#     for s in range(0,randomclasses(1,5)):
-#         Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}. In this season many techniques were applied, also the temperature was controlled and many parameters were varied")
-#         for e in range(0,randomclasses(1,5)):
-#             d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
-#             d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
-#             descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
-#                     "the bed was with iron, and it was neessary to verify potential leakages"]
-#             fuel=["Polyethylene","Textiles","PVC"]
-#             ind=random.randint(0,1)
-#             ind2=randomclasses(0,len(fuel)-1)
-#             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
-#             for pnt in range(0,randomclasses(0,5)):
-#                 # print(f"p{p},s{s},e{e}")
-#                 Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
+Pr=[]
+N_P=randomclasses(1,5)
+#P=list(range(N_P))
+for p in range(0,N_P):
+    Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
+    for s in range(0,randomclasses(1,5)):
+        Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}. In this season many techniques were applied, also the temperature was controlled and many parameters were varied")
+        for e in range(0,randomclasses(1,5)):
+            d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
+            d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
+            descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
+                    "the bed was with iron, and it was neessary to verify potential leakages"]
+            fuel=["Polyethylene","Textiles","PVC"]
+            ind=random.randint(0,1)
+            ind2=randomclasses(0,len(fuel)-1)
+            Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
+            for pnt in range(0,randomclasses(0,5)):
+                # print(f"p{p},s{s},e{e}")
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
 
 
 
         
         
-# # if __name__ == "__main__":
-# #     import sys
-# #     app = QtWidgets.QApplication(sys.argv)
-# #     ui = Ui_MainWindow()
-# #     ui.setupUi(Pr[1])
-# #     ui.show()
-# #     sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui = Ui_MainWindow()
+#     ui.setupUi(Pr[1])
+#     ui.show()
+#     sys.exit(app.exec_())
 
 
-# ui=Ui_MainWindow()
-# ui.setupUi(Pr[1])
+ui=Ui_MainWindow()
+ui.setupUi(Pr[1])
 
-# ui.show()
+ui.show()

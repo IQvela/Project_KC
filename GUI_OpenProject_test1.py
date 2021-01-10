@@ -11,25 +11,18 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 # from . import GUI_AddExperiment as gui_addexperiment
 # from . import Classes_Backend
-from . import GUI_NewSeason as gui_newseason
-from . import GUI_NewExperiment as gui_newexperiment
-from . import GUI_OpenExperiment as gui_openexperiment
-from . import GUI_MessageBoxKC as msgbox
-
-# import GUIs.GUI_NewSeason as gui_newseason
-# import GUIs.GUI_NewExperiment as gui_newexperiment
-# import GUIs.GUI_OpenExperiment as gui_openexperiment
-# import GUIs.GUI_MessageBoxKC as msgbox
-# import Classes_Backend as KCbckend
-# import random
+import GUIs.GUI_NewSeason as gui_newseason
+import GUIs.GUI_NewExperiment as gui_newexperiment
+import GUIs.GUI_OpenExperiment as gui_openexperiment
+import Classes_Backend as KCbckend
+import random
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,project_selected):
+    def __init__(self):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
-        self.finish_window=False
-        self.project_selected=project_selected
+        self.finish_window=False 
     
     def closeEvent(self, event):
         self.finish_window=True
@@ -37,8 +30,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # print(self.finish_window)
         # print("closing OpenProject window")
         
-    def setupUi(self):
-        
+    def setupUi(self,project_selected):
         self.setObjectName("MainWindow")
         self.resize(900, 550)
         palette = QtGui.QPalette()
@@ -256,17 +248,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.treeWidget.setGeometry(QtCore.QRect(80, 190, 600, 291))
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.treeWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) #the selection behaviour is by rows 
         font1=QtGui.QFont()
         font1.setBold(True)
         font1.setPointSize(10)
         font2=QtGui.QFont()
         font2.setItalic(True)
         font2.setPointSize(9)        
-        for s in self.project_selected.seasons:
+        for s in project_selected.seasons:
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
-            # for c in range(7):
-            #     item_0.setFont(c,font1)
+            item_0.setFont(0,font1)
             for e in s.experiments:
                 item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
                 for pnt in e.points:
@@ -300,11 +290,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menu1.addSeparator()
         self.menubar.addAction(self.menu1.menuAction())
 
-        self.retranslateUi()
+        self.retranslateUi(project_selected)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self):
-        # self.project_selected.add_Season("Season 2020-11","This is the 2020_11 test season") #CHECK!!!!
+    def retranslateUi(self,p_selected):
+        # p_selected.add_Season("Season 2020-11","This is the 2020_11 test season") #CHECK!!!!
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
         
@@ -320,73 +310,82 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menu1.setTitle(_translate("MainWindow", "Project"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         
-        self.Label_Title.setText(_translate("MainWindow", "Project: " + self.project_selected.project_name))
-
-        font_header=QtGui.QFont()
-        font_header.setBold(True)
-        font_header.setPointSize(11)
-        font1=QtGui.QFont()
-        font1.setBold(False)
-        font1.setPointSize(10)
-        # font11=QtGui.QFont() #for column Exp/pnts
-        # font11.setBold(False)
-        # font11.setPointSize(9)        
-        font2=QtGui.QFont()
-        font2.setItalic(True)
-        font2.setPointSize(9)
-        font3=QtGui.QFont()
-        #font3.setItalic(True)
-        font3.setPointSize(8)  
+        self.Label_Title.setText(_translate("MainWindow", "Project: " + p_selected.project_name))
+        self.treeWidget.headerItem().setText(6, _translate("MainWindow", "ID"))
+        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "Item Name"))
+        self.treeWidget.headerItem().setText(1, _translate("MainWindow", "Date Ini"))
+        self.treeWidget.headerItem().setText(2, _translate("MainWindow", "Date End"))
+        self.treeWidget.headerItem().setText(3, _translate("MainWindow", "Exp/Pnts"))
+        self.treeWidget.headerItem().setText(4, _translate("MainWindow", "Fuel Type"))
+        self.treeWidget.headerItem().setText(5, _translate("MainWindow", "Description/Comments"))
         
-        tree_titles=["NAME","Date Ini","Date End","Ent.","Fuel Type","Description/Comments","ID",]
-        for c in range(len(tree_titles)):
-            item=self.treeWidget.headerItem()
-            item.setText(c, _translate("MainWindow", tree_titles[c]))
-            item.setFont(c, font_header)
-
-  
-        self.treeWidget.setColumnWidth(0, 120)
+        self.treeWidget.setColumnWidth(6, 40)
+        self.treeWidget.setColumnWidth(0, 100)
         self.treeWidget.setColumnWidth(1, 200)
         self.treeWidget.setColumnWidth(2, 200)
         self.treeWidget.setColumnWidth(3, 50)
         self.treeWidget.setColumnWidth(4, 100)
         self.treeWidget.setColumnWidth(5, 500)
-        self.treeWidget.setColumnWidth(6, 40)
         
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
         
-        # max_desc_length=50 #maximum number of caracteres to show in the description
-        for s_i,s in enumerate(self.project_selected.seasons):
-            col_content=[s.season_name,s.get_dates_total()[0],s.get_dates_total()[1],str(len(s.experiments)),s.get_fuel_total(),s.season_description,str(s_i)]            
-            for c in range(len(tree_titles)):
-                item=self.treeWidget.topLevelItem(s_i)
-                item.setText(c, _translate("MainWindow", col_content[c]))
-                item.setFont(c,font1)
-
+        max_desc_length=50 #maximum number of caracteres to show in the description
+        for s_i,s in enumerate(p_selected.seasons):
+            # desc_temp=s.season_description
+            # if len(s.season_description)>max_desc_length:
+            #     desc_temp=s.season_description[0:max_desc_length]+"..."            
+                        
+            self.treeWidget.topLevelItem(s_i).setText(6, _translate("MainWindow", str(s_i)))
+            self.treeWidget.topLevelItem(s_i).setText(0, _translate("MainWindow", s.season_name))
+            self.treeWidget.topLevelItem(s_i).setText(1, _translate("MainWindow", s.get_dates_total()[0]))
+            self.treeWidget.topLevelItem(s_i).setText(2, _translate("MainWindow", s.get_dates_total()[1]))
+            self.treeWidget.topLevelItem(s_i).setText(3, _translate("MainWindow", str(len(s.experiments))))
+            self.treeWidget.topLevelItem(s_i).setText(4, _translate("MainWindow", s.get_fuel_total()))
+            self.treeWidget.topLevelItem(s_i).setText(5, _translate("MainWindow", s.season_description))
             for e_i,e in enumerate(s.experiments):
-                col_content=[e.exp_name,e.date_ini,e.date_end,str(len(e.points)),e.fuel_type,e.exp_comments,str(s_i)+"/"+str(e_i)]                            
-                for c in range(len(tree_titles)):
-                    item=self.treeWidget.topLevelItem(s_i).child(e_i)
-                    item.setText(c, _translate("MainWindow", col_content[c]))
-                    item.setFont(c,font2)                
+                # desc_temp=e.exp_comments
+                # if len(desc_temp)>max_desc_length:
+                #     desc_temp=e.exp_comments[0:max_desc_length]+"..."   
+                # self.treeWidget.topLevelItem(s_i).child(e_i).setText(0, _translate("MainWindow", e.exp_name+"@"+e.date_ini+"-"+e.date_end+"//Pnts:"+str(len(e.points))+"//"+e.fuel_type+"//"+desc_temp))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(6, _translate("MainWindow", str(s_i)+str(e_i)))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(0, _translate("MainWindow", e.exp_name))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(1, _translate("MainWindow", e.date_ini))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(2, _translate("MainWindow", e.date_end))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(3, _translate("MainWindow", str(len(e.points))))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(4, _translate("MainWindow", e.fuel_type))
+                self.treeWidget.topLevelItem(s_i).child(e_i).setText(5, _translate("MainWindow", e.exp_comments))
+
 
                 for pnt_i,pnt in enumerate(e.points):
-                    col_content=[pnt.point_name,pnt.date_ini,pnt.date_end,"-",e.fuel_type,pnt.point_comments,str(s_i)+"/"+str(e_i)+"/"+str(pnt_i)]                            
-                    for c in range(len(tree_titles)):
-                        item=self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i)
-                        item.setText(c, _translate("MainWindow", col_content[c]))
-                        item.setFont(c,font3)
+                    # desc_temp=pnt.point_comments
+                    # if len(desc_temp)>max_desc_length:
+                    #     desc_temp=pnt.point_comments[0:max_desc_length]+"..."                       
+                    # self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(0, _translate("MainWindow", pnt.point_name+"@"+pnt.date_ini+"-"+pnt.date_end+"//"+desc_temp))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(6, _translate("MainWindow", str(s_i)+str(e_i)+str(pnt_i)))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(0, _translate("MainWindow", pnt.point_name))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(1, _translate("MainWindow", pnt.date_ini))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(2, _translate("MainWindow", pnt.date_end))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(3, _translate("MainWindow", "N/A"))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(4, _translate("MainWindow", e.fuel_type))
+                    self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i).setText(5, _translate("MainWindow", pnt.point_comments))
 
                     
         #self.treeWidget.expandToDepth(0) 
-        self.treeWidget.resizeColumnToContents(1) #date_ini
-        self.treeWidget.resizeColumnToContents(2) #date_end
-        self.treeWidget.resizeColumnToContents(4) #fueltype
-
+        self.treeWidget.resizeColumnToContents(1)     
+        # self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "Season 2020-2021"))
+        # self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "Experiment 1"))
+        # self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "Point1.1_LowT"))
+        # self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("MainWindow", "Point1.2_HighT"))
+        # self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("MainWindow", "Experiment 2"))
+        # self.treeWidget.topLevelItem(0).child(1).child(0).setText(0, _translate("MainWindow", "Increasing T"))
+        # self.treeWidget.topLevelItem(1).setText(0, _translate("MainWindow", "Season 2019-2020"))
+        # self.treeWidget.topLevelItem(1).child(0).setText(0, _translate("MainWindow", "Experiment Day1"))
+        # self.treeWidget.topLevelItem(1).child(0).child(0).setText(0, _translate("MainWindow", "Point A_SFR=1"))
+        # self.treeWidget.topLevelItem(1).child(0).child(1).setText(0, _translate("MainWindow", "Point B_SFR=2"))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
         
-        self.Textbox_Description.setText(self.project_selected.project_description)
+        self.Textbox_Description.setText(p_selected.project_description)
                
         self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
         self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
@@ -399,9 +398,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         while ui_newseason.finish_window==False:
             QtCore.QCoreApplication.processEvents()
-            time.sleep(0.05) 
+            time.sleep(0.02) 
 
-    #Opens Add Experiment window------------------------------------------------------------------------------------------
+    #Opens Add Experiment window
     def new_experiment(self):
         ui_newexperiment=gui_newexperiment.Ui_MainWindow()
         ui_newexperiment.setupUi()
@@ -409,82 +408,77 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         while ui_newexperiment.finish_window==False:
             QtCore.QCoreApplication.processEvents()
-            time.sleep(0.05)  
+            time.sleep(0.02)  
         
         print("add experiment window opened")
         
-    #Delete experiment---------------------------------------------------------------------------------------------------- 
+    #Delete experiment    
     def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment
         pass
     
-    #Opens window Experiment---------------------------------------------------------------------------------------------
-    def open_experiment(self):        
-        #exp_selected1=self.treeWidget.selectedItems()
-        exp_selected=self.treeWidget.selectedIndexes()[-1].data()
-        
-        if len(exp_selected.split("/"))<2 or len(exp_selected.split("/"))>3:
-            msgbox.Message_popup("Error","Error","Please select an Experiment row")
-        else:
-            season_selected=int(exp_selected.split("/")[0])
-            exp_selected=int(exp_selected.split("/")[1])
-                    
+    #Opens window Experiment 
+    def open_experiment(self):
+        #print(self.treeWidget.selectedItems())
+        #print(self.treeWidget.selectedIndexes())
+        exp_selected=self.treeWidget.selectedIndexes()[0]
+        print("{},{}".format(exp_selected.child(),exp_selected.row()))
         print("opening the open_experiment window")
-        ui_openexperiment=gui_openexperiment.Ui_MainWindow(self.project_selected.seasons[season_selected].experiments[exp_selected])
-        ui_openexperiment.setupUi()
-        ui_openexperiment.show()
+        #ui_openexperiment=gui_openexperiment.Ui_MainWindow()
+        #ui_openexperiment.setupUi(0)
+        #ui_openexperiment.show()
 
         #print("window openned")
-        while ui_openexperiment.finish_window==False:
-            QtCore.QCoreApplication.processEvents()
-            time.sleep(0.05)  
+        #while ui_openexperiment.finish_window==False:
+        #    QtCore.QCoreApplication.processEvents()
+        #    time.sleep(0.02)  
             
-    #opens the window to analysis of the data------------------------------------------------------------------------------    
+    #opens the window to analysis of the data    
     def data_analysis(self):
         pass
     
     
-# def randomclasses(a,b):
-#     global seed
-#     seed+=1
-#     random.seed(17*seed)
-#     return random.randint(a,b)
+def randomclasses(a,b):
+    global seed
+    seed+=1
+    random.seed(17*seed)
+    return random.randint(a,b)
 
-# seed=25
+seed=25
 
-# Pr=[]
-# N_P=randomclasses(1,5)
-# #P=list(range(N_P))
-# for p in range(0,N_P):
-#     Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
-#     for s in range(0,randomclasses(1,5)):
-#         Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}. In this season many techniques were applied, also the temperature was controlled and many parameters were varied")
-#         for e in range(0,randomclasses(1,5)):
-#             d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
-#             d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
-#             descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
-#                     "the bed was with iron, and it was neessary to verify potential leakages"]
-#             fuel=["Polyethylene","Textiles","PVC"]
-#             ind=random.randint(0,1)
-#             ind2=randomclasses(0,len(fuel)-1)
-#             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
-#             for pnt in range(0,randomclasses(0,5)):
-#                 # print(f"p{p},s{s},e{e}")
-#                 Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
+Pr=[]
+N_P=randomclasses(1,5)
+#P=list(range(N_P))
+for p in range(0,N_P):
+    Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
+    for s in range(0,randomclasses(1,5)):
+        Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
+        for e in range(0,randomclasses(1,5)):
+            d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
+            d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
+            descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
+                    "the bed was with iron, and it was neessary to verify potential leakages"]
+            fuel=["Polyethylene","Textiles","PVC"]
+            ind=random.randint(0,1)
+            ind2=randomclasses(0,len(fuel)-1)
+            Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
+            for pnt in range(0,randomclasses(0,5)):
+                # print(f"p{p},s{s},e{e}")
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
 
 
 
         
         
-# # if __name__ == "__main__":
-# #     import sys
-# #     app = QtWidgets.QApplication(sys.argv)
-# #     ui = Ui_MainWindow()
-# #     ui.setupUi(Pr[1])
-# #     ui.show()
-# #     sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui = Ui_MainWindow()
+#     ui.setupUi(Pr[1])
+#     ui.show()
+#     sys.exit(app.exec_())
 
 
-# ui=Ui_MainWindow()
-# ui.setupUi(Pr[1])
+ui=Ui_MainWindow()
+ui.setupUi(Pr[1])
 
-# ui.show()
+ui.show()

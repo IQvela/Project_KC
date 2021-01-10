@@ -53,10 +53,10 @@ class Ui_MainWindow(object):
         self.text_Description.setFont(font)
         self.text_Description.setObjectName("text_Description")
         self.Button_Create = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Create.setGeometry(QtCore.QRect(390, 260, 100, 40))
+        self.Button_Create.setGeometry(QtCore.QRect(260, 260, 100, 40))
         self.Button_Create.setObjectName("Button_Create")
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Cancel.setGeometry(QtCore.QRect(260, 260, 100, 40))
+        self.Button_Cancel.setGeometry(QtCore.QRect(390, 260, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -92,9 +92,9 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    #app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+    #sys.exit(app.exec_())

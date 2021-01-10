@@ -11,10 +11,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ProjectWin(object):
-    def setupUi(self, ProjectWin):
-        ProjectWin.setObjectName("ProjectWin")
-        ProjectWin.resize(1116, 690)
+class Ui_MainWindow(QtWidgets.QMainWindow):
+    
+    def __init__(self,exp_selected):
+        # self.MainWindow=QtWidgets.QMainWindow()
+        super(Ui_MainWindow,self).__init__()
+        self.finish_window=False
+        self.exp_selected=exp_selected
+    
+    def closeEvent(self, event):
+        self.finish_window=True
+        self.close()
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(1116, 690)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -151,8 +162,8 @@ class Ui_ProjectWin(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        ProjectWin.setPalette(palette)
-        self.centralwidget = QtWidgets.QWidget(ProjectWin)
+        self.setPalette(palette)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(840, 380, 100, 40))
@@ -323,123 +334,128 @@ class Ui_ProjectWin(object):
         self.Button_ModifyData_2 = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ModifyData_2.setGeometry(QtCore.QRect(250, 580, 100, 40))
         self.Button_ModifyData_2.setObjectName("Button_ModifyData_2")
-        ProjectWin.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(ProjectWin)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1116, 26))
         self.menubar.setObjectName("menubar")
         self.menu1 = QtWidgets.QMenu(self.menubar)
         self.menu1.setObjectName("menu1")
-        ProjectWin.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(ProjectWin)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        ProjectWin.setStatusBar(self.statusbar)
-        self.actionOpen = QtWidgets.QAction(ProjectWin)
+        self.setStatusBar(self.statusbar)
+        self.actionOpen = QtWidgets.QAction(self)
         self.actionOpen.setObjectName("actionOpen")
         self.menu1.addAction(self.actionOpen)
         self.menu1.addSeparator()
         self.menubar.addAction(self.menu1.menuAction())
 
-        self.retranslateUi(ProjectWin)
-        QtCore.QMetaObject.connectSlotsByName(ProjectWin)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, ProjectWin):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        ProjectWin.setWindowTitle(_translate("ProjectWin", "MainWindow"))
-        self.Button_AnalyseData.setText(_translate("ProjectWin", "ANALYZE DATA"))
-        self.Button_ModifyData.setText(_translate("ProjectWin", "MODIFY DATA"))
-        self.Button_AddData.setText(_translate("ProjectWin", "ADD DATA"))
-        self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
-        self.Title_ExperimentName.setText(_translate("ProjectWin", "Season 1/ Experiment 1"))
-        self.text_fuel.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
+        self.Button_ModifyData.setText(_translate("MainWindow", "MODIFY DATA"))
+        self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
+        self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
+        self.Title_ExperimentName.setText(_translate("MainWindow", "Season 1/ Experiment 1"))
+        self.text_fuel.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.label_comments.setText(_translate("ProjectWin", "Comments"))
-        self.label_fuel.setText(_translate("ProjectWin", "Fuel"))
-        self.label_DateStart.setText(_translate("ProjectWin", "Date start"))
-        self.text_DateEnd.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.label_comments.setText(_translate("MainWindow", "Comments"))
+        self.label_fuel.setText(_translate("MainWindow", "Fuel"))
+        self.label_DateStart.setText(_translate("MainWindow", "Date start"))
+        self.text_DateEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_TimeEnd.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.text_TimeEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">23:59</span></p></body></html>"))
-        self.text_TimeStart.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.text_TimeStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">6:00</span></p></body></html>"))
-        self.text_DateStart.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.label_DateEnd.setText(_translate("ProjectWin", "Date end"))
-        self.tex_comments.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
+        self.tex_comments.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.label_time.setText(_translate("ProjectWin", "Time (HH:MM)"))
-        self.label_date.setText(_translate("ProjectWin", "Date (YYYY-MM-DD)"))
+        self.label_time.setText(_translate("MainWindow", "Time (HH:MM)"))
+        self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         item = self.tableWidget.verticalHeaderItem(0)
-        item.setText(_translate("ProjectWin", "1"))
+        item.setText(_translate("MainWindow", "1"))
         item = self.tableWidget.verticalHeaderItem(1)
-        item.setText(_translate("ProjectWin", "2"))
+        item.setText(_translate("MainWindow", "2"))
         item = self.tableWidget.verticalHeaderItem(2)
-        item.setText(_translate("ProjectWin", "3"))
+        item.setText(_translate("MainWindow", "3"))
         item = self.tableWidget.verticalHeaderItem(3)
-        item.setText(_translate("ProjectWin", "4"))
+        item.setText(_translate("MainWindow", "4"))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("ProjectWin", "StartDate"))
+        item.setText(_translate("MainWindow", "StartDate"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("ProjectWin", "EndDate"))
+        item.setText(_translate("MainWindow", "EndDate"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("ProjectWin", "Type"))
+        item.setText(_translate("MainWindow", "Type"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("ProjectWin", "Comment"))
+        item.setText(_translate("MainWindow", "Comment"))
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSortingEnabled(__sortingEnabled)
-        self.label_DateStart_2.setText(_translate("ProjectWin", "Data available"))
+        self.label_DateStart_2.setText(_translate("MainWindow", "Data available"))
         item = self.tableWidget_2.verticalHeaderItem(0)
-        item.setText(_translate("ProjectWin", "1"))
+        item.setText(_translate("MainWindow", "1"))
         item = self.tableWidget_2.verticalHeaderItem(1)
-        item.setText(_translate("ProjectWin", "2"))
+        item.setText(_translate("MainWindow", "2"))
         item = self.tableWidget_2.verticalHeaderItem(2)
-        item.setText(_translate("ProjectWin", "3"))
+        item.setText(_translate("MainWindow", "3"))
         item = self.tableWidget_2.verticalHeaderItem(3)
-        item.setText(_translate("ProjectWin", "4"))
+        item.setText(_translate("MainWindow", "4"))
         item = self.tableWidget_2.horizontalHeaderItem(0)
-        item.setText(_translate("ProjectWin", "StartDate"))
+        item.setText(_translate("MainWindow", "StartDate"))
         item = self.tableWidget_2.horizontalHeaderItem(1)
-        item.setText(_translate("ProjectWin", "EndDate"))
+        item.setText(_translate("MainWindow", "EndDate"))
         item = self.tableWidget_2.horizontalHeaderItem(2)
-        item.setText(_translate("ProjectWin", "Description"))
+        item.setText(_translate("MainWindow", "Description"))
         item = self.tableWidget_2.horizontalHeaderItem(3)
-        item.setText(_translate("ProjectWin", "Comment"))
+        item.setText(_translate("MainWindow", "Comment"))
         __sortingEnabled = self.tableWidget_2.isSortingEnabled()
         self.tableWidget_2.setSortingEnabled(False)
         self.tableWidget_2.setSortingEnabled(__sortingEnabled)
-        self.label_comments_2.setText(_translate("ProjectWin", "Points available"))
-        self.Button_ViewData_2.setText(_translate("ProjectWin", "OK"))
-        self.Button_ViewData_3.setText(_translate("ProjectWin", "CANCEL"))
-        self.Button_AddData_2.setText(_translate("ProjectWin", "ADD POINT"))
-        self.Button_ModifyData_2.setText(_translate("ProjectWin", "MODIFY POINT"))
-        self.menu1.setTitle(_translate("ProjectWin", "1"))
-        self.actionOpen.setText(_translate("ProjectWin", "Open"))
+        self.label_comments_2.setText(_translate("MainWindow", "Points available"))
+        self.Button_ViewData_2.setText(_translate("MainWindow", "OK"))
+        self.Button_ViewData_3.setText(_translate("MainWindow", "CANCEL"))
+        self.Button_AddData_2.setText(_translate("MainWindow", "ADD POINT"))
+        self.Button_ModifyData_2.setText(_translate("MainWindow", "MODIFY POINT"))
+        self.menu1.setTitle(_translate("MainWindow", "1"))
+        self.actionOpen.setText(_translate("MainWindow", "Open"))
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ProjectWin = QtWidgets.QMainWindow()
-    ui = Ui_ProjectWin()
-    ui.setupUi(ProjectWin)
-    ProjectWin.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(MainWindow)
+#     self.show()
+#     sys.exit(app.exec_())
+
+
+# ui=Ui_MainWindow()
+# ui.setupUi(0)
+# ui.show()
