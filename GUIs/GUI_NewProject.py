@@ -28,50 +28,68 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
     def setupUi(self):
         self.setObjectName("MainWindow")
-        self.resize(781, 347)
-        self.label_7 = QtWidgets.QLabel(self)
-        self.label_7.setGeometry(QtCore.QRect(120, 190, 221, 16))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_7.setFont(font)
-        self.label_7.setObjectName("label_7")
+        self.resize(550, 330)
         
-        self.Textbox_name = QtWidgets.QTextEdit(self)
-        self.Textbox_name.setGeometry(QtCore.QRect(190, 110, 541, 31))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.Textbox_name.setFont(font)
-        
-        self.Title_2 = QtWidgets.QLabel(self)
-        self.Title_2.setGeometry(QtCore.QRect(260, 30, 311, 41))
+        #Labels
+        self.Label_Title = QtWidgets.QLabel(self)
+        self.Label_Title.setGeometry(QtCore.QRect(180, 10, 200, 41))
         font = QtGui.QFont()
         font.setPointSize(16)
         font.setBold(True)
         font.setUnderline(False)
         font.setWeight(75)
         font.setStrikeOut(False)
-        self.Title_2.setFont(font)
-        self.Title_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title_2.setObjectName("Title_2")
-        self.label_6 = QtWidgets.QLabel(self)
-        self.label_6.setGeometry(QtCore.QRect(120, 110, 55, 16))
+        self.Label_Title.setFont(font)
+        self.Label_Title.setAlignment(QtCore.Qt.AlignCenter)
+        self.Label_Title.setObjectName("Label_Title")
+        
+        self.Label_Name = QtWidgets.QLabel(self)
+        self.Label_Name.setGeometry(QtCore.QRect(20, 70, 100, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.label_6.setFont(font)
-        self.label_6.setObjectName("label_6")
+        self.Label_Name.setFont(font)
+        self.Label_Name.setObjectName("Label_Name")
         
-        self.Textbox_description = QtWidgets.QTextEdit(self)
-        self.Textbox_description.setGeometry(QtCore.QRect(220, 180, 511, 81)) 
+        self.Label_Description = QtWidgets.QLabel(self)
+        self.Label_Description.setGeometry(QtCore.QRect(20, 120, 70, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.Textbox_description.setFont(font)
+        self.Label_Description.setFont(font)
+        self.Label_Description.setObjectName("Label_Description")
+
+        self.Label_Responsible = QtWidgets.QLabel(self)
+        self.Label_Responsible.setGeometry(QtCore.QRect(20, 230, 70, 16))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Label_Responsible.setFont(font)
+        self.Label_Responsible.setObjectName("Label_Responsible")
         
+        #TextBoxes
+        self.Textbox_Name = QtWidgets.QTextEdit(self)
+        self.Textbox_Name.setGeometry(QtCore.QRect(120, 70, 300, 30))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.Textbox_Name.setFont(font)
+                
+        self.Textbox_Description = QtWidgets.QTextEdit(self)
+        self.Textbox_Description.setGeometry(QtCore.QRect(120, 120, 400, 90)) 
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Textbox_Description.setFont(font)
+        
+        self.Textbox_Responsible = QtWidgets.QTextEdit(self)
+        self.Textbox_Responsible.setGeometry(QtCore.QRect(120, 230, 300, 31)) 
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Textbox_Responsible.setFont(font)
+        
+        #Buttons
         self.Button_Create = QtWidgets.QPushButton(self)
-        self.Button_Create.setGeometry(QtCore.QRect(450, 290, 100, 40))
+        self.Button_Create.setGeometry(QtCore.QRect(120, 280, 100, 40))
         self.Button_Create.clicked.connect(self.create_project)
         
         self.Button_Cancel = QtWidgets.QPushButton(self)
-        self.Button_Cancel.setGeometry(QtCore.QRect(630, 290, 100, 40))
+        self.Button_Cancel.setGeometry(QtCore.QRect(320, 280, 100, 40))
         self.Button_Cancel.clicked.connect(self.cancel_window)
 
         self.retranslateUi()
@@ -80,21 +98,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "New Project"))
-        self.label_7.setText(_translate("MainWindow", "Description"))
-        self.Title_2.setText(_translate("MainWindow", "New project"))
-        self.label_6.setText(_translate("MainWindow", "Name"))
+
+        self.Label_Title.setText(_translate("MainWindow", "New project"))
+        self.Label_Name.setText(_translate("MainWindow", "Project Name"))
+        self.Label_Description.setText(_translate("MainWindow", "Description"))
+        self.Label_Responsible.setText(_translate("MainWindow", "Responsible"))
+        
         self.Button_Create.setText(_translate("MainWindow", "Create"))
         self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
 
 
     def create_project(self):
         print("creating the project")
-        if self.Textbox_name.toPlainText()=="" or self.Textbox_description.toPlainText()=="":
-            print("No text was written")
+        if self.Textbox_Name.toPlainText()=="" or self.Textbox_Description.toPlainText()=="" or self.Textbox_Responsible.toPlainText()=="":
+            # print("No text was written")
             msgbox.Message_popup("Error","No Text","No text was written")
         else:
 
-            self.project_attributes=(self.Textbox_name.toPlainText(),self.Textbox_description.toPlainText())
+            self.project_attributes=(self.Textbox_Name.toPlainText(),self.Textbox_Description.toPlainText(),self.Textbox_Responsible.toPlainText())
             print("the text was read")
             self.cancel_window()
         
@@ -133,7 +154,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 #         return self.msg.exec_()    
 
         
-# if __name__ == "__main__":
+# if __Name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
 #     Form = QtWidgets.QWidget()

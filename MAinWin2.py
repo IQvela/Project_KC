@@ -211,12 +211,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #self.Table_Project_list.setUpdatesEnabled(False)
         
         self.Table_Project_list.setColumnCount(len(Ui_MainWindow.Table_Project_headers)) #number of columns
-        self.Table_Project_list.setRowCount(len(Pr)+1) #number of rows --- need to change by list length
+        self.Table_Project_list.setRowCount(len(Pr)) #number of rows --- need to change by list length
         
-        #vertical headers
-        for i in range(len(Pr)+1):            
-            item = QtWidgets.QTableWidgetItem()
-            self.Table_Project_list.setVerticalHeaderItem(i, item)
+        # #vertical headers
+        # for i in range(len(Pr)+1):            
+        #     item = QtWidgets.QTableWidgetItem()
+        #     self.Table_Project_list.setVerticalHeaderItem(i, item)
 
         #horizontal header
         for i in range(self.Table_Project_list.columnCount()):
@@ -257,10 +257,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             item.setText(_translate("MainWindow", n))
         
         if len(Pr)>0:
-            for i in range(len(Pr)):         
-                item = self.Table_Project_list.verticalHeaderItem(i)
-                item.setText(_translate("MainWindow", f"{i}"))
-                item=self.Table_Project_list.item(i,0)
+            # for i in range(len(Pr)):         
+            #     item = self.Table_Project_list.verticalHeaderItem(i)
+            #     item.setText(_translate("MainWindow", f"{i}"))
+                # item=self.Table_Project_list.item(i,0)
             
             attr={}
             for i,p in list(enumerate(Pr)):
@@ -288,6 +288,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     
     def new_project(self):
+
         ui_newproject=gui_newproject.Ui_MainWindow()
         ui_newproject.setupUi()
         ui_newproject.show()
@@ -296,10 +297,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.02)        
         
-        print("data collected of the new project")
+        # print("data collected of the new project")
         project_attributes=ui_newproject.project_attributes
+        # print(project_attributes)
         
-        Pr.append(KCbckend.Project(project_attributes))      
+        Pr.append(KCbckend.Project(project_attributes[0],project_attributes[1],project_attributes[2]))
+        
+        attr={}
+        attr[0]=str(len(Pr)-1)
+        attr[1]=Pr[-1].project_name
+        attr[3]=Pr[-1].project_description
+        attr[4]=Pr[-1].project_responsible
+        # print(attr)
+        self.Table_Project_list.setRowCount(len(Pr))
+        item = QtWidgets.QTableWidgetItem()
+        i=self.Table_Project_list.rowCount()-2
+        # print(i)
+        self.Table_Project_list.setVerticalHeaderItem(i, item)        
+        item = self.Table_Project_list.verticalHeaderItem(i)
+        item.setText(attr[0])
+            
+        for j,v in attr.items():
+            item = QtWidgets.QTableWidgetItem()
+            self.Table_Project_list.setItem(i, j, item)
+            item=self.Table_Project_list.item(i,j)
+            item.setText(v)
+        # print("done")
         
     def open_project(self):
         
@@ -330,10 +353,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 # if __name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
+#     ui_Mother = Ui_MainWindow()
+#     ui_Mother.setupUi()
+#     ui_Mother.show()
 #     sys.exit(app.exec_())
 
 ui_Mother=Ui_MainWindow()

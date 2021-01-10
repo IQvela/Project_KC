@@ -210,23 +210,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddData.setGeometry(QtCore.QRect(720, 400, 100, 40))
-        self.Button_AddData.setObjectName("Button_AddData")
+        self.Button_AddData.setObjectName("Button_AddData")        
+        # self.Button_AddData.clicked.connect(self.adddata)
         
-        self.Button_AddData.clicked.connect(self.adddata)
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(720, 220, 100, 40))
         self.Button_ViewData.setObjectName("Button_ViewData")
         
         #Treeview---------------------------------------------------------------------------------
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
-        self.treeWidget.setGeometry(QtCore.QRect(80, 190, 331, 291))
+        self.treeWidget.setGeometry(QtCore.QRect(80, 190, 600, 291))
         self.treeWidget.setObjectName("treeWidget")
+        self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         
         for s in project_selected.seasons:
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
             for e in s.experiments:
                 item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-                for p in e.points:
+                for pnt in e.points:
                     item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
         
         # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
@@ -278,14 +279,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
         
-        for si,s in enumerate(p_selected.seasons):            
-            self.treewidget.topLevelItem(si).setText(0, _translate("MainWindow", s.season_name+" => "+s.season_descrption[0:47]+"..."))
+        max_desc_length=50 #maximum number of caracteres to show in the description
+        for si,s in enumerate(p_selected.seasons):
+            desc_temp=s.season_description
+            if len(s.season_description)>max_desc_length:
+                desc_temp=s.season_description[0:max_desc_length]+"..."            
+            self.treeWidget.topLevelItem(si).setText(0, _translate("MainWindow", s.season_name+" => "+desc_temp))
             for ei,e in enumerate(s.experiments):
-                self.treeWidget.topLevelItem(si).child(ei).setText(0, _translate("MainWindow", e.exp_name+"@"+e.date_ini+"-"+e.date_end+"//Pnts:"+str(len(e.points))+"//"+e.fuel_type+"//"+e.exp_comments[0:50] +"..."))
-                for pi,p in enumerate(e.points):
-                    self.treeWidget.topLevelItem(si).child(ei).child(pi).setText(0, _translate("MainWindow", p.point_name+"@"+p.date_ini+"-"+p.date_end+"//"+p.point_comments[0:50] +"..."))
+                desc_temp=e.exp_comments
+                if len(desc_temp)>max_desc_length:
+                    desc_temp=e.exp_comments[0:max_desc_length]+"..."   
+                self.treeWidget.topLevelItem(si).child(ei).setText(0, _translate("MainWindow", e.exp_name+"@"+e.date_ini+"-"+e.date_end+"//Pnts:"+str(len(e.points))+"//"+e.fuel_type+"//"+desc_temp))
+                for pnti,pnt in enumerate(e.points):
+                    desc_temp=pnt.point_comments
+                    if len(desc_temp)>max_desc_length:
+                        desc_temp=pnt.point_comments[0:max_desc_length]+"..."                       
+                    self.treeWidget.topLevelItem(si).child(ei).child(pnti).setText(0, _translate("MainWindow", pnt.point_name+"@"+pnt.date_ini+"-"+pnt.date_end+"//"+desc_temp))
                     
-                
+        self.treeWidget.expandToDepth(0) 
+        self.treeWidget.resizeColumnToContents(0)     
         # self.treeWidget.topLevelItem(0).setText(0, _translate("MainWindow", "Season 2020-2021"))
         # self.treeWidget.topLevelItem(0).child(0).setText(0, _translate("MainWindow", "Experiment 1"))
         # self.treeWidget.topLevelItem(0).child(0).child(0).setText(0, _translate("MainWindow", "Point1.1_LowT"))
@@ -327,15 +339,15 @@ def randomclasses(a,b):
     random.seed(17*seed)
     return random.randint(a,b)
 
-seed=10
+seed=25
 
-P=[]
+Pr=[]
 N_P=randomclasses(1,5)
 #P=list(range(N_P))
 for p in range(0,N_P):
-    P.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
+    Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
     for s in range(0,randomclasses(1,5)):
-        P[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
+        Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
         for e in range(0,randomclasses(1,5)):
             d_0="2020-10-18"
             d_1="2020-10-20"
@@ -344,9 +356,10 @@ for p in range(0,N_P):
             fuel=["Polyethylene","Textiles","PVC"]
             ind=random.randint(0,1)
             ind2=randomclasses(0,len(fuel)-1)
-            P[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
-            for p in range(0,randomclasses(0,3)):
-                P[p].seasons[s].experiment[e].add_Point(f"Point{p}","this is the point {p}")    
+            Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
+            for pnt in range(0,randomclasses(0,5)):
+                # print(f"p{p},s{s},e{e}")
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
 
 
 
@@ -363,6 +376,6 @@ for p in range(0,N_P):
 
 
 ui=Ui_MainWindow()
-ui.setupUi(0)
+ui.setupUi(Pr[1])
 
 ui.show()

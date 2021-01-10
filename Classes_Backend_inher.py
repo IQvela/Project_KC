@@ -81,11 +81,11 @@ class Point:
         #self.date_end=date_end
         self.point_name=point_name
         self.point_comments=point_comments
-        self.date_ini="ND"
-        self.date_end="ND"       
         self.data_added={}
         self.point_route=point_route #String which contains the indexes of the Project/Season/Experiment/Point
     
+    def get_point_route(self):
+        pn=enumerate()
     
     def set_point_data(self,data_type,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
         #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
@@ -224,7 +224,7 @@ class Point:
     
 #this creates the class experiment which is the most basic class (apart from the timeinterval)
 #since this class is inheriting from timeinterval then there is no need to declare the getter methods of data_ini and data_end
-class Experiment(timeinterval):
+class Experiment(timeinterval,Point):
     
     db_names=["SCADA","GC1","INFERNO","SPA"]#,"Logging"] #here it is possible to add new methods
     
@@ -235,25 +235,24 @@ class Experiment(timeinterval):
     def __init__(self,exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,exp_route):
         #Experiment_name,Temp_particle_distrib_,... (many attributes to be included maybe this can be done through a pandas or directory read from an excel sheet (check ideas_CLasses.docx))
         #instead it can be a list that be read from the pandas column titles
-        super().__init__(date_ini,date_end)
+        timeinterval.__init__(date_ini,date_end)
         self.exp_name=exp_name
         self.fuel_type=fuel_type
         self.exp_comments=exp_comments
         self.bed_type=bed_type
-        
         self.data_experiment={k:[] for k in Experiment.db_names} #results collected from the different databases
         self.points=[] #list with all points
         self.exp_route=exp_route
         
         
     def modify_Exp_attributes(self,date_ini,date_end,fuel_type,exp_comments):
-        super().__init__(date_ini,date_end)
+        timeinterval.__init__(date_ini,date_end)
         self.fuel_type=fuel_type
         self.exp_comments=exp_comments        
     
     def add_Point(self,point_name,point_description):
-        newpoint_route=self.exp_route+"/"+str(len(self.points))
-        self.points.append(Point(point_name,point_description,newpoint_route))
+        newpoint_route=self.exp_route+"/"+len(self.points)
+        self.points.append(Point.__init__(point_name,point_description,newpoint_route))
     
     #this method will be used to generate the table we create with the different database
     #this method is triggered by a button that directs to other window where the kind of database is chosen
@@ -322,7 +321,7 @@ class Experiment(timeinterval):
                 return Table_timeinterval 
     
     
-class Season:
+class Season(Experiment):
     def __init__(self,season_name,season_description,season_route):
         self.season_name=season_name
         self.season_description=season_description #this cannot be empty (a message should appear)
@@ -335,8 +334,8 @@ class Season:
         #or maybe the window calls this method instead, once the button ok is pressed after all the required values are filled and 
         #win_new_experiment()
         
-        newexp_route=self.season_route+"/"+str(len(self.experiments))
-        new_experiment=Experiment(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,newexp_route)#entry)
+        newexp_route=self.season_route+"/"+len(self.experiments)
+        new_experiment=super().__init__(exp_name,date_ini,date_end,fuel_type,bed_type,exp_comments,newexp_route)#entry)
         self.experiments.append(new_experiment)
     
     #this method is called after ok is pressed in a window that allows to change the attributes of the season
@@ -377,7 +376,7 @@ class Season:
             tk.messagebox.showinfo("Delete Experiment", "None experiment will be deleted")
             
             
-class Project:
+class Project(Season):
     
     Totalnumberprojects=0 #stores the total number of projects
     
@@ -415,8 +414,8 @@ class Project:
     #after this there should be a button "add experiment" where the dates (ini,end) and the fuel type is introduced
     #another button, "show experiments", opens a list with the different experiments done on each season
     def add_Season(self,season_name,season_description=""):
-        newseason_route=str(self.project_route)+"/"+str(len(self.seasons))
-        new_Season=Season(season_name,season_description,newseason_route)
+        newseason_route=self.project_route+"/"+len(self.seasons)
+        new_Season=super()._init(season_name,season_description,newseason_route)
         self.seasons.append(new_Season)
         
     #this method is called after ok is pressed in a window that allows to change the attributes of the Project
