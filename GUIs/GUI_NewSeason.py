@@ -9,13 +9,24 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from . import GUI_MessageBoxKC as msgbox
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(527, 366)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_MainWindow(QtWidgets.QMainWindow):
+    
+    def __init__(self):
+        super(Ui_MainWindow,self).__init__()
+        self.finish_window=False
+        self.season_attributes=""
+   
+    def closeEvent(self, event):
+        self.finish_window=True
+        self.close()
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(527, 366)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.Title_NewSeason = QtWidgets.QLabel(self.centralwidget)
         self.Title_NewSeason.setGeometry(QtCore.QRect(110, 10, 311, 41))
@@ -40,61 +51,77 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         self.label_description.setFont(font)
         self.label_description.setObjectName("label_description")
-        self.text_Season = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_Season.setGeometry(QtCore.QRect(150, 80, 351, 41))
+        self.text_name = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_name.setGeometry(QtCore.QRect(150, 80, 351, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.text_Season.setFont(font)
-        self.text_Season.setObjectName("text_Season")
+        self.text_name.setFont(font)
+        self.text_name.setObjectName("text_name")
         self.text_Description = QtWidgets.QTextEdit(self.centralwidget)
         self.text_Description.setGeometry(QtCore.QRect(150, 160, 351, 61))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.text_Description.setFont(font)
         self.text_Description.setObjectName("text_Description")
+        
+        #Buttons
         self.Button_Create = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Create.setGeometry(QtCore.QRect(260, 260, 100, 40))
         self.Button_Create.setObjectName("Button_Create")
+        self.Button_Create.clicked.connect(self.create_season)
+        
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(390, 260, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.Button_Cancel.clicked.connect(self.cancel_button)
+        
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 527, 26))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "NEW SEASON"))
         self.Title_NewSeason.setText(_translate("MainWindow", "New Season"))
         self.label_name.setText(_translate("MainWindow", "Name"))
         self.label_description.setText(_translate("MainWindow", "Description"))
-        self.text_Season.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.text_Description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+#         self.text_name.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+# "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+# "p, li { white-space: pre-wrap; }\n"
+# "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+# "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+#         self.text_Description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+# "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+# "p, li { white-space: pre-wrap; }\n"
+# "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+# "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.Button_Create.setText(_translate("MainWindow", "Create"))
         self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
 
+    
+    def create_season(self):
+        if self.text_name.toPlainText()=="" or self.text_Description.toPlainText()=="":
+            msgbox.Message_popup("Error","Error","No text was written in one of the boxes")
+        else:
+            self.season_attributes=(self.text_name.toPlainText(),self.text_Description.toPlainText())
+            self.cancel_button()
 
-if __name__ == "__main__":
-    import sys
-    #app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    #sys.exit(app.exec_())
+    def cancel_button(self):
+        self.finish_window=True
+        self.close()
+
+# if __name__ == "__main__":
+#     import sys
+#     #app = QtWidgets.QApplication(sys.argv)
+#     ui = Ui_MainWindow()
+#     ui.setupUi()
+#     ui.show()
+#     #sys.exit(app.exec_())

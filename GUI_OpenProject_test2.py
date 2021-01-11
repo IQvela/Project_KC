@@ -317,21 +317,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Label_Title.setText(_translate("MainWindow", "Project: " + self.project_selected.project_name))
 
+        self.Textbox_Description.setText(self.project_selected.project_description)
+               
+        self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
+        self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
+
         font_header=QtGui.QFont()
         font_header.setBold(True)
         font_header.setPointSize(11)
-        font1=QtGui.QFont()
-        font1.setBold(False)
-        font1.setPointSize(10)
-        # font11=QtGui.QFont() #for column Exp/pnts
-        # font11.setBold(False)
-        # font11.setPointSize(9)        
-        font2=QtGui.QFont()
-        font2.setItalic(True)
-        font2.setPointSize(9)
-        font3=QtGui.QFont()
-        #font3.setItalic(True)
-        font3.setPointSize(8)  
         
         tree_titles=["NAME","Date Ini","Date End","Ent.","Fuel Type","Description/Comments","ID",]
         for c in range(len(tree_titles)):
@@ -350,25 +343,48 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
+
+        self.populate_tree()
+
+        self.treeWidget.setSortingEnabled(__sortingEnabled)
         
-        max_desc_length=50 #maximum number of caracteres to show in the description
+    def populate_tree(self):
+        _translate = QtCore.QCoreApplication.translate
+        
+        ncols=self.treeWidget.columnCount()
+        # print(f"number of columns:{ncols}")
+        
+        font1=QtGui.QFont()
+        font1.setBold(False)
+        font1.setPointSize(10)
+        # font11=QtGui.QFont() #for column Exp/pnts
+        # font11.setBold(False)
+        # font11.setPointSize(9)        
+        font2=QtGui.QFont()
+        font2.setItalic(True)
+        font2.setPointSize(9)
+        font3=QtGui.QFont()
+        #font3.setItalic(True)
+        font3.setPointSize(8)  
+        
+        #max_desc_length=50 #maximum number of caracteres to show in the description
         for s_i,s in enumerate(self.project_selected.seasons):
             col_content=[s.season_name,s.get_dates_total()[0],s.get_dates_total()[1],str(len(s.experiments)),s.get_fuel_total(),s.season_description,str(s_i)]            
-            for c in range(len(tree_titles)):
+            for c in range(ncols):
                 item=self.treeWidget.topLevelItem(s_i)
                 item.setText(c, _translate("MainWindow", col_content[c]))
                 item.setFont(c,font1)
 
             for e_i,e in enumerate(s.experiments):
                 col_content=[e.exp_name,e.date_ini,e.date_end,str(len(e.points)),e.fuel_type,e.exp_comments,str(s_i)+"/"+str(e_i)]                            
-                for c in range(len(tree_titles)):
+                for c in range(ncols):
                     item=self.treeWidget.topLevelItem(s_i).child(e_i)
                     item.setText(c, _translate("MainWindow", col_content[c]))
                     item.setFont(c,font2)                
 
                 for pnt_i,pnt in enumerate(e.points):
                     col_content=[pnt.point_name,pnt.date_ini,pnt.date_end,"-",e.fuel_type,pnt.point_comments,str(s_i)+"/"+str(e_i)+"/"+str(pnt_i)]                            
-                    for c in range(len(tree_titles)):
+                    for c in range(ncols):
                         item=self.treeWidget.topLevelItem(s_i).child(e_i).child(pnt_i)
                         item.setText(c, _translate("MainWindow", col_content[c]))
                         item.setFont(c,font3)
@@ -377,16 +393,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #self.treeWidget.expandToDepth(0) 
         self.treeWidget.resizeColumnToContents(1) #date_ini
         self.treeWidget.resizeColumnToContents(2) #date_end
-        self.treeWidget.resizeColumnToContents(4) #fueltype
-
-        self.treeWidget.setSortingEnabled(__sortingEnabled)
-        
-        self.Textbox_Description.setText(self.project_selected.project_description)
-               
-        self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
-        self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
-
+        self.treeWidget.resizeColumnToContents(4) #fueltype        
     
+    #Opens the window to create a new season and add the new season to project selected
     def new_season(self):
         ui_newseason=gui_newseason.Ui_MainWindow()
         ui_newseason.setupUi()
@@ -395,7 +404,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         while ui_newseason.finish_window==False:
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.05) 
-
+        if ui_newseason.season_attributes!="":
+            # print("N. seasons of project selected:{}".format(len(self.project_selected.seasons)))
+            (season_name,season_description)=ui_newseason.season_attributes
+            self.project_selected.add_Season(season_name,season_description)
+            # print("new season created. N. seasons of project selected:{}".format(len(self.project_selected.seasons)))
+            item=QtWidgets.QTreeWidgetItem(self.treeWidget) #creates the high level item in the tree
+            #self.treeWidget.addTopLevelItem(item)
+            self.populate_tree()
+            # print("tree populated!")            
+            
+        else:
+            msgbox.Message_popup("Error","Season Error","Season cannot be created because neither the season name nor its description was given, please check!")
+        
     #Opens Add Experiment window------------------------------------------------------------------------------------------
     def new_experiment(self):
         ui_newexperiment=gui_newexperiment.Ui_MainWindow()
@@ -473,13 +494,13 @@ for p in range(0,N_P):
 # if __name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
-#     ui = Ui_MainWindow()
-#     ui.setupUi(Pr[1])
+#     ui = Ui_MainWindow(Pr[1])
+#     ui.setupUi()
 #     ui.show()
 #     sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow()
-ui.setupUi(Pr[1])
+ui=Ui_MainWindow(Pr[1])
+ui.setupUi()
 
 ui.show()

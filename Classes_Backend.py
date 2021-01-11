@@ -383,8 +383,8 @@ class Season:
             tk.messagebox.showinfo("Delete Experiment", "None experiment will be deleted")
             
     def get_dates_total(self): #get the date of the object given the subclasses that are within it
-        if len(self.experiments)>0:
-            d_ini,d_end=[],[]
+        d_ini,d_end=[],[]
+        if len(self.experiments)>0:            
             for a in self.experiments:
                 # print(a.date_ini)
                 # print(a.date_end)
@@ -493,8 +493,8 @@ class Project:
             tk.messagebox.showinfo("Delete Season", "None season will be transfered")
 
     def get_dates_total(self): #get the date of the object given the subclasses that are within it
-        if len(self.seasons)>0:
-            d_ini,d_end=[],[]
+        d_ini,d_end=[],[]
+        if len(self.seasons)>0:            
             for a in self.seasons:
                 # print(a.date_ini)
                 # print(a.date_end)
