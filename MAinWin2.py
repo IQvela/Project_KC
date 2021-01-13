@@ -325,9 +325,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def open_project(self):
         
         #app=QtWidgets.QApplication(sys.argv)
-        p_selected=int(self.Table_Project_list.selectedItems()[0].text())
+        ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
         #print(f"this is the selected: {p_selected}")
-        ui_openproject=gui_openproject.Ui_MainWindow(Pr[p_selected])
+        ui_openproject=gui_openproject.Ui_MainWindow(Pr,ind_pr_selected)
         ui_openproject.setupUi() #introduces the selected project into the ui_open project to open the respective project
         ui_openproject.show()
         #sys.exit(app.exec())
@@ -386,14 +386,14 @@ for p in range(0,N_P):
 
 
         
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     ui_Mother = Ui_MainWindow()
-#     ui_Mother.setupUi()
-#     ui_Mother.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ui_Mother = Ui_MainWindow()
+    ui_Mother.setupUi()
+    ui_Mother.show()
+    sys.exit(app.exec_())
 
-ui_Mother=Ui_MainWindow()
-ui_Mother.setupUi()
-ui_Mother.show()
+# ui_Mother=Ui_MainWindow()
+# ui_Mother.setupUi()
+# ui_Mother.show()

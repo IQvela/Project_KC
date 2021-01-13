@@ -9,15 +9,21 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from . import GUI_MessageBoxKC as msgbox
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,exp_selected):
+    def __init__(self,Pr_list,exp_route):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
+
+        self.Pr_list=Pr_list
+        self.ind_pr_selected=exp_route[0] #index of the selected project
+        self.ind_season_selected=exp_route[1] #index of the selected season       
+        self.ind_exp_selected=exp_route[2] #index of the selected experiment
+        self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
+        
         self.finish_window=False
-        self.exp_selected=exp_selected
     
     def closeEvent(self, event):
         self.finish_window=True
@@ -242,9 +248,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AnalyseData.setGeometry(QtCore.QRect(840, 380, 100, 40))
         self.Button_AnalyseData.setObjectName("Button_AnalyseData")
         
-        self.Button_ModifyData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ModifyData.setGeometry(QtCore.QRect(710, 380, 100, 40))
-        self.Button_ModifyData.setObjectName("Button_ModifyData")
+        self.Button_DeleteData = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_DeleteData.setGeometry(QtCore.QRect(710, 380, 100, 40))
+        self.Button_DeleteData.setObjectName("Button_DeleteData")
         
         self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddData.setGeometry(QtCore.QRect(960, 380, 100, 40))
@@ -254,31 +260,44 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_ViewData.setGeometry(QtCore.QRect(580, 380, 100, 40))
         self.Button_ViewData.setObjectName("Button_ViewData")
         
-        self.Button_ViewData_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ViewData_2.setGeometry(QtCore.QRect(960, 550, 100, 40))
-        self.Button_ViewData_2.setObjectName("Button_ViewData_2")
+        self.Button_Ok = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Ok.setGeometry(QtCore.QRect(960, 550, 100, 40))
+        self.Button_Ok.setObjectName("Button_Ok")
         
-        self.Button_ViewData_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ViewData_3.setGeometry(QtCore.QRect(840, 550, 100, 40))
-        self.Button_ViewData_3.setObjectName("Button_ViewData_3")
+        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Cancel.setGeometry(QtCore.QRect(840, 550, 100, 40))
+        self.Button_Cancel.setObjectName("Button_Cancel")
         
-        self.Button_AddData_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AddData_2.setGeometry(QtCore.QRect(370, 580, 100, 40))
-        self.Button_AddData_2.setObjectName("Button_AddData_2")
+        self.Button_AddPoint = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_AddPoint.setGeometry(QtCore.QRect(370, 580, 100, 40))
+        self.Button_AddPoint.setObjectName("Button_AddPoint")
         
-        self.Button_ModifyData_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ModifyData_2.setGeometry(QtCore.QRect(250, 580, 100, 40))
-        self.Button_ModifyData_2.setObjectName("Button_ModifyData_2")
+        self.Button_OpenPoint = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_OpenPoint.setGeometry(QtCore.QRect(250, 580, 100, 40))
+        self.Button_OpenPoint.setObjectName("Button_OpenPoint")
         
         
         #TextBoxes---------------------------------------------------------------------------------
-        self.text_fuel = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_fuel.setGeometry(QtCore.QRect(160, 240, 301, 31))
+        self.text_name = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_name.setGeometry(QtCore.QRect(160, 230, 301, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.text_fuel.setFont(font)
-        self.text_fuel.setObjectName("text_fuel")
+        self.text_name.setFont(font)
 
+        self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_DateStart.setGeometry(QtCore.QRect(160, 130, 161, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_DateStart.setFont(font)
+        self.text_DateStart.setObjectName("text_DateStart")
+
+        self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_TimeStart.setGeometry(QtCore.QRect(350, 130, 111, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_TimeStart.setFont(font)
+        self.text_TimeStart.setObjectName("text_TimeStart")
+        
         self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
         self.text_DateEnd.setGeometry(QtCore.QRect(160, 180, 161, 31))
         font = QtGui.QFont()
@@ -292,20 +311,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(10)
         self.text_TimeEnd.setFont(font)
         self.text_TimeEnd.setObjectName("text_TimeEnd")
-        
-        self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_TimeStart.setGeometry(QtCore.QRect(350, 130, 111, 31))
+
+        self.text_fuel = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_fuel.setGeometry(QtCore.QRect(160, 240, 301, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.text_TimeStart.setFont(font)
-        self.text_TimeStart.setObjectName("text_TimeStart")
-        
-        self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateStart.setGeometry(QtCore.QRect(160, 130, 161, 31))
+        self.text_fuel.setFont(font)
+        self.text_fuel.setObjectName("text_fuel")
+
+        self.text_bed = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_bed.setGeometry(QtCore.QRect(160, 250, 301, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.text_DateStart.setFont(font)
-        self.text_DateStart.setObjectName("text_DateStart")
+        self.text_bed.setFont(font)
 
         self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
         self.tex_comments.setGeometry(QtCore.QRect(160, 280, 301, 71))
@@ -316,57 +334,34 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
         #TableWidgets--------------------------------------------------------------------------
-        self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(580, 130, 481, 221))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(4)
-        self.tableWidget.setRowCount(4)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(3, 0, item)
+        #table widget database (table where the loaded databases will be shown)
+        self.tableWidget_db = QtWidgets.QTableWidget(self.centralwidget) 
+        self.tableWidget_db.setGeometry(QtCore.QRect(580, 130, 481, 221))
+        self.tableWidget_db.setColumnCount(6)
+        self.tableWidget_db.setRowCount(sum([len(self.exp_selected.data_experiment[k]) for k in self.exp_selected.data_experiment.keys()]))
+        
+        for i in range(self.tableWidget_db.columnCount()):
+            item=QtWidgets.QTableWidgetItem()
+            self.tableWidget_db.setHorizontalHeaderItem(i,item)
+            if self.tableWidget_db.rowCount()>0:
+                for j in range(self.tableWidget_db.rowCount()):
+                    item=QtWidgets.QTableWidgetItem()
+                    self.tableWidget_db.setItem(j, i, item)
+        
 
-        self.tableWidget_2 = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget_2.setGeometry(QtCore.QRect(50, 430, 421, 141))
-        self.tableWidget_2.setObjectName("tableWidget_2")
-        self.tableWidget_2.setColumnCount(4)
-        self.tableWidget_2.setRowCount(4)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget_2.setItem(3, 0, item)
+        #Table points. Table where the points registered to the selected experiment will be displayed
+        self.tableWidget_points = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableWidget_points.setGeometry(QtCore.QRect(50, 430, 421, 141))
+        self.tableWidget_points.setColumnCount(6)
+        self.tableWidget_points.setRowCount(len(self.exp_selected.points))
+        
+        for i in range(self.tableWidget_points.columnCount()):
+            item=QtWidgets.QTableWidgetItem()
+            self.tableWidget_points.setHorizontalHeaderItem(i,item)        
+            if self.tableWidget_points.rowCount()>0:
+                for j in range(self.tableWidget_points.rowCount()):
+                    item=QtWidgets.QTableWidgetItem()
+                    self.tableWidget_points.setItem(j, i, item)        
      
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
@@ -402,59 +397,52 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_comments_2.setText(_translate("MainWindow", "Points available"))
 
         self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
-        self.Button_ModifyData.setText(_translate("MainWindow", "MODIFY DATA"))
+        self.Button_DeleteData.setText(_translate("MainWindow", "DELETE DATA"))
         self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
         self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
-        self.Button_ViewData_2.setText(_translate("MainWindow", "OK"))
-        self.Button_ViewData_3.setText(_translate("MainWindow", "CANCEL"))
-        self.Button_AddData_2.setText(_translate("MainWindow", "ADD POINT"))
-        self.Button_ModifyData_2.setText(_translate("MainWindow", "MODIFY POINT"))
+        self.Button_Ok.setText(_translate("MainWindow", "OK"))
+        self.Button_Cancel.setText(_translate("MainWindow", "CANCEL"))
+        self.Button_AddPoint.setText(_translate("MainWindow", "ADD POINT"))
+        self.Button_OpenPoint.setText(_translate("MainWindow", "OPEN POINT"))
         
-        item = self.tableWidget.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "1"))
-        item = self.tableWidget.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "2"))
-        item = self.tableWidget.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "3"))
-        item = self.tableWidget.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "4"))
-        item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "StartDate"))
-        item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "EndDate"))
-        item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Type"))
-        item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Comment"))
-        __sortingEnabled = self.tableWidget.isSortingEnabled()
-        self.tableWidget.setSortingEnabled(False)
-        self.tableWidget.setSortingEnabled(__sortingEnabled)
+        col_labels_db=["Index","DB Type","Date Start","Date End","Comment","Delay"]
+        col_labels_points=["Index","Name","Date Start","Date End","DB added","Comment"]
         
+        for c_i,c_label in enumerate(col_labels_db):
+            item = self.tableWidget_db.horizontalHeaderItem(c_i)
+            item.setText(_translate("MainWindow",c_label))
 
-        item = self.tableWidget_2.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "1"))
-        item = self.tableWidget_2.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "2"))
-        item = self.tableWidget_2.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "3"))
-        item = self.tableWidget_2.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "4"))
-        item = self.tableWidget_2.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "StartDate"))
-        item = self.tableWidget_2.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "EndDate"))
-        item = self.tableWidget_2.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Description"))
-        item = self.tableWidget_2.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Comment"))
-        __sortingEnabled = self.tableWidget_2.isSortingEnabled()
-        self.tableWidget_2.setSortingEnabled(False)
-        self.tableWidget_2.setSortingEnabled(__sortingEnabled)
+        for c_i,c_label in enumerate(col_labels_points):
+            item = self.tableWidget_points.horizontalHeaderItem(c_i)
+            item.setText(_translate("MainWindow",c_label))
         
+        # __sortingEnabled = self.tableWidget.isSortingEnabled()
+        # self.tableWidget.setSortingEnabled(False)
+        # self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-
+        
         self.menu1.setTitle(_translate("MainWindow", "1"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
+
+        text_boxes=[(self.text_name,self.exp_selected.exp_name),
+                    (self.text_DateStart,self.exp_selected.date_ini.split(" ")[0]),
+                    (self.text_TimeStart,self.exp_selected.date_ini.split(" ")[1]),
+                    (self.text_DateEnd,self.exp_selected.date_end.split(" ")[0]),
+                    (self.text_TimeEnd,self.exp_selected.date_end.split(" ")[1]),
+                    (self.text_fuel,self.exp_selected.fuel_type),
+                    (self.text_bed,self.exp_selected.bed_type),
+                    (self.tex_comments,self.exp_selected.exp_comments)]
+
+        for tbox in text_boxes:
+            tbox[0].setText(tbox[1])
+            
+        tablepoints_info=lambda j: [j,self.exp_selected.points[j].point_name,
+                                    self.exp_selected.points[j].date_ini,self.exp_selected.points[j].date_end,
+                                    self.exp_selected.points[j].data_added.keys(),self.exp_selected.points[j].point_comments]
+        for r in range(self.tableWidget_points.rowCount()):
+            for c in range(self.tableWidget_points.columnCount()):
+                item=self.tableWidget_points.item(r, c)
+                item.setText(str(tablepoints_info(r)[c]))
 
 
 # if __name__ == "__main__":

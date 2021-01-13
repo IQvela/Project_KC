@@ -13,7 +13,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self,project_selected,default_attributes="",index_season_selected="ND"):
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.project_selected=self.project_selected
+        self.project_selected=project_selected
         self.index_season_selected=index_season_selected
         
         self.default_attributes=default_attributes #attributes to be written in the different text box by default (when the windows shows up)

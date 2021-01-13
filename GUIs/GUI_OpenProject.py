@@ -25,11 +25,13 @@ from . import GUI_MessageBoxKC as msgbox
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,project_selected):
+    def __init__(self,Pr_list,ind_pr_selected):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.project_selected=project_selected
+        self.Pr_list=Pr_list
+        self.ind_pr_selected=ind_pr_selected
+        self.project_selected=self.Pr_list[ind_pr_selected]
     
     def closeEvent(self, event):
         self.finish_window=True
@@ -501,7 +503,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             exp_selected=int(exp_selected.split("/")[1])
                     
         print("opening the open_experiment window")
-        ui_openexperiment=gui_openexperiment.Ui_MainWindow(self.project_selected.seasons[season_selected].experiments[exp_selected])
+        ui_openexperiment=gui_openexperiment.Ui_MainWindow(self.Pr_list,[self.ind_pr_selected,season_selected,exp_selected])
         ui_openexperiment.setupUi()
         ui_openexperiment.show()
 
