@@ -309,11 +309,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # print(attr)
         self.Table_Project_list.setRowCount(len(Pr))
         item = QtWidgets.QTableWidgetItem()
-        i=self.Table_Project_list.rowCount()-2
+        i=self.Table_Project_list.rowCount()-1
         # print(i)
         self.Table_Project_list.setVerticalHeaderItem(i, item)        
         item = self.Table_Project_list.verticalHeaderItem(i)
-        item.setText(attr[0])
+        item.setText(str(int(attr[0])+1))
             
         for j,v in attr.items():
             item = QtWidgets.QTableWidgetItem()
@@ -386,14 +386,14 @@ for p in range(0,N_P):
 
 
         
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui_Mother = Ui_MainWindow()
-    ui_Mother.setupUi()
-    ui_Mother.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui_Mother = Ui_MainWindow()
+#     ui_Mother.setupUi()
+#     ui_Mother.show()
+#     sys.exit(app.exec_())
 
-# ui_Mother=Ui_MainWindow()
-# ui_Mother.setupUi()
-# ui_Mother.show()
+ui_Mother=Ui_MainWindow()
+ui_Mother.setupUi()
+ui_Mother.show()

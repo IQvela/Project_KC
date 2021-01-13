@@ -466,21 +466,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("add experiment window closed")
         ind_season_selected=ui_newexperiment.index_season_selected#int(ind_season_selected)
         #print(ind_season_selected)
-        
-        n_exp0=len(self.project_selected.seasons[ind_season_selected].experiments)
-        # print(f"{n_seasons0}, season:{ind_season_selected}, exp:{n_exp0}")
-        if ui_newexperiment.exp_attributes!="":            
-            (exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)=ui_newexperiment.exp_attributes
-            # print("creating the experiment object. attributes:",ui_newexperiment.exp_attributes)
-            self.project_selected.seasons[ind_season_selected].add_Experiment(exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)
-            if len(self.project_selected.seasons)>n_seasons0:
-                item=QtWidgets.QTreeWidgetItem(self.treeWidget)
-            if len(self.project_selected.seasons[ind_season_selected].experiments)>n_exp0:
-                item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
-            self.populate_tree()
-            print("tree populated")
-        else:
-            msgbox.Message_popup("Error","Error","The Experiment attributes were not read. Please check and add again the info")    
+        if type(ind_season_selected)==int:
+            n_exp0=len(self.project_selected.seasons[ind_season_selected].experiments)
+            # print(f"{n_seasons0}, season:{ind_season_selected}, exp:{n_exp0}")
+            if ui_newexperiment.exp_attributes!="":            
+                (exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)=ui_newexperiment.exp_attributes
+                # print("creating the experiment object. attributes:",ui_newexperiment.exp_attributes)
+                self.project_selected.seasons[ind_season_selected].add_Experiment(exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)
+                if len(self.project_selected.seasons)>n_seasons0:
+                    item=QtWidgets.QTreeWidgetItem(self.treeWidget)
+                if len(self.project_selected.seasons[ind_season_selected].experiments)>n_exp0:
+                    item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
+                self.populate_tree()
+                print("tree populated")
+            else:
+                msgbox.Message_popup("Error","Error","The Experiment attributes were not read. Please check and add again the info")    
         
     #Delete experiment---------------------------------------------------------------------------------------------------- 
     def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment
