@@ -265,20 +265,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_back.setGeometry(QtCore.QRect(830, 480, 60, 30))
         self.Button_back.clicked.connect(self.back_button)
         
-
-        
+       
         #Treeview---------------------------------------------------------------------------------
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget.setGeometry(QtCore.QRect(80, 190, 600, 291))
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.treeWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) #the selection behaviour is by rows 
-        # font1=QtGui.QFont()
-        # font1.setBold(True)
-        # font1.setPointSize(10)
-        # font2=QtGui.QFont()
-        # font2.setItalic(True)
-        # font2.setPointSize(9)        
+        font1=QtGui.QFont()
+        font1.setBold(True)
+        font1.setPointSize(10)
+        font2=QtGui.QFont()
+        font2.setItalic(True)
+        font2.setPointSize(9)        
         for s in self.project_selected.seasons:
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
             # for c in range(7):
@@ -288,16 +287,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 for pnt in e.points:
                     item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
         
-        # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
-        # item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-        # item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
-        # item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
-        # item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-        # item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
-        # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        # item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        # item_2 = QtWidgets.QTreeWidgetItem(item_1)
-        # item_2 = QtWidgets.QTreeWidgetItem(item_1)        
+   
         
         #Menus---------------------------------------------------------------------------------
         self.setCentralWidget(self.centralwidget)
@@ -331,7 +321,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
         self.Button_DeleteExp.setText(_translate("MainWindow", "DELETE EXP"))
         self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
-        
+
         self.Button_back.setText(_translate("MainWindow", "BACK"))
 
         self.Label_Description.setText(_translate("MainWindow", "Description"))
@@ -376,14 +366,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         ncols=self.treeWidget.columnCount()
         # print(f"number of columns:{ncols}")
-        
-        # for s in self.project_selected.seasons:
-        #     item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
-        #     for e in s.experiments:
-        #         item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-        #         for pnt in e.points:
-        #             item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
-        
         
         font1=QtGui.QFont()
         font1.setBold(False)
@@ -447,18 +429,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
         else:
             msgbox.Message_popup("Error","Season Error","Season cannot be created because neither the season name nor its description was given, please check!")
-
+    
     #Opens the season information window
     def view_infoseason(self):
         pass
-        
+    
     #Opens Add Experiment window------------------------------------------------------------------------------------------
     def new_experiment(self):
-        ind_season_selected=self.treeWidget.selectedIndexes()[-1].data().split("/")[0]
-        n_seasons0=len(self.project_selected.seasons)#total number fo seasons of the selected project
-        print(f"season_selected:{ind_season_selected}")
-        default_attributes=""
-        ui_newexperiment=gui_newexperiment.Ui_MainWindow(self.project_selected,default_attributes,ind_season_selected)
+        ui_newexperiment=gui_newexperiment.Ui_MainWindow()
         ui_newexperiment.setupUi()
         ui_newexperiment.show()
         
@@ -466,24 +444,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.05)  
         
-        print("add experiment window closed")
-        ind_season_selected=ui_newexperiment.index_season_selected#int(ind_season_selected)
-        #print(ind_season_selected)
-        
-        n_exp0=len(self.project_selected.seasons[ind_season_selected].experiments)
-        # print(f"{n_seasons0}, season:{ind_season_selected}, exp:{n_exp0}")
-        if ui_newexperiment.exp_attributes!="":            
-            (exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)=ui_newexperiment.exp_attributes
-            # print("creating the experiment object. attributes:",ui_newexperiment.exp_attributes)
-            self.project_selected.seasons[ind_season_selected].add_Experiment(exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)
-            if len(self.project_selected.seasons)>n_seasons0:
-                item=QtWidgets.QTreeWidgetItem(self.treeWidget)
-            if len(self.project_selected.seasons[ind_season_selected].experiments)>n_exp0:
-                item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
-            self.populate_tree()
-            print("tree populated")
-        else:
-            msgbox.Message_popup("Error","Error","The Experiment attributes were not read. Please check and add again the info")    
+        print("add experiment window opened")
         
     #Delete experiment---------------------------------------------------------------------------------------------------- 
     def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment

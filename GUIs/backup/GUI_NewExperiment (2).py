@@ -13,8 +13,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self,project_selected,default_attributes="",index_season_selected="ND"):
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.project_selected=self.project_selected
-        self.index_season_selected=index_season_selected
+        self.project_selected=project_selected
+        self.index_season_selected=int(index_season_selected)
         
         self.default_attributes=default_attributes #attributes to be written in the different text box by default (when the windows shows up)
         self.exp_attributes=0
@@ -30,7 +30,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         
-        #Labels------------------------------------------------------------------------------------------
         self.Title = QtWidgets.QLabel(self.centralwidget)
         self.Title.setGeometry(QtCore.QRect(170, 20, 311, 41))
         font = QtGui.QFont()
@@ -230,10 +229,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.comboBox_seasons.setItemText(s_i, _translate("MainWindow", s.season_name))
                 
         if self.index_season_selected!="ND":
-            self.comboBox_seasons.setCurrentIndex(int(self.index_season_selected))        
-            self.write_default_attrib(self.index_season_selected)
-        else:
-            self.index_season_selected=int(self.comboBox_seasons.currentIndex())
+            self.comboBox_seasons.setCurrentIndex(int(self.index_season_selected))
+        
+        self.write_default_attrib(self.index_season_selected)
     
     #writes the default attributes into the text boxes
     def write_default_attrib(self,ind_season):
