@@ -12,11 +12,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
         MainWindow.resize(576, 541)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
+        
+        # All labels (from up to down)------------------------------------------------------------- 
         self.Title_ReadData = QtWidgets.QLabel(self.centralwidget)
         self.Title_ReadData.setGeometry(QtCore.QRect(30, 30, 521, 41))
         font = QtGui.QFont()
@@ -27,156 +28,164 @@ class Ui_MainWindow(object):
         font.setStrikeOut(False)
         self.Title_ReadData.setFont(font)
         self.Title_ReadData.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title_ReadData.setObjectName("Title_ReadData")
+        
         self.label_DataFrom = QtWidgets.QLabel(self.centralwidget)
         self.label_DataFrom.setGeometry(QtCore.QRect(60, 100, 91, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_DataFrom.setFont(font)
-        self.label_DataFrom.setObjectName("label_DataFrom")
-        self.text_DataFrom = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DataFrom.setGeometry(QtCore.QRect(170, 90, 291, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_DataFrom.setFont(font)
-        self.text_DataFrom.setObjectName("text_DataFrom")
-        self.Button_OK = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_OK.setGeometry(QtCore.QRect(440, 450, 100, 40))
-        self.Button_OK.setObjectName("Button_OK")
-        self.label_delay = QtWidgets.QLabel(self.centralwidget)
-        self.label_delay.setGeometry(QtCore.QRect(60, 300, 121, 31))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_delay.setFont(font)
-        self.label_delay.setObjectName("label_delay")
-        self.text_TimeEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_TimeEnd.setGeometry(QtCore.QRect(360, 230, 111, 41))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_TimeEnd.setFont(font)
-        self.text_TimeEnd.setObjectName("text_TimeEnd")
-        self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateEnd.setGeometry(QtCore.QRect(170, 230, 161, 41))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_DateEnd.setFont(font)
-        self.text_DateEnd.setObjectName("text_DateEnd")
-        self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateStart.setGeometry(QtCore.QRect(170, 180, 161, 41))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_DateStart.setFont(font)
-        self.text_DateStart.setObjectName("text_DateStart")
-        self.label_DateStart = QtWidgets.QLabel(self.centralwidget)
-        self.label_DateStart.setGeometry(QtCore.QRect(60, 190, 91, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_DateStart.setFont(font)
-        self.label_DateStart.setObjectName("label_DateStart")
-        self.text_delay = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_delay.setGeometry(QtCore.QRect(170, 300, 301, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_delay.setFont(font)
-        self.text_delay.setObjectName("text_delay")
-        self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_TimeStart.setGeometry(QtCore.QRect(360, 180, 111, 41))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_TimeStart.setFont(font)
-        self.text_TimeStart.setObjectName("text_TimeStart")
-        self.label_time = QtWidgets.QLabel(self.centralwidget)
-        self.label_time.setGeometry(QtCore.QRect(360, 150, 121, 16))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_time.setFont(font)
-        self.label_time.setObjectName("label_time")
-        self.label_DateEnd = QtWidgets.QLabel(self.centralwidget)
-        self.label_DateEnd.setGeometry(QtCore.QRect(60, 240, 81, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_DateEnd.setFont(font)
-        self.label_DateEnd.setObjectName("label_DateEnd")
+
         self.label_date = QtWidgets.QLabel(self.centralwidget)
         self.label_date.setGeometry(QtCore.QRect(170, 150, 161, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_date.setFont(font)
-        self.label_date.setObjectName("label_date")
+
+        self.label_time = QtWidgets.QLabel(self.centralwidget)
+        self.label_time.setGeometry(QtCore.QRect(360, 150, 121, 16))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label_time.setFont(font)
+
+        self.label_DateStart = QtWidgets.QLabel(self.centralwidget)
+        self.label_DateStart.setGeometry(QtCore.QRect(60, 190, 91, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_DateStart.setFont(font)
+                
+        self.label_DateEnd = QtWidgets.QLabel(self.centralwidget)
+        self.label_DateEnd.setGeometry(QtCore.QRect(60, 240, 81, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_DateEnd.setFont(font)
+
+        self.label_delay = QtWidgets.QLabel(self.centralwidget)
+        self.label_delay.setGeometry(QtCore.QRect(60, 300, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_delay.setFont(font)
+                
+        
+        #labels for explanation calcuation delay------------------------------------
         self.label_explain1 = QtWidgets.QLabel(self.centralwidget)
         self.label_explain1.setGeometry(QtCore.QRect(60, 350, 411, 21))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_explain1.setFont(font)
-        self.label_explain1.setObjectName("label_explain1")
+        
         self.label_explain2 = QtWidgets.QLabel(self.centralwidget)
         self.label_explain2.setGeometry(QtCore.QRect(60, 370, 411, 21))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_explain2.setFont(font)
-        self.label_explain2.setObjectName("label_explain2")
+        
         self.label_explain3 = QtWidgets.QLabel(self.centralwidget)
         self.label_explain3.setGeometry(QtCore.QRect(60, 390, 411, 21))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_explain3.setFont(font)
-        self.label_explain3.setObjectName("label_explain3")
+
+        # Text boxes -----------------------------------------------------
+        
+        #where data type come from (SCADA, GC....)
+        self.text_DataFrom = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_DataFrom.setGeometry(QtCore.QRect(170, 90, 291, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_DataFrom.setFont(font)
+
+        #start date and time
+        self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_DateStart.setGeometry(QtCore.QRect(170, 180, 161, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_DateStart.setFont(font)
+
+        self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_TimeStart.setGeometry(QtCore.QRect(360, 180, 111, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_TimeStart.setFont(font) 
+
+        #end date and time
+        self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_DateEnd.setGeometry(QtCore.QRect(170, 230, 161, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_DateEnd.setFont(font)
+        
+        self.text_TimeEnd = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_TimeEnd.setGeometry(QtCore.QRect(360, 230, 111, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_TimeEnd.setFont(font)
+
+        #delay
+        self.text_delay = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_delay.setGeometry(QtCore.QRect(170, 300, 301, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_delay.setFont(font)
+        
+   
+
+        #Buttons---------------------------------------------------------------
+        self.Button_OK = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_OK.setGeometry(QtCore.QRect(440, 450, 100, 40))
+        
+        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Cancel.setGeometry(QtCore.QRect(300, 450, 100, 40))
+        
+               
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 576, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+
+        #naming labels----------------------------------------------------------------------
         self.Title_ReadData.setText(_translate("MainWindow", "Read Data"))
         self.label_DataFrom.setText(_translate("MainWindow", "From"))
+        self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
+        self.label_DateStart.setText(_translate("MainWindow", "Date start"))
+        self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
+        self.label_time.setText(_translate("MainWindow", "Time (HH:MM)"))
+        self.label_delay.setText(_translate("MainWindow", "Time Delay"))
+
+        self.label_explain1.setText(_translate("MainWindow", "Delay of data selected with regards SCADA. For example,"))
+        self.label_explain2.setText(_translate("MainWindow", "if GC computer time is 10:05 and KC computer time is 10:02,"))
+        self.label_explain3.setText(_translate("MainWindow", "the delay is of +3min"))
+
+        #name buttons--------------------------------------------
+        self.Button_OK.setText(_translate("MainWindow", "OK"))
+        self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
+
+        #text input--------------------------------------------------------------
+        #type date (SCADA,GC...)
         self.text_DataFrom.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">SCADA</p></body></html>"))
-        self.Button_OK.setText(_translate("MainWindow", "OK"))
-        self.label_delay.setText(_translate("MainWindow", "Time Delay"))
-        self.text_TimeEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">13:00</span></p></body></html>"))
-        self.text_DateEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.label_DateStart.setText(_translate("MainWindow", "Date start"))
-        self.text_delay.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">0</p></body></html>"))
-        self.text_TimeStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">12:00</span></p></body></html>"))
-        self.label_time.setText(_translate("MainWindow", "Time (HH:MM)"))
-        self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
-        self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
-        self.label_explain1.setText(_translate("MainWindow", "Delay of data selected with regards SCADA. For example,"))
-        self.label_explain2.setText(_translate("MainWindow", "if GC computer time is 10:05 and KC computer time is 10:02,"))
-        self.label_explain3.setText(_translate("MainWindow", "the delay is of +3min"))
+
+        #date start
+        self.text_DateStart.setHtml(_translate("MainWindow", " "))
+        self.text_TimeStart.setHtml(_translate("MainWindow", " "))
+        
+        #date end
+        self.text_DateEnd.setHtml(_translate("MainWindow", " "))
+        self.text_TimeEnd.setHtml(_translate("MainWindow", " "))
+        
+        #delay 
+        self.text_delay.setHtml(_translate("MainWindow", " "))
 
 
 if __name__ == "__main__":
