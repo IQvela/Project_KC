@@ -460,7 +460,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
         tablepoints_info=lambda j: [j,self.exp_selected.points[j].point_name,
                                     self.exp_selected.points[j].date_ini,self.exp_selected.points[j].date_end,
-                                    self.exp_selected.points[j].data_added.keys(),self.exp_selected.points[j].point_comments]
+                                    list(self.exp_selected.points[j].data_added.keys()),self.exp_selected.points[j].point_comments]
         for r in range(self.tableWidget_points.rowCount()):
             for c in range(self.tableWidget_points.columnCount()):
                 item=self.tableWidget_points.item(r, c)

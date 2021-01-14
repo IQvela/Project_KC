@@ -455,7 +455,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         n_seasons0=len(self.project_selected.seasons)#total number fo seasons of the selected project
         print(f"season_selected:{ind_season_selected}")
         default_attributes=""
-        ui_newexperiment=gui_newexperiment.Ui_MainWindow(self.project_Selected,default_attributes,ind_season_selected)
+        ui_newexperiment=gui_newexperiment.Ui_MainWindow(self.project_selected,default_attributes,ind_season_selected)
         ui_newexperiment.setupUi()
         ui_newexperiment.show()
         
