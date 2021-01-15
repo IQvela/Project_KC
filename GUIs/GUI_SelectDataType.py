@@ -13,36 +13,30 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
         MainWindow.resize(444, 366)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
+
+        #labels-----------------------------------------------------------
         self.Title_DataType = QtWidgets.QLabel(self.centralwidget)
         self.Title_DataType.setGeometry(QtCore.QRect(60, 10, 311, 41))
         font = QtGui.QFont()
         font.setPointSize(16)
         font.setBold(True)
-        font.setUnderline(False)
         font.setWeight(75)
-        font.setStrikeOut(False)
         self.Title_DataType.setFont(font)
         self.Title_DataType.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title_DataType.setObjectName("Title_DataType")
+        
         self.label_DataType = QtWidgets.QLabel(self.centralwidget)
         self.label_DataType.setGeometry(QtCore.QRect(30, 80, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_DataType.setFont(font)
         self.label_DataType.setObjectName("label_DataType")
-        self.Button_Add = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Add.setGeometry(QtCore.QRect(280, 250, 100, 40))
-        self.Button_Add.setObjectName("Button_Add")
-        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Cancel.setGeometry(QtCore.QRect(150, 250, 100, 40))
-        self.Button_Cancel.setObjectName("Button_Cancel")
+
+        #list data types----------------------------------------------------------
         self.list_DataType = QtWidgets.QListWidget(self.centralwidget)
         self.list_DataType.setGeometry(QtCore.QRect(120, 80, 261, 141))
-        self.list_DataType.setObjectName("list_DataType")
+        
         item = QtWidgets.QListWidgetItem()
         self.list_DataType.addItem(item)
         item = QtWidgets.QListWidgetItem()
@@ -53,6 +47,15 @@ class Ui_MainWindow(object):
         self.list_DataType.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.list_DataType.addItem(item)
+
+        #Buttons--------------------------------------------------------
+        self.Button_Add = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Add.setGeometry(QtCore.QRect(280, 250, 100, 40))
+        
+        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Cancel.setGeometry(QtCore.QRect(150, 250, 100, 40))
+        
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 444, 26))
@@ -67,11 +70,13 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Select Data Type"))
+
+        #labels-------------------------------------------------------------------
         self.Title_DataType.setText(_translate("MainWindow", "Select Data type"))
         self.label_DataType.setText(_translate("MainWindow", "Data type"))
-        self.Button_Add.setText(_translate("MainWindow", "Add"))
-        self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
+
+        #list----------------------------------------------------------------------
         __sortingEnabled = self.list_DataType.isSortingEnabled()
         self.list_DataType.setSortingEnabled(False)
         item = self.list_DataType.item(0)
@@ -83,6 +88,10 @@ class Ui_MainWindow(object):
         item = self.list_DataType.item(3)
         item.setText(_translate("MainWindow", "Other files"))
         self.list_DataType.setSortingEnabled(__sortingEnabled)
+
+        #buttons--------------------------------------------------------
+        self.Button_Add.setText(_translate("MainWindow", "Add"))
+        self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
 
 
 if __name__ == "__main__":
