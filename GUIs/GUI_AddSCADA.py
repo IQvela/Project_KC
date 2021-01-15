@@ -11,11 +11,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(558, 536)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_MainWindow(QtWidgets.QMainWindow):
+    
+    def __init__(self):
+        # self.MainWindow=QtWidgets.QMainWindow()
+        super(Ui_MainWindow,self).__init__()
+
+        self.scada_info=""
+        
+        self.finish_window=False
+    
+    def closeEvent(self, event):
+        self.finish_window=True
+        self.close()
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(558, 536)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.label_DateStart = QtWidgets.QLabel(self.centralwidget)
         self.label_DateStart.setGeometry(QtCore.QRect(70, 160, 91, 16))
@@ -46,12 +59,7 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         self.text_FileDir.setFont(font)
         self.text_FileDir.setObjectName("text_FileDir")
-        self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
-        self.tex_comments.setGeometry(QtCore.QRect(170, 350, 311, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.tex_comments.setFont(font)
-        self.tex_comments.setObjectName("tex_comments")
+
         self.label_DateEnd = QtWidgets.QLabel(self.centralwidget)
         self.label_DateEnd.setGeometry(QtCore.QRect(70, 200, 81, 16))
         font = QtGui.QFont()
@@ -64,9 +72,7 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.label_file.setFont(font)
         self.label_file.setObjectName("label_file")
-        self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AddData.setGeometry(QtCore.QRect(390, 420, 100, 40))
-        self.Button_AddData.setObjectName("Button_AddData")
+
         self.label_date = QtWidgets.QLabel(self.centralwidget)
         self.label_date.setGeometry(QtCore.QRect(180, 120, 161, 16))
         font = QtGui.QFont()
@@ -79,99 +85,109 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         self.label_time.setFont(font)
         self.label_time.setObjectName("label_time")
+        
         self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
         self.text_DateStart.setGeometry(QtCore.QRect(180, 150, 161, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateStart.setFont(font)
         self.text_DateStart.setObjectName("text_DateStart")
+        
         self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
         self.text_DateEnd.setGeometry(QtCore.QRect(180, 200, 161, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateEnd.setFont(font)
         self.text_DateEnd.setObjectName("text_DateEnd")
+        
         self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
         self.text_TimeStart.setGeometry(QtCore.QRect(370, 150, 111, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_TimeStart.setFont(font)
         self.text_TimeStart.setObjectName("text_TimeStart")
+        
         self.text_TimeEnd = QtWidgets.QTextEdit(self.centralwidget)
         self.text_TimeEnd.setGeometry(QtCore.QRect(370, 200, 111, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_TimeEnd.setFont(font)
         self.text_TimeEnd.setObjectName("text_TimeEnd")
+
+        self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
+        self.tex_comments.setGeometry(QtCore.QRect(170, 350, 311, 80))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.tex_comments.setFont(font)
+        self.tex_comments.setObjectName("tex_comments")
+        
+        
+        self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_AddData.setGeometry(QtCore.QRect(390, 450, 100, 40))
+        self.Button_AddData.setObjectName("Button_AddData")        
+        
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Cancel.setGeometry(QtCore.QRect(270, 420, 100, 40))
+        self.Button_Cancel.setGeometry(QtCore.QRect(270, 450, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
+        
         self.Button_SearchFile = QtWidgets.QPushButton(self.centralwidget)
         self.Button_SearchFile.setGeometry(QtCore.QRect(390, 289, 100, 31))
         self.Button_SearchFile.setObjectName("Button_SearchFile")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 558, 26))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_DateStart.setText(_translate("MainWindow", "Date start"))
         self.Title.setText(_translate("MainWindow", "Add Data (SCADA)"))
         self.label_comments.setText(_translate("MainWindow", "Comments"))
-        self.text_FileDir.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.tex_comments.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
         self.label_file.setText(_translate("MainWindow", "File"))
         self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         self.label_time.setText(_translate("MainWindow", "TIME (HH:MM)"))
-        self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_DateEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_TimeStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">6:00</span></p></body></html>"))
-        self.text_TimeEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">23:59</span></p></body></html>"))
         self.Button_Cancel.setText(_translate("MainWindow", "CANCEL"))
         self.Button_SearchFile.setText(_translate("MainWindow", "Search"))
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    def write_default_attrib(self,ind_season):
+        _translate = QtCore.QCoreApplication.translate
+        #print("default_attributes =",self.default_attributes)
+        if self.default_attributes=="":
+            d_ini="2021-01-22 10:00:00"
+            d_end="2021-01-22 12:00:00"
+            comments="This is SCADA"
+            self.default_attributes=(d_ini,d_end,comments)
+        # print("default_attributes ",self.default_attributes)
+        self.text_name.setPlaceholderText(_translate("MainWindow", self.default_attributes[0]))
+        # print("the text is:{}".format(self.text_name.toPlainText()))
+        self.text_DateStart.setPlaceholderText(_translate("MainWindow", self.default_attributes[1].split(" ")[0]))
+        self.text_TimeStart.setPlaceholderText(_translate("MainWindow", self.default_attributes[1].split(" ")[1]))
+        self.text_DateEnd.setPlaceholderText(_translate("MainWindow", self.default_attributes[2].split(" ")[0]))
+        self.text_TimeEnd.setPlaceholderText(_translate("MainWindow", self.default_attributes[2].split(" ")[1]))
+        self.text_fuel.setPlaceholderText(_translate("MainWindow", self.default_attributes[3]))
+        self.text_bed.setPlaceholderText(_translate("MainWindow", self.default_attributes[4]))
+        self.text_comments.setPlaceholderText(_translate("MainWindow", self.default_attributes[5]))
+
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui = Ui_MainWindow()
+#     ui.setupUi()
+#     ui.show()
+#     sys.exit(app.exec_())
+
+ui = Ui_MainWindow()
+ui.setupUi()
+ui.show()

@@ -11,6 +11,10 @@ import random
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import GUIs.GUI_MessageBoxKC as msgbox
+# import GUIs.GUI_NewPoint as gui_newpoint
+import GUIs.GUI_OpenPoint as gui_openpoint
+import GUIs.GUI_AddSCADA as gui_addscada
+import GUIs.GUI_AddGC as gui_addgc
 import Classes_Backend as KCbckend
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -244,7 +248,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_comments_2.setFont(font)
         self.label_comments_2.setObjectName("label_comments_2")   
         
-
+        self.label_Selectdatatype = QtWidgets.QLabel(self.centralwidget)
+        self.label_Selectdatatype.setGeometry(QtCore.QRect(670, 250, 191, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_Selectdatatype.setFont(font)
+        
+        
         #Buttons----------------------------------------------------------------------------------
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(840, 380, 100, 40))
@@ -257,6 +267,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddData.setGeometry(QtCore.QRect(960, 380, 100, 40))
         self.Button_AddData.setObjectName("Button_AddData")
+        self.Button_AddData.clicked.connect(self.add_data)
         
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(580, 380, 100, 40))
@@ -339,8 +350,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #table widget database (table where the loaded databases will be shown)
         self.tableWidget_db = QtWidgets.QTableWidget(self.centralwidget) 
         self.tableWidget_db.setGeometry(QtCore.QRect(580, 130, 481, 221))
-        self.tableWidget_db.setColumnCount(6)
+        self.tableWidget_db.setColumnCount(5)
         self.tableWidget_db.setRowCount(sum([len(self.exp_selected.data_experiment[k]) for k in self.exp_selected.data_experiment.keys()]))
+        self.tableWidget_db.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         
         for i in range(self.tableWidget_db.columnCount()):
             item=QtWidgets.QTableWidgetItem()
@@ -358,24 +370,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.tableWidget.setVerticalHeaderItem(2, item)
         # item = QtWidgets.QTableWidgetItem()
         # self.tableWidget.setVerticalHeaderItem(3, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setHorizontalHeaderItem(0, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setHorizontalHeaderItem(1, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setHorizontalHeaderItem(2, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setHorizontalHeaderItem(3, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setItem(0, 0, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.tableWidget.setItem(3, 0, item)
+
 
         #Table points. Table where the points registered to the selected experiment will be displayed
         self.tableWidget_points = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget_points.setGeometry(QtCore.QRect(50, 430, 421, 141))
-        self.tableWidget_points.setColumnCount(6)
+        self.tableWidget_points.setColumnCount(5)
         self.tableWidget_points.setRowCount(len(self.exp_selected.points))
+        self.tableWidget_points.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         
         for i in range(self.tableWidget_points.columnCount()):
             item=QtWidgets.QTableWidgetItem()
@@ -384,7 +386,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 for j in range(self.tableWidget_points.rowCount()):
                     item=QtWidgets.QTableWidgetItem()
                     self.tableWidget_points.setItem(j, i, item)        
-     
+
+                
+
+        #List of the types of databases
+        self.list_types = QtWidgets.QListWidget(self.centralwidget)
+        self.list_types.setGeometry(QtCore.QRect(670, 280, 221, 101))
+        self.list_types.setObjectName("list_types")
+        for db in self.exp_selected.get_dbnames():
+            item = QtWidgets.QListWidgetItem()
+            self.list_types.addItem(item)
+        
+
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1116, 26))
@@ -408,7 +421,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         
-        self.Title_ExperimentName.setText(_translate("MainWindow", "Season 1/ Experiment 1"))
+        s_name=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].season_name
+        e_name=self.exp_selected.exp_name        
+        self.Title_ExperimentName.setText(_translate("MainWindow", "SEASON: {}/ EXPERIMENT: {}".format(s_name,e_name)))
         self.label_comments.setText(_translate("MainWindow", "Comments"))
         self.label_fuel.setText(_translate("MainWindow", "Fuel"))
         self.label_DateStart.setText(_translate("MainWindow", "Date start"))
@@ -427,8 +442,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AddPoint.setText(_translate("MainWindow", "ADD POINT"))
         self.Button_OpenPoint.setText(_translate("MainWindow", "OPEN POINT"))
         
-        col_labels_db=["Index","DB Type","Date Start","Date End","Comment","Delay"]
-        col_labels_points=["Index","Name","Date Start","Date End","DB added","Comment"]
+        col_labels_db=["DB Type","Date Start","Date End","Comment","Delay"]
+        col_labels_points=["Name","Date Start","Date End","DB added","Comment"]
         
         for c_i,c_label in enumerate(col_labels_db):
             item = self.tableWidget_db.horizontalHeaderItem(c_i)
@@ -457,8 +472,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         for tbox in text_boxes:
             tbox[0].setText(tbox[1])
+
+        #List Widget. Data bases types
+        #db_types=["SCADA","GC1","INFERNO","SPA"]
+        for db_i,db in enumerate(self.exp_selected.get_dbnames()):
+            item=self.list_types.item(db_i)
+            item.setText(db)
             
-        tablepoints_info=lambda j: [j,self.exp_selected.points[j].point_name,
+        self.populate_pointstable()
+        self.populate_dbtable()
+
+    #Method that populates the tablewidget_points with the info of the points that have been registered to this experiment
+    def populate_pointstable(self):            
+        tablepoints_info=lambda j: [self.exp_selected.points[j].point_name,
                                     self.exp_selected.points[j].date_ini,self.exp_selected.points[j].date_end,
                                     list(self.exp_selected.points[j].data_added.keys()),self.exp_selected.points[j].point_comments]
         for r in range(self.tableWidget_points.rowCount()):
@@ -466,6 +492,48 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 item=self.tableWidget_points.item(r, c)
                 item.setText(str(tablepoints_info(r)[c]))
    
+    #Method that populates the tablewidget_db with the info of the databases that have been loaded to this experiment
+    def populate_dbtable(self):    
+        #Populate 
+        r=0
+        for k,db_tot in self.exp_selected.data_experiment.items():
+            if len(db_tot)>0:
+                for ind_db,db in enumerate(db_tot): #goes over the differente databases loaded for the data_type k in the data_experiment dictionary
+                    tabledb_info=self.exp_selected.data_experiment_info[k][ind_db] #(datatype_entrynumber,d_min,d_max,comments,delay(HH:MM:SS))
+                    for c in range(self.tableWidget_db.columnCount()):
+                        item=self.tableWidget_db.item(r,c)
+                        item.setText(tabledb_info[c])
+                    r+=1
+            
+
+    #add new databases to the list
+    def add_data(self): #needs to be created a list to pick up the database type
+        data_type=self.list_types.selectedIndexes()[0].data()
+        #print(data_type)
+        if data_type=="SCADA":
+            ui_addscada=gui_addscada.Ui_MainWindow()
+            ui_addscada.setupUi()
+            ui_addscada.show()            
+            while ui_addscada.finish_window==False:
+                QtCore.QCoreApplication.processEvents()
+                time.sleep(0.05)          
+            
+            
+    def new_point(self):
+        default_attributes=""
+        ui_newpoint=gui_newpoint.Ui_MainWindow(self.exp_selected,default_attributes)
+        ui_newpoint.setupUi()
+        ui_newpoint.show()
+        
+        while ui_newpoint.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.05)  
+
+    def open_point(self):
+        pass
+
+
+
     
 def randomclasses(a,b):
     global seed
@@ -494,6 +562,17 @@ for p in range(0,N_P):
             for pnt in range(0,randomclasses(0,5)):
                 # print(f"p{p},s{s},e{e}")
                 Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")     
+
+# Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+# Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
+# Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
+# Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
+# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# # In[1]:
+# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
+# Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
 # if __name__ == "__main__":
 #     import sys
@@ -505,6 +584,6 @@ for p in range(0,N_P):
 #     sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow(Pr,[1,0,0])
+ui=Ui_MainWindow(Pr,[1,0,0])#[0,0,-1])
 ui.setupUi()
 ui.show()

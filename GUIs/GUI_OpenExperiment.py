@@ -385,8 +385,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        
-        self.Title_ExperimentName.setText(_translate("MainWindow", "Season 1/ Experiment 1"))
+        s_name=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].season_name
+        e_name=self.exp_selected.exp_name
+        self.Title_ExperimentName.setText(_translate("MainWindow", "SEASON: {}/ EXPERIMENT: {}".format(s_name,e_name)))
         self.label_comments.setText(_translate("MainWindow", "Comments"))
         self.label_fuel.setText(_translate("MainWindow", "Fuel"))
         self.label_DateStart.setText(_translate("MainWindow", "Date start"))

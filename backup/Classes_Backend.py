@@ -87,8 +87,8 @@ class Point:
         self.point_route=point_route #String which contains the indexes of the Project/Season/Experiment/Point
     
     
-    def set_point_data(self,collect_data,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
-        #collect_data (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
+    def set_point_data(self,data_type,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
+        #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #time_type (str)= SCADA or GC
         #date_ini (str) = initial date of the point
         #date_end (str) = end date of the point
@@ -128,7 +128,7 @@ class Point:
             date_i+=timedelta(minutes=1)
         
         
-        if collect_data=="AUTOMATIC": #the time taken by the point is the SCADA time      
+        if data_type=="AUTOMATIC": #the time taken by the point is the SCADA time      
             #collect data from all databases
             Nentries={k:0 for k in Experiment.db_names}
             for k in db_experiment.keys():
@@ -143,7 +143,7 @@ class Point:
                     d_t0,d_t1=None,None
                     Nentries[k]=0
                     #search which of the list elements added to the db_experiment[k] has the time interval it is being looking for
-                    for db in db_experiment[k]: #db_experiment[k] is a dictionary with a list per each key (when more that one SCADA or GC has been added to the experiment)
+                    for db in db_experiment[k][0]: #db_experiment[k] is a dictionary with a list per each key (when more that one SCADA or GC has been added to the experiment)
                         d_t0=db[Experiment.name_timecolumn[k]]>=self.date_ini+timedelta(minutes=delay_db[k]) 
                         d_t1=db[Experiment.name_timecolumn[k]]<=self.date_end+timedelta(minutes=delay_db[k])
                         if all(d_t0==False) and all(d_t1==False): #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
@@ -169,7 +169,7 @@ class Point:
                         G_PX0="G_None"
                         #temp=time_db_pnt[k]
                         SPA_samples=[]                        
-                        for db in db_experiment[k]: #considering that several SPA files were added in that experiment
+                        for db in db_experiment[k][0]: #considering that several SPA files were added in that experiment
                             
                             #When two SPA's are in series both share the same time, therefore two dataframes must to be in the db_experiment["SPA"] dictionary for a specific key (since the key is the time)
                             for t_spa,v_list in db.items():
@@ -207,14 +207,14 @@ class Point:
             if len(v)==0:
                 self.time_db_pnt[k]=["No Data" for i in self.time_db_pnt["DATE"]]
                 
-        self.update_db_global(self)
+        self.update_db_global()
     ############################################################################
     #add the data acquired of the point to the global time_db database
     ############################################################################
     @classmethod
-    def update_db_global(cls,pnt):
+    def update_db_global(cls,self):
         
-        cls.time_db_global=cls.time_db_global.append(pnt.time_db_pnt,ignore_index=True,sort=False) #the time_db_pnt must to be appended to the global data
+        cls.time_db_global=cls.time_db_global.append(self.time_db_pnt,ignore_index=True,sort=False) #the time_db_pnt must to be appended to the global data
     
     #def point_attributes(self,times...):
         #takes the maximum and minimum (SCADA) time to define the point that will be shown in the list presented in the experiment window 
@@ -242,7 +242,6 @@ class Experiment(timeinterval):
         self.bed_type=bed_type
         
         self.data_experiment={k:[] for k in Experiment.db_names} #results collected from the different databases
-        self.data_experiment_info={k:[] for k in Experiment.db_names}
         self.points=[] #list with all points
         self.exp_route=exp_route
         
@@ -258,24 +257,22 @@ class Experiment(timeinterval):
     
     #this method will be used to generate the table we create with the different database
     #this method is triggered by a button that directs to other window where the kind of database is chosen
-    def add_data(self,data_type,filename,delay,comments=""):
+    def add_data(self,data_type,filename,comments=""):
         #data_type (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #filename (str)= this is the route of the file where the information will be extracted out (user defined through a explorer window)
-        #delay(str) = delay time respect of the SCADA time (format: HH:MM:SS)
-        
+        #dates (list)=it is a list of the initial and final date of the GC file [file start date, file end date] (maybe this is not needed because the pandas can load all dates)
+
         #The data can be read from a predefined excel sheet format
         #the different data should be stored in a dictionary (with the data_type string as the key)
         #each experiment can have several time intervals (to check)
         
         if data_type=="SCADA":
-            self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename)) #it must to search all the files which are within the dates given (maybe not)     
+            self.data_experiment[data_type].append((self.get_data_fromfile(data_type,filename),comments)) #it must to search all the files which are within the dates given (maybe not)
         elif data_type=="GC1" or data_type=="INFERNO": #The time interval of the GC corresponds with the whole time registered in the file 
-            self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename)) #maybe this one             
+            self.data_experiment[data_type].append((self.get_data_fromfile(data_type,filename),comments)) #maybe this one 
         elif data_type=="SPA":
-            self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename))
+            self.data_experiment[data_type].append((self.get_data_fromfile(data_type,filename),comments))
         
-        d_min,d_max=self.get_dates_db(data_type, -1) #-1 because always must to take the last db loaded for a given data_type        
-        self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,comments,delay))
         #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the values the different databases at that time)
         #this is in order to build the "concept" table 
     
@@ -329,9 +326,7 @@ class Experiment(timeinterval):
         d_min=d_max="ND"
         if db in ["SCADA","GC1","INFERNO"]:
             d_min=self.data_experiment[db][index][Experiment.name_timecolumn[db]].min()
-            d_min=d_min.strftime("%Y-%m-%d %H:%M:%S")
             d_max=self.data_experiment[db][index][Experiment.name_timecolumn[db]].max()
-            d_max=d_max.strftime("%Y-%m-%d %H:%M:%S")
         elif db=="SPA":
             d_spa_tot=[datetime.strptime(k, "%Y-%m-%d %H:%M:%S") for k in self.data_experiment[db][index].keys()]
             d_min=min(d_spa_tot).strftime("%Y-%m-%d %H:%M:%S")
@@ -587,18 +582,18 @@ class Project:
 
 
 # P={}
-# P[0]=Project("Proj1","This is the test project 1","Sam")
+# P[0]=Project("Proj1","This is the test project 1")
 # P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
 # P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
-# P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS","00:00:00")
-# P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx","00:03:00")
-# P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls","00:03:00")
+# P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS")
+# P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx")
+# P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls")
 # P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
 # # In[1]:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=P[0].seasons[0].experiments[0].data_experiment
-# P[0].seasons[0].experiments[0].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# P[0].seasons[0].experiments[0].points[0].set_point_data(pnt_route,"AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
 
 #type (ExcelRead)
 #print(ExcelRead)

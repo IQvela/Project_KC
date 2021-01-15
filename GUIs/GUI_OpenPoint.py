@@ -11,11 +11,28 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ProjectWin(object):
+class Ui_MainWindow(QtWidgets.QMainWindow):
+    
+    def __init__(self,Pr_list,point_route):
+        # self.MainWindow=QtWidgets.QMainWindow()
+        super(Ui_MainWindow,self).__init__()
 
-    def setupUi(self, ProjectWin):
-        ProjectWin.setObjectName("ProjectWin")
-        ProjectWin.resize(1116, 681)
+        self.Pr_list=Pr_list
+        self.ind_pr_selected=point_route[0] #index of the selected project
+        self.ind_season_selected=point_route[1] #index of the selected season       
+        self.ind_exp_selected=point_route[2] #index of the selected experiment
+        self.ind_point_selected=point_route[3]
+        self.point_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected].points[self.ind_point_selected]
+        
+        self.finish_window=False
+    
+    def closeEvent(self, event):
+        self.finish_window=True
+        self.close()
+
+    def setupUi(self):
+        self.setObjectName("MainWindows")
+        self.resize(1116, 681)
 
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -153,9 +170,9 @@ class Ui_ProjectWin(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        ProjectWin.setPalette(palette)
+        self.setPalette(palette)
 
-        self.centralwidget = QtWidgets.QWidget(ProjectWin)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         
         #Point information (labels, text and button)---------------------------------------------------------------------------------
@@ -197,7 +214,7 @@ class Ui_ProjectWin(object):
         #Button Modify info point
         self.Button_ModifyInfoPoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ModifyInfoPoint.setGeometry(QtCore.QRect(910, 110, 100, 40))
-        ProjectWin.setCentralWidget(self.centralwidget)
+        self.setCentralWidget(self.centralwidget)
 
         #Table Data Avaible/already existing---------------------------------------------------------------------------------
         self.table_DataAvailable = QtWidgets.QTableWidget(self.centralwidget)
@@ -295,67 +312,68 @@ class Ui_ProjectWin(object):
         self.Button_Cancel.setGeometry(QtCore.QRect(830, 560, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
 
-        self.retranslateUi(ProjectWin)
-        QtCore.QMetaObject.connectSlotsByName(ProjectWin)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, ProjectWin):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        ProjectWin.setWindowTitle(_translate("ProjectWin", "MainWindow"))
-        self.Button_AnalyseData.setText(_translate("ProjectWin", "ANALYZE DATA"))
-        self.Button_ModifyData.setText(_translate("ProjectWin", "MODIFY DATA"))
-        self.Button_ReadData.setText(_translate("ProjectWin", "READ DATA"))
-        self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
-        self.Title_PointName.setText(_translate("ProjectWin", "Season 1/ Experiment 1/Point 1"))
-        self.label_comments.setText(_translate("ProjectWin", "Comments"))
-        self.label_SelectType.setText(_translate("ProjectWin", "Select type "))
-        self.text_comments.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.setWindowTitle(_translate("MainWindows", "MainWindow"))
+        
+        self.Title_PointName.setText(_translate("MainWindows", "Season 1/ Experiment 1/Point 1"))
+        self.Button_AnalyseData.setText(_translate("MainWindows", "ANALYZE DATA"))
+        self.Button_ModifyData.setText(_translate("MainWindows", "MODIFY DATA"))
+        self.Button_ReadData.setText(_translate("MainWindows", "READ DATA"))
+        self.Button_ViewData.setText(_translate("MainWindows", "VIEW DATA"))
+        self.label_comments.setText(_translate("MainWindows", "Comments"))
+        self.label_SelectType.setText(_translate("MainWindows", "Select type "))
+        self.text_comments.setHtml(_translate("MainWindows", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         item = self.table_DataAvailable.horizontalHeaderItem(0)
-        item.setText(_translate("ProjectWin", "Index"))
+        item.setText(_translate("MainWindows", "Index"))
         item = self.table_DataAvailable.horizontalHeaderItem(1)
-        item.setText(_translate("ProjectWin", "StartDate"))
+        item.setText(_translate("MainWindows", "StartDate"))
         item = self.table_DataAvailable.horizontalHeaderItem(2)
-        item.setText(_translate("ProjectWin", "EndDate"))
+        item.setText(_translate("MainWindows", "EndDate"))
         item = self.table_DataAvailable.horizontalHeaderItem(3)
-        item.setText(_translate("ProjectWin", "Type"))
+        item.setText(_translate("MainWindows", "Type"))
         item = self.table_DataAvailable.horizontalHeaderItem(4)
-        item.setText(_translate("ProjectWin", "Comment"))
+        item.setText(_translate("MainWindows", "Comment"))
         __sortingEnabled = self.table_DataAvailable.isSortingEnabled()
         self.table_DataAvailable.setSortingEnabled(False)
         self.table_DataAvailable.setSortingEnabled(__sortingEnabled)
-        self.label_DataAvailable.setText(_translate("ProjectWin", "Data available"))
-        self.Button_Ok.setText(_translate("ProjectWin", "OK"))
-        self.Button_Cancel.setText(_translate("ProjectWin", "CANCEL"))
+        self.label_DataAvailable.setText(_translate("MainWindows", "Data available"))
+        self.Button_Ok.setText(_translate("MainWindows", "OK"))
+        self.Button_Cancel.setText(_translate("MainWindows", "CANCEL"))
         __sortingEnabled = self.list_types.isSortingEnabled()
         self.list_types.setSortingEnabled(False)
         item = self.list_types.item(0)
-        item.setText(_translate("ProjectWin", "SCADA"))
+        item.setText(_translate("MainWindows", "SCADA"))
         item = self.list_types.item(1)
-        item.setText(_translate("ProjectWin", "GC"))
+        item.setText(_translate("MainWindows", "GC"))
         item = self.list_types.item(2)
-        item.setText(_translate("ProjectWin", "SPA"))
+        item.setText(_translate("MainWindows", "SPA"))
         item = self.list_types.item(3)
-        item.setText(_translate("ProjectWin", "Others"))
+        item.setText(_translate("MainWindows", "Others"))
         self.list_types.setSortingEnabled(__sortingEnabled)
-        self.Button_AddNewData.setText(_translate("ProjectWin", "ADD DATA"))
-        self.label_AddNewData.setText(_translate("ProjectWin", "Add data to point"))
-        self.label_name.setText(_translate("ProjectWin", "Name"))
-        self.text_PointName.setHtml(_translate("ProjectWin", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.Button_AddNewData.setText(_translate("MainWindows", "ADD DATA"))
+        self.label_AddNewData.setText(_translate("MainWindows", "Add data to point"))
+        self.label_name.setText(_translate("MainWindows", "Name"))
+        self.text_PointName.setHtml(_translate("MainWindows", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.Button_ModifyInfoPoint.setText(_translate("ProjectWin", "MODIFY INFO"))
+        self.Button_ModifyInfoPoint.setText(_translate("MainWindows", "MODIFY INFO"))
         
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    ProjectWin = QtWidgets.QMainWindow()
-    ui = Ui_ProjectWin()
-    ui.setupUi(ProjectWin)
-    ProjectWin.show()
+    self = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi()
+    ui.show()
     sys.exit(app.exec_())
