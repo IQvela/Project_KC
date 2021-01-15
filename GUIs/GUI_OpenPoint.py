@@ -331,6 +331,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.Button_ModifyInfoPoint.setText(_translate("ProjectWin", "MODIFY INFO"))
+
+        #buttons existing data--------------------------------------------------------
+        self.Button_AnalyseData.setText(_translate("ProjectWin", "ANALYZE DATA"))
+        self.Button_ModifyData.setText(_translate("ProjectWin", "MODIFY DATA"))
+        self.Button_ReadData.setText(_translate("ProjectWin", "READ DATA"))
+        self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
+
+        #table existing/available data-------------------------------------------
         item = self.table_DataAvailable.horizontalHeaderItem(0)
         item.setText(_translate("MainWindows", "Index"))
         item = self.table_DataAvailable.horizontalHeaderItem(1)
@@ -368,6 +377,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.Button_ModifyInfoPoint.setText(_translate("MainWindows", "MODIFY INFO"))
         
+        #basic buttons------------------------------------------------------------------
+        self.Button_Ok.setText(_translate("ProjectWin", "OK"))
+        self.Button_Cancel.setText(_translate("ProjectWin", "CANCEL"))
 
 if __name__ == "__main__":
     import sys

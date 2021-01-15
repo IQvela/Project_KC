@@ -41,19 +41,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #Labels---------------------------------------------------------
         self.Title_ViewInfoSeason.setFont(font)
         self.Title_ViewInfoSeason.setAlignment(QtCore.Qt.AlignCenter)
-        #self.Title_ViewInfoSeason.setObjectName("Title_ViewInfoSeason")
+        
         self.label_DateStartFrom = QtWidgets.QLabel(self.centralwidget)
         self.label_DateStartFrom.setGeometry(QtCore.QRect(40, 120, 91, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_DateStartFrom.setFont(font)
-        #self.label_DateStartFrom.setObjectName("label_DateStartFrom")
+        
         self.label_DateEndTo = QtWidgets.QLabel(self.centralwidget)
         self.label_DateEndTo.setGeometry(QtCore.QRect(320, 120, 81, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_DateEndTo.setFont(font)
-        #self.label_DateEndTo.setObjectName("label_DateEndTo")
+
+        self.label_description = QtWidgets.QLabel(self.centralwidget)
+        self.label_description.setGeometry(QtCore.QRect(40, 180, 221, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_description.setFont(font)
+        
 
         #Text Boxes------------------------------------------------------------
         self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
@@ -61,25 +67,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateStart.setFont(font)
-        #self.text_DateStart.setObjectName("text_DateStart")
+        
         self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
         self.text_DateEnd.setGeometry(QtCore.QRect(410, 110, 131, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateEnd.setFont(font)
-        #self.text_DateEnd.setObjectName("text_DateEnd")
-        self.tex_description = QtWidgets.QTextEdit(self.centralwidget)
-        self.tex_description.setGeometry(QtCore.QRect(40, 200, 501, 61))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.tex_description.setFont(font)
-        #self.tex_description.setObjectName("tex_description")
-        self.label_description = QtWidgets.QLabel(self.centralwidget)
-        self.label_description.setGeometry(QtCore.QRect(40, 180, 221, 16))
+
+        self.label_ExperimentList = QtWidgets.QLabel(self.centralwidget)
+        self.label_ExperimentList.setGeometry(QtCore.QRect(40, 290, 221, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.label_description.setFont(font)
-        #self.label_description.setObjectName("label_description")
+        self.label_ExperimentList.setFont(font)
+                
+        self.text_description = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_description.setGeometry(QtCore.QRect(40, 200, 501, 61))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.text_description.setFont(font)
+       
 
         #List---------------------------------------------------------------------
         self.list_experiments = QtWidgets.QListWidget(self.centralwidget)
@@ -98,18 +104,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.list_experiments.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.list_experiments.addItem(item)
-        self.label_ExperimentList = QtWidgets.QLabel(self.centralwidget)
-        self.label_ExperimentList.setGeometry(QtCore.QRect(40, 290, 221, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_ExperimentList.setFont(font)
-        self.label_ExperimentList.setObjectName("label_ExperimentList")
+
+        
 
         #Button ------------------------------------------------------
         self.Button_OK = QtWidgets.QPushButton(self.centralwidget)
         self.Button_OK.setGeometry(QtCore.QRect(440, 450, 100, 40))
-        self.Button_OK.setObjectName("Button_OK")
         self.Button_OK.clicked.connect(self.ok)
+
+        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Cancel.setGeometry(QtCore.QRect(300, 450, 100, 40))
+        self.Button_Cancel.clicked.connect(self.ok)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -125,10 +130,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ViewInfoSeason"))
+
+        #labels-------------------------------------------------------------------
         self.Title_ViewInfoSeason.setText(_translate("MainWindow", "View info Season X"))
         self.label_DateStartFrom.setText(_translate("MainWindow", "From"))
         self.label_DateEndTo.setText(_translate("MainWindow", "To"))
+        self.label_ExperimentList.setText(_translate("MainWindow", "Experiments list"))
+        self.label_description.setText(_translate("MainWindow", "Description"))
+
+        #tex boxes---------------------------------------------------------------------
         self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -140,12 +151,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.tex_description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.text_description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.label_description.setText(_translate("MainWindow", "Description"))
+        
+        #list-------------------------------------------------------------
         __sortingEnabled = self.list_experiments.isSortingEnabled()
         self.list_experiments.setSortingEnabled(False)
         item = self.list_experiments.item(0)
@@ -159,8 +171,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         item = self.list_experiments.item(4)
         item.setText(_translate("MainWindow", "Exp X: test"))
         self.list_experiments.setSortingEnabled(__sortingEnabled)
-        self.label_ExperimentList.setText(_translate("MainWindow", "Experiments list"))
+        
+        #buttons-------------------------------------------------------------------
         self.Button_OK.setText(_translate("MainWindow", "OK"))
+        self.Button_Cancel.setText(_translate("MainWindow", "Cancel"))
 
 #closes the window
     def back_button(self):
