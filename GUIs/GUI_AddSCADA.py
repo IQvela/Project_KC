@@ -13,102 +13,105 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
         MainWindow.resize(558, 536)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.label_DateStart = QtWidgets.QLabel(self.centralwidget)
-        self.label_DateStart.setGeometry(QtCore.QRect(70, 160, 91, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_DateStart.setFont(font)
-        self.label_DateStart.setObjectName("label_DateStart")
+
         self.Title = QtWidgets.QLabel(self.centralwidget)
         self.Title.setGeometry(QtCore.QRect(60, 40, 421, 41))
         font = QtGui.QFont()
         font.setPointSize(16)
         font.setBold(True)
-        font.setUnderline(False)
         font.setWeight(75)
-        font.setStrikeOut(False)
         self.Title.setFont(font)
         self.Title.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title.setObjectName("Title")
-        self.label_comments = QtWidgets.QLabel(self.centralwidget)
-        self.label_comments.setGeometry(QtCore.QRect(70, 360, 221, 16))
-        font = QtGui.QFont()
-        font.setPointSize(11)
-        self.label_comments.setFont(font)
-        self.label_comments.setObjectName("label_comments")
-        self.text_FileDir = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_FileDir.setGeometry(QtCore.QRect(110, 290, 271, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.text_FileDir.setFont(font)
-        self.text_FileDir.setObjectName("text_FileDir")
-        self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
-        self.tex_comments.setGeometry(QtCore.QRect(170, 350, 311, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.tex_comments.setFont(font)
-        self.tex_comments.setObjectName("tex_comments")
-        self.label_DateEnd = QtWidgets.QLabel(self.centralwidget)
-        self.label_DateEnd.setGeometry(QtCore.QRect(70, 200, 81, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_DateEnd.setFont(font)
-        self.label_DateEnd.setObjectName("label_DateEnd")
-        self.label_file = QtWidgets.QLabel(self.centralwidget)
-        self.label_file.setGeometry(QtCore.QRect(70, 300, 55, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_file.setFont(font)
-        self.label_file.setObjectName("label_file")
-        self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AddData.setGeometry(QtCore.QRect(390, 420, 100, 40))
-        self.Button_AddData.setObjectName("Button_AddData")
+
+        #labels-----------------------------------------------------------------------------------------
         self.label_date = QtWidgets.QLabel(self.centralwidget)
         self.label_date.setGeometry(QtCore.QRect(180, 120, 161, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_date.setFont(font)
-        self.label_date.setObjectName("label_date")
+                
         self.label_time = QtWidgets.QLabel(self.centralwidget)
         self.label_time.setGeometry(QtCore.QRect(370, 120, 121, 16))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_time.setFont(font)
-        self.label_time.setObjectName("label_time")
+
+        self.label_DateStart = QtWidgets.QLabel(self.centralwidget)
+        self.label_DateStart.setGeometry(QtCore.QRect(70, 160, 91, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_DateStart.setFont(font)
+        
+        self.label_DateEnd = QtWidgets.QLabel(self.centralwidget)
+        self.label_DateEnd.setGeometry(QtCore.QRect(70, 200, 81, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_DateEnd.setFont(font)
+        
+        self.label_file = QtWidgets.QLabel(self.centralwidget)
+        self.label_file.setGeometry(QtCore.QRect(70, 300, 55, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_file.setFont(font)
+
+        self.label_comments = QtWidgets.QLabel(self.centralwidget)
+        self.label_comments.setGeometry(QtCore.QRect(70, 360, 221, 16))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.label_comments.setFont(font)
+        
+        #text boxes-------------------------------------------------------
+        
         self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateStart.setGeometry(QtCore.QRect(180, 150, 161, 31))
+        self.text_DateStart.setGeometry(QtCore.QRect(180, 150, 161, 33))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(8)
         self.text_DateStart.setFont(font)
-        self.text_DateStart.setObjectName("text_DateStart")
+
         self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateEnd.setGeometry(QtCore.QRect(180, 200, 161, 31))
+        self.text_DateEnd.setGeometry(QtCore.QRect(180, 200, 161, 33))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(8)
         self.text_DateEnd.setFont(font)
-        self.text_DateEnd.setObjectName("text_DateEnd")
+        
         self.text_TimeStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_TimeStart.setGeometry(QtCore.QRect(370, 150, 111, 31))
+        self.text_TimeStart.setGeometry(QtCore.QRect(370, 150, 111, 33))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(8)
         self.text_TimeStart.setFont(font)
-        self.text_TimeStart.setObjectName("text_TimeStart")
+        
         self.text_TimeEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_TimeEnd.setGeometry(QtCore.QRect(370, 200, 111, 31))
+        self.text_TimeEnd.setGeometry(QtCore.QRect(370, 200, 111, 33))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.text_TimeEnd.setFont(font)
+
+        self.text_FileDir = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_FileDir.setGeometry(QtCore.QRect(110, 290, 271, 33))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.text_FileDir.setFont(font)
+        
+        self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
+        self.tex_comments.setGeometry(QtCore.QRect(170, 350, 311, 33))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.text_TimeEnd.setFont(font)
-        self.text_TimeEnd.setObjectName("text_TimeEnd")
-        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_Cancel.setGeometry(QtCore.QRect(270, 420, 100, 40))
-        self.Button_Cancel.setObjectName("Button_Cancel")
+        self.tex_comments.setFont(font)
+        
+        #buttons------------------------------------------------------
         self.Button_SearchFile = QtWidgets.QPushButton(self.centralwidget)
         self.Button_SearchFile.setGeometry(QtCore.QRect(390, 289, 100, 31))
-        self.Button_SearchFile.setObjectName("Button_SearchFile")
+
+        self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_AddData.setGeometry(QtCore.QRect(390, 420, 100, 40))
+        
+        self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_Cancel.setGeometry(QtCore.QRect(270, 420, 100, 40))
+        
+       
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 558, 26))
@@ -123,26 +126,18 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_DateStart.setText(_translate("MainWindow", "Date start"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Add Data (SCADA)"))
+        
+        #labels----------------------------------------------------------------
         self.Title.setText(_translate("MainWindow", "Add Data (SCADA)"))
-        self.label_comments.setText(_translate("MainWindow", "Comments"))
-        self.text_FileDir.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.tex_comments.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
-        self.label_file.setText(_translate("MainWindow", "File"))
-        self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         self.label_time.setText(_translate("MainWindow", "TIME (HH:MM)"))
+        self.label_DateStart.setText(_translate("MainWindow", "Date start"))
+        self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
+        self.label_file.setText(_translate("MainWindow", "File"))
+        self.label_comments.setText(_translate("MainWindow", "Comments"))
+      
+        #text boxes-------------------------------------------------------------------------------        
         self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -163,9 +158,22 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">23:59</span></p></body></html>"))
-        self.Button_Cancel.setText(_translate("MainWindow", "CANCEL"))
+        self.text_FileDir.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.tex_comments.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        
+        #buttons-------------------------------------------------------------------------
         self.Button_SearchFile.setText(_translate("MainWindow", "Search"))
-
+        self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
+        self.Button_Cancel.setText(_translate("MainWindow", "CANCEL"))
 
 if __name__ == "__main__":
     import sys
