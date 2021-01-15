@@ -274,10 +274,14 @@ class Experiment(timeinterval):
         elif data_type=="SPA":
             self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename))
         
-        d_min,d_max=self.get_dates_db(data_type, -1) #-1 because always must to take the last db loaded for a given data_type        
-        self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,comments,delay))
-        #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the values the different databases at that time)
-        #this is in order to build the "concept" table 
+        if len(self.data_experiment[data_type][-1].index)>0: #check if the last dataframe added has data on it
+            d_min,d_max=self.get_dates_db(data_type, -1) #-1 because always must to take the last db loaded for a given data_type        
+            self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,delay,comments))
+            #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the values the different databases at that time)
+            #this is in order to build the "concept" table 
+        else:
+            del self.data_experiment[data_type][-1] #deletes the last element becuase the times dont interesect
+            guiSPA.Message_popup("Error","Time interval error","The time of the experiment does not interect with the time of the data in the file selected. Please check the times") 
     
     def get_data_fromfile(self,data_type,filename):#, dates=None): #it should be added a list "dates" for the cases where there are several measurement sets (e.g. GC)
         
@@ -329,8 +333,10 @@ class Experiment(timeinterval):
         d_min=d_max="ND"
         if db in ["SCADA","GC1","INFERNO"]:
             d_min=self.data_experiment[db][index][Experiment.name_timecolumn[db]].min()
+            print(self.data_experiment[db][index])
             d_min=d_min.strftime("%Y-%m-%d %H:%M:%S")
             d_max=self.data_experiment[db][index][Experiment.name_timecolumn[db]].max()
+            print(d_max)
             d_max=d_max.strftime("%Y-%m-%d %H:%M:%S")
         elif db=="SPA":
             d_spa_tot=[datetime.strptime(k, "%Y-%m-%d %H:%M:%S") for k in self.data_experiment[db][index].keys()]
