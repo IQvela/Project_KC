@@ -709,20 +709,53 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def modify_attrib(self):
         self.label_status.setText("Status: Modifying Attributes...")
         if self.text_name.isEnabled()==True:
-            self.exp_selected.exp_name=self.text_name.toPlainText()
-            self.exp_selected.date_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
-            self.exp_selected.date_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()
-            self.exp_selected.fuel_type=self.text_fuel.toPlainText()
-            self.exp_selected.bed_type=self.text_bed.toPlainText()
-            self.exp_selected.exp_comments=self.text_comments.toPlainText()
             
-            self.populate_attributes()
-            self.label_status.setText("Status: Ready...")
+            d_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
+            d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
+            if len(self.text_TimeStart.toPlainText().split(":"))==2:
+                d_ini+=":00"
+            elif len(self.text_TimeEnd.toPlainText().split(":"))==2:
+                d_ini+=":00"
+            try:
+                d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
+                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")
+                if d_ini>d_end:
+                    raise Exception                    
+            except:
+                if d_ini>d_end:
+                    msgbox.Message_popup("Error","Dates Error","The Date Start is later than Date End")
+                else:
+                    msgbox.Message_popup("Error","Dates Format Error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
+            else:
+                
+                if self.tableWidget_db.rowCount()>0: #if there is any data already loaded to the experiment check that the new dates intersects with the data loaded
+                    d_ini_list=[datetime.strptime(d_info[1],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.data_experiment_info[d_type]]
+                    d_end_list=[datetime.strptime(d_info[2],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.data_experiment_info[d_type] ]
+                    if max(min(d_ini_list),d_ini)<min(max(d_end_list),d_end):                                        
+                        self.exp_selected.date_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
+                        self.exp_selected.date_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
+                    else:
+                        msgbox.Message_popup("Error","New Dates Error","The new timeframe assigned does not intersect with one of the data loaded for this experiment. Please Check")
+                        self.text_DateStart.setText(self.exp_selected.date_ini.split(" ")[0])
+                        self.text_TimeStart.setText(self.exp_selected.date_ini.split(" ")[1])
+                        self.text_DateEnd.setText(self.exp_selected.date_end.split(" ")[0])
+                        self.text_TimeEnd.setText(self.exp_selected.date_end.split(" ")[1])
+                else:
+                    self.exp_selected.date_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
+                    self.exp_selected.date_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
+                    
+                self.exp_selected.exp_name=self.text_name.toPlainText()
+                self.exp_selected.fuel_type=self.text_fuel.toPlainText()
+                self.exp_selected.bed_type=self.text_bed.toPlainText()
+                self.exp_selected.exp_comments=self.text_comments.toPlainText()
+            
+                self.populate_attributes()
+                msgbox.Message_popup("Info","Modify Attributes","Valid attributes have been succesfully updated")
+                self.label_status.setText("Status: Ready...")
         else:
             text_boxes=[self.text_name,self.text_DateStart,self.text_TimeStart,self.text_DateEnd,self.text_TimeEnd,self.text_fuel,self.text_bed,self.text_comments]
             for t_box in text_boxes:
                 t_box.setEnabled(True)                    
-        
 
 
 # if __name__ == "__main__":

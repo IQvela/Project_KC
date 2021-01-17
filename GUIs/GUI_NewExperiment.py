@@ -304,9 +304,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 d_ini+=":00"
             try:
                 d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
-                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")                
+                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S") 
+                if d_ini>d_end:
+                    raise Exception                 
             except:
-                msgbox.Message_popup("Error","No Text","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
+                if d_ini>d_end:
+                    msgbox.Message_popup("Error","Dates Error","The Date Start is later than Date End")
+                else:                
+                    msgbox.Message_popup("Error","Dates Format Error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
             else:
                 d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
                 d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
