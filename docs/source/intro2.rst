@@ -1,16 +1,43 @@
 Graphic Interface
 ============================================
 
-This explain main construction of the graphic interface (file: MAinWin.py).
+This explain main construction of the graphic interface.
 
-The code is object oriented and contain 5 classes interconnected as shown in the figure,
-and have the following fuction:
 
-* Main Window: it is the start window and has a table with all the projects available. It can *open a project* or *add a project*
-* Project Window: allows the modification of a project including
+**Main Window**
+
+It is the start window and has a table with all the projects available. It can *open a project* or *add a project*
+
+.. figure::  images/Main.png
+   :align:   center
+
+
+**Project Window**
+
+Allows the modification of a project including:
+
 	- Adding a *New Season*
+	- *View info* of a Season
 	- Adding a *New Experiment*
-* Seasson Window
-* Experiment Window
-* Point Window
+	- *View data* of an existing Experiment	
+	- *Delete* a Experiment
+
+.. figure::  images/Project.png
+   :align:   center
+
+**Experiment Window**
+
+Allows the modification of a Experiment including:
+
+	- *Open Point*
+	- *Add Point*
+	- Adding a SCADA, GC or SPA data (*Add data*)
+
+.. figure::  images/Experiment.png
+   :align:   center
+
+
+**Point Window**
+
+In progress
 

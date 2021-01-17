@@ -34,11 +34,11 @@
             
   <div class="section" id="structure-of-gui">
 <h1>Structure of GUI<a class="headerlink" href="#structure-of-gui" title="Permalink to this headline">¶</a></h1>
-<p>This page summarises the code structure of a GUI.</p>
+<p>This page summarises the code structure of a GUI (class).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Ui_MainWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
 </pre></div>
 </div>
-<p>inside you need to define:</p>
+<p>inside you need to define the innit fuction:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n_db_loaded</span><span class="p">):</span>
         <span class="c1"># define window</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Ui_MainWindow</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -48,13 +48,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">finish_window</span><span class="o">=</span><span class="kc">False</span>
 </pre></div>
 </div>
-<p>and also:</p>
+<p>and</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="c1">#define close window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finish_window</span><span class="o">=</span><span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-<span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>and the main fuction defining the window an its functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1">#define main characteristic window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;MainWindow&quot;</span><span class="p">)</span> <span class="c1">#name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">558</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span> <span class="c1">#size</span>
