@@ -375,16 +375,19 @@ for p in range(0,N_P):
             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
             for pnt in range(0,randomclasses(0,5)):
                 # print(f"p{p},s{s},e{e}")
-                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")    
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")     
 
-
-
-# Pr=[] #dictionary containing all the projects (this must to be initialized from a previous file where all the projects were saved)
-# Pr.append(KCbckend.Project("Proj1","This is Project 1","Sam"))
-# Pr.append(KCbckend.Project("Proj2","This is Project 2","Tom"))
-# Pr.append(KCbckend.Project("Proj3","This is Project 3","Pam"))
-
-
+Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+# Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
+# Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
+# Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
+# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# # In[1]:
+# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
+# Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+    
         
 # if __name__ == "__main__":
 #     import sys

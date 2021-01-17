@@ -10,7 +10,7 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from . import GUI_MessageBoxKC as msgbox
-
+from . import GUI_SPA as guispa
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -120,11 +120,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "Add Data (GC gas /GC INFERNO)"))
+        self.setWindowTitle(_translate("MainWindow", "Add Data (SPA)"))
         self.label_timeformat.setText(_translate("MainWindow", "HH:MM:SS")) 
         self.label_TimeDelay.setText(_translate("MainWindow", "Time Delay (+/- from SCADA)"))   
         
-        self.Title.setText(_translate("MainWindow", "Add Data (GC gas /GC INFERNO)"))
+        self.Title.setText(_translate("MainWindow", "Add Data (SPA)"))
         self.label_comments.setText(_translate("MainWindow", "Comments"))
         self.label_file.setText(_translate("MainWindow", "File"))
         self.Button_AddData.setText(_translate("MainWindow", "ADD DATA"))
@@ -141,7 +141,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #print("default_attributes =",self.default_attributes)
         if self.default_attributes=="":
             delay="00:03:00"
-            comments="This is GC_{}".format(self.n_db_loaded)
+            comments="This is SPA_{}".format(self.n_db_loaded)
             self.default_attributes=(delay,comments)
         # print("default_attributes ",self.default_attributes)
 
@@ -158,7 +158,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.text_filepath.setText(file_name[0])
 
     def add_data(self):
-
+        
+        
+        
         self.line_TimeDelay.setText(self.default_attributes[0])
         self.text_comments.setText(self.default_attributes[-1])
         if self.text_filepath=="":
