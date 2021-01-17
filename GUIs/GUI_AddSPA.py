@@ -10,11 +10,11 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from . import GUI_MessageBoxKC as msgbox
-from . import GUI_SPA as guispa
+# from . import GUI_SPA as guispa
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,n_db_loaded):
+    def __init__(self,n_db_loaded):#Pr_list,point_route,n_db_loaded):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
 
@@ -22,6 +22,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.datafile_info=""
         self.default_attributes=""
         
+        # self.Pr_list=Pr_list
+        # self.point_route=point_route
+        # self.point_selected=Pr_list[point_route[0]].seasons[point_route[1]].experiments[point_route[2]].points[point_route[3]]
         self.finish_window=False
     
     def closeEvent(self, event):
@@ -158,9 +161,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.text_filepath.setText(file_name[0])
 
     def add_data(self):
-        
-        
-        
+               
         self.line_TimeDelay.setText(self.default_attributes[0])
         self.text_comments.setText(self.default_attributes[-1])
         if self.text_filepath=="":
@@ -168,7 +169,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.datafile_info=""
         else:
             self.datafile_info=[self.text_filepath.toPlainText(),self.line_TimeDelay.text(),self.text_comments.toPlainText()]
-            print(self.datafile_info)
+            # print(self.datafile_info)
             self.cancel_button()
 
     def cancel_button(self):

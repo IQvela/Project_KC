@@ -327,6 +327,7 @@ class Message_popup:
         self.msg=QMessageBox()
         self.msg.setWindowTitle(m_title)
         self.msg.setText(m_text)
+        self.ret="No"
         if m_type=="Error":
             self.msgError()            
         elif m_type=="Warning":
@@ -348,8 +349,15 @@ class Message_popup:
     def msgYesNo(self): 
         self.msg.setIcon(QMessageBox.Question)
         self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        self.msg.buttonClicked.connect(self.button_selected)
         #self.msg.standardButton()
         return self.msg.exec_()    
+
+    def button_selected(self,i):
+        if i.text()=="&Yes":
+            self.ret="Yes"
+        else:
+            self.ret="No"
     
 #if __name__ == "__main__":
 # import sys

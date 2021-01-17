@@ -196,7 +196,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.datafile_info=""
         else:        
             self.datafile_info=[self.text_filepath.toPlainText(),delay,self.text_comments.toPlainText()]
-            print(self.datafile_info)
+            # print(self.datafile_info)
             self.cancel_button()
 
     def cancel_button(self):

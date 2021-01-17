@@ -511,7 +511,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         while ui_openexperiment.finish_window==False:
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.05)  
-            
+        
+        self.populate_tree() 
     #opens the window to analysis of the data------------------------------------------------------------------------------    
     def data_analysis(self):
         pass

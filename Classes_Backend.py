@@ -15,18 +15,18 @@ import GUIs.GUI_SPA as guiSPA
 
 # #Function which defines the filename #this should come from a explorer window to select the file
 #later the file must to be saved in the backup folder
-def define_file(dataname):
+# def define_file(dataname):
 
-     if dataname=="SCADA":
-         filename="190201 trend.XLS"
+#      if dataname=="SCADA":
+#          filename="190201 trend.XLS"
 
-     elif dataname=="GC1":
-         filename="190201_mGC.xlsx"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
+#      elif dataname=="GC1":
+#          filename="190201_mGC.xlsx"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
      
-     elif dataname=="SPA":
-         filename="430_190201_G_190123.xls"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
+#      elif dataname=="SPA":
+#          filename="430_190201_G_190123.xls"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
          
-     return filename
+#      return filename
  
     
 # In[1]:
@@ -266,7 +266,7 @@ class Experiment(timeinterval):
         #The data can be read from a predefined excel sheet format
         #the different data should be stored in a dictionary (with the data_type string as the key)
         #each experiment can have several time intervals (to check)
-        
+        data_addedtolist=False
         if data_type=="SCADA":
             self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename)) #it must to search all the files which are within the dates given (maybe not)     
         elif data_type=="GC1" or data_type=="INFERNO": #The time interval of the GC corresponds with the whole time registered in the file 
@@ -274,14 +274,34 @@ class Experiment(timeinterval):
         elif data_type=="SPA":
             self.data_experiment[data_type].append(self.get_data_fromfile(data_type,filename))
         
-        if len(self.data_experiment[data_type][-1].index)>0: #check if the last dataframe added has data on it
-            d_min,d_max=self.get_dates_db(data_type, -1) #-1 because always must to take the last db loaded for a given data_type        
-            self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,delay,comments))
-            #at the end the data_experiment must to be rearranged as a function of time (the key must to be the time and the values the different databases at that time)
-            #this is in order to build the "concept" table 
+        if data_type in ["SCADA","GC1","INFERNO"]:
+            if len(self.data_experiment[data_type][-1].index)>0: #check if the last dataframe added has data on it
+                data_addedtolist=True
+        elif data_type in ["SPA"]:
+            if len(self.data_experiment[data_type][-1].items())>0: #check if the last dataframe added has data on it
+                data_addedtolist=True
+
+        if data_addedtolist: #check if the last dataframe added has data on it
+            d_min,d_max=self.get_dates_db(data_type, -1) #-1 because always must to take the last db loaded for a given data_type            
+
+            if len(self.data_experiment_info[data_type])==0:       
+                self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,delay,comments))                           
+            else:
+                d_min_list=[datetime.strptime(d_info[1],"%Y-%m-%d %H:%M:%S") for d_info in self.data_experiment_info[data_type]]
+                d_max_list=[datetime.strptime(d_info[2],"%Y-%m-%d %H:%M:%S") for d_info in self.data_experiment_info[data_type]]
+                if datetime.strptime(d_min,"%Y-%m-%d %H:%M:%S")>=min(d_min_list) or datetime.strptime(d_max,"%Y-%m-%d %H:%M:%S")<=max(d_max_list):
+                    yesorno=guiSPA.Message_popup("YesorNo","Time intervals overlapped","The time interval of the new data is overlapping with one of the databases already uploaded. keep it anyway?")
+                    if yesorno.ret=="Yes":
+                        self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,delay,comments))  
+                    else:
+                        del self.data_experiment[data_type][-1]
+                        guiSPA.Message_popup("Warning","Data overlapped","Data times overlapped. Check the file and upload it again")
+                                              
         else:
-            del self.data_experiment[data_type][-1] #deletes the last element becuase the times dont interesect
-            guiSPA.Message_popup("Error","Time interval error","The time of the experiment does not interect with the time of the data in the file selected. Please check the times") 
+            del self.data_experiment[data_type][-1] #deletes the last element because the times dont interesect
+            guiSPA.Message_popup("Error","Time interval error","The time interval of the experiment does not intersect with the time interval of the data in the file selected. Please check the times") 
+
+
     
     def get_data_fromfile(self,data_type,filename):#, dates=None): #it should be added a list "dates" for the cases where there are several measurement sets (e.g. GC)
         
@@ -292,6 +312,10 @@ class Experiment(timeinterval):
             d_t0=ExcelTable[name_timecolumn]>=self.date_ini ## d_t0=ExcelTable["Acquisition Date & Time"].dt.strftime("%H:%M")>t0 (when t0 is in HH:MM format)
             d_t1=ExcelTable[name_timecolumn]<=self.date_end
             Table_timeinterval=ExcelTable[d_t0 & d_t1]
+            
+            # if len(Table_timeinterval.index)==0:  #check if the dataframe has any values on it (all depends on the dates provided)
+            #     Table_timeinterval=""
+                
             return Table_timeinterval
         
         elif data_type=="GC1" or data_type=="INFERNO":#this must to be checkd because it could exist several measurements sets within the experiment time  
@@ -301,6 +325,10 @@ class Experiment(timeinterval):
             d_t0=ExcelTable[name_timecolumn]>=self.date_ini #dates[0]  #It must to be read the whole file (this is why it is important tha the experiment dates be wider enough)
             d_t1=ExcelTable[name_timecolumn]<=self.date_end #dates[1]     
             Table_timeinterval=ExcelTable[d_t0 & d_t1]
+            
+            # if len(Table_timeinterval.index)==0:
+            #     Table_timeinterval=""
+            
             return Table_timeinterval
 
         elif data_type=="SPA":#this must to be checked because it could exist several measurements sets within the experiment time  
@@ -316,6 +344,8 @@ class Experiment(timeinterval):
                 sheets_dates=spa_win.sh_dates
             except:
                 guiSPA.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
+                Table_timeinterval={}
+                return Table_timeinterval
                 #sheets_dates is a dictionary where the key is the time => dict["YYY-MM-DD HH:MM:SS"]. the keys must be sorted by the time
                 #the value is a list. list[0]=GPX, list[1]=FR/CR, list[2]=sheet_name of R. (R is the repetition of the GC, X is the spa sample number, P is the point) 
             else: #read the excel tables from the respective files
@@ -333,10 +363,10 @@ class Experiment(timeinterval):
         d_min=d_max="ND"
         if db in ["SCADA","GC1","INFERNO"]:
             d_min=self.data_experiment[db][index][Experiment.name_timecolumn[db]].min()
-            print(self.data_experiment[db][index])
+            #print(self.data_experiment[db][index])
             d_min=d_min.strftime("%Y-%m-%d %H:%M:%S")
             d_max=self.data_experiment[db][index][Experiment.name_timecolumn[db]].max()
-            print(d_max)
+            #print(d_max)
             d_max=d_max.strftime("%Y-%m-%d %H:%M:%S")
         elif db=="SPA":
             d_spa_tot=[datetime.strptime(k, "%Y-%m-%d %H:%M:%S") for k in self.data_experiment[db][index].keys()]

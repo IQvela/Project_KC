@@ -272,11 +272,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_dataloaded.setObjectName("label_dataloaded")
         
         self.label_Selectdatatype = QtWidgets.QLabel(self.centralwidget)
-        self.label_Selectdatatype.setGeometry(QtCore.QRect(670, 250, 191, 21))
+        self.label_Selectdatatype.setGeometry(QtCore.QRect(960, 30, 100, 21))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(10)
         self.label_Selectdatatype.setFont(font)
-        
+
+        self.label_status = QtWidgets.QLabel(self.centralwidget)
+        self.label_status.setGeometry(QtCore.QRect(580, 340, 250, 21))#580, 290, 100, 40
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        self.label_status.setFont(font)        
+
 
         #TextBoxes---------------------------------------------------------------------------------
         self.text_name = QtWidgets.QTextEdit(self.centralwidget)
@@ -326,12 +333,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(10)
         self.text_bed.setFont(font)
 
-        self.tex_comments = QtWidgets.QTextEdit(self.centralwidget)
-        self.tex_comments.setGeometry(QtCore.QRect(160, 290, 301, 70))
+        self.text_comments = QtWidgets.QTextEdit(self.centralwidget)
+        self.text_comments.setGeometry(QtCore.QRect(160, 290, 301, 70))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.tex_comments.setFont(font)
-        self.tex_comments.setObjectName("tex_comments")
+        self.text_comments.setFont(font)
+        self.text_comments.setObjectName("text_comments")
 
         
         #Buttons----------------------------------------------------------------------------------
@@ -339,7 +346,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_Modifyattrib.setGeometry(QtCore.QRect(470, 80, 80, 50))#160, 80, 301, 31
         font = QtGui.QFont()
         font.setPointSize(9)
-        self.Button_Modifyattrib.setFont(font)        
+        self.Button_Modifyattrib.setFont(font) 
+        self.Button_Modifyattrib.clicked.connect(self.modify_attrib)
         
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(840, 290, 100, 40))
@@ -466,7 +474,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         self.label_dataloaded.setText(_translate("MainWindow", "Data Loaded"))
         self.label_pointsavailable.setText(_translate("MainWindow", "POINTS AVAILABLE"))
-        self.label_Selectdatatype.setText(_translate("MainWindow", "Select Data"))
+        self.label_Selectdatatype.setText(_translate("MainWindow", "Select Data:"))
+        self.label_status.setText(_translate("MainWindow", "Status: Ready!"))
 
         self.Button_Modifyattrib.setText(_translate("MainWindow", "Modify Exp.\nAttributes"))
         self.Button_AnalyseData.setText(_translate("MainWindow", "ANALYZE DATA"))
@@ -510,18 +519,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menu1.setTitle(_translate("MainWindow", "1"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
 
-        text_boxes=[(self.text_name,self.exp_selected.exp_name),
-                    (self.text_DateStart,self.exp_selected.date_ini.split(" ")[0]),
-                    (self.text_TimeStart,self.exp_selected.date_ini.split(" ")[1]),
-                    (self.text_DateEnd,self.exp_selected.date_end.split(" ")[0]),
-                    (self.text_TimeEnd,self.exp_selected.date_end.split(" ")[1]),
-                    (self.text_fuel,self.exp_selected.fuel_type),
-                    (self.text_bed,self.exp_selected.bed_type),
-                    (self.tex_comments,self.exp_selected.exp_comments)]
-
-        for tbox in text_boxes:
-            tbox[0].setText(tbox[1])
-            tbox[0].setEnabled(False)#setReadOnly(True)#
+        self.populate_attributes()
 
         #List Widget. Data bases types
         #db_types=["SCADA","GC1","INFERNO","SPA"]
@@ -531,6 +529,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
         self.populate_pointstable()
         self.populate_dbtable()
+
+    def populate_attributes(self):
+        text_boxes=[(self.text_name,self.exp_selected.exp_name),
+                    (self.text_DateStart,self.exp_selected.date_ini.split(" ")[0]),
+                    (self.text_TimeStart,self.exp_selected.date_ini.split(" ")[1]),
+                    (self.text_DateEnd,self.exp_selected.date_end.split(" ")[0]),
+                    (self.text_TimeEnd,self.exp_selected.date_end.split(" ")[1]),
+                    (self.text_fuel,self.exp_selected.fuel_type),
+                    (self.text_bed,self.exp_selected.bed_type),
+                    (self.text_comments,self.exp_selected.exp_comments)]
+
+        for tbox in text_boxes:
+            tbox[0].setText(tbox[1])
+            tbox[0].setEnabled(False)#setReadOnly(True)#        
 
     #Method that populates the tablewidget_points with the info of the points that have been registered to this experiment
     def populate_pointstable(self):            
@@ -559,11 +571,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     #add new databases to the list
     def add_data(self): #needs to be created a list to pick up the database type
+        
         if len(self.list_types.selectedIndexes())==0 or len(self.list_types.selectedIndexes())>1:
             msgbox.Message_popup("Warning","No Data","Please select one data type from the list")
         else:
+            self.label_status.setText("Status: Adding New Data...")
             data_type=self.list_types.selectedIndexes()[0].data()
-            #print(data_type)
+            N_dbloaded_0=len(self.exp_selected.data_experiment_info[data_type]) #Number of databases of the data_type already loaded
+            print(N_dbloaded_0)
             if data_type=="SCADA":
                 ui_addscada=gui_addscada.Ui_MainWindow(len(self.exp_selected.data_experiment[data_type]))
                 ui_addscada.setupUi()
@@ -575,28 +590,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 if ui_addscada.datafile_info!="" and ui_addscada.text_filepath!="":
                     try:
                         self.exp_selected.add_data(data_type,ui_addscada.datafile_info[0],ui_addscada.datafile_info[1],ui_addscada.datafile_info[2])
-                        d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][1], "%Y-%m-%d %H:%M:%S")
-                        d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][2], "%Y-%m-%d %H:%M:%S")
-                        d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
-                        d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
-                        if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
-                            r=self.tableWidget_db.rowCount()
-                            self.tableWidget_db.insertRow(r)                    
-                            for c in range(self.tableWidget_db.columnCount()):
+                        N_dbloaded=len(self.exp_selected.data_experiment[data_type])
+                        print(N_dbloaded)
+                        if N_dbloaded>N_dbloaded_0:
+                            d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][1], "%Y-%m-%d %H:%M:%S")
+                            d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][2], "%Y-%m-%d %H:%M:%S")
+                            d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
+                            d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
+                            if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
                                 r=self.tableWidget_db.rowCount()
-                                item=QtWidgets.QTableWidgetItem()
-                                self.tableWidget_db.setItem(r-1, c, item)
-                                
-                                item=self.tableWidget_db.item(r-1,c)
-                                item.setText(self.exp_selected.data_experiment_info[data_type][-1][c])
-                            msgbox.Message_popup("Info","Data Added", "Data succesfully added")
-                        else:
-                            del self.exp_selected.data_experiment_info[data_type][-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
-                            msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not interesect with the one of the experiment, please check the times and upload again the file")    
+                                self.tableWidget_db.insertRow(r)                    
+                                for c in range(self.tableWidget_db.columnCount()):
+                                    r=self.tableWidget_db.rowCount()
+                                    item=QtWidgets.QTableWidgetItem()
+                                    self.tableWidget_db.setItem(r-1, c, item)
+                                    
+                                    item=self.tableWidget_db.item(r-1,c)
+                                    item.setText(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][c])
+                                msgbox.Message_popup("Info","Data Added", "Data succesfully added")
+                            else:
+                                del self.exp_selected.data_experiment[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                del self.exp_selected.data_experiment_info[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not interesect with the one of the experiment, please check the times and upload again the file")    
                     except:
                         msgbox.Message_popup("Error","Data Error", "An error ocurred while getting the data from the file. Please check the dates and/or the file and upload it again") 
             
-            if data_type=="GC1" or data_type=="INFERNO":
+            elif data_type=="GC1" or data_type=="INFERNO":
                 ui_addgc=gui_addgc.Ui_MainWindow(len(self.exp_selected.data_experiment[data_type]))
                 ui_addgc.setupUi()
                 ui_addgc.show()            
@@ -607,28 +626,68 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 if ui_addgc.datafile_info!="" and ui_addgc.text_filepath!="":
                     try:
                         self.exp_selected.add_data(data_type,ui_addgc.datafile_info[0],ui_addgc.datafile_info[1],ui_addgc.datafile_info[2])
-                        d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][1], "%Y-%m-%d %H:%M:%S")
-                        d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][2], "%Y-%m-%d %H:%M:%S")
-                        d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
-                        d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
-                        if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
-                            r=self.tableWidget_db.rowCount()
-                            self.tableWidget_db.insertRow(r)                    
-                            for c in range(self.tableWidget_db.columnCount()):
+                        N_dbloaded=len(self.exp_selected.data_experiment[data_type])
+                        if N_dbloaded>N_dbloaded_0:
+                            d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][1], "%Y-%m-%d %H:%M:%S")
+                            d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][2], "%Y-%m-%d %H:%M:%S")
+                            d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
+                            d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
+                            if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
                                 r=self.tableWidget_db.rowCount()
-                                item=QtWidgets.QTableWidgetItem()
-                                self.tableWidget_db.setItem(r-1, c, item)
-                                
-                                item=self.tableWidget_db.item(r-1,c)
-                                item.setText(self.exp_selected.data_experiment_info[data_type][-1][c])
-                            msgbox.Message_popup("Info","Data Added", "Data succesfully added")
-                        else:
-                            del self.exp_selected.data_experiment_info[data_type][-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
-                            msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not interesect with the one of the experiment, please check the times and upload again the file")    
+                                self.tableWidget_db.insertRow(r)                    
+                                for c in range(self.tableWidget_db.columnCount()):
+                                    r=self.tableWidget_db.rowCount()
+                                    item=QtWidgets.QTableWidgetItem()
+                                    self.tableWidget_db.setItem(r-1, c, item)
+                                    
+                                    item=self.tableWidget_db.item(r-1,c)
+                                    item.setText(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][c])
+                                msgbox.Message_popup("Info","Data Added", "Data succesfully added")
+                            else:
+                                del self.exp_selected.data_experiment[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                del self.exp_selected.data_experiment_info[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not interesect with the one of the experiment, please check the times and upload again the file")    
                     except:
                         msgbox.Message_popup("Error","Data Error", "An error ocurred while getting the data from the file. Please check the dates and/or the file and upload it again") 
             
-
+            elif data_type=="SPA":
+                ui_addspa=gui_addspa.Ui_MainWindow(len(self.exp_selected.data_experiment[data_type]))
+                ui_addspa.setupUi()
+                ui_addspa.show()            
+                while ui_addspa.finish_window==False:
+                    QtCore.QCoreApplication.processEvents()
+                    time.sleep(0.05)          
+                
+                if ui_addspa.datafile_info!="" and ui_addspa.text_filepath!="":
+                    try:
+                        self.exp_selected.add_data(data_type,ui_addspa.datafile_info[0],ui_addspa.datafile_info[1],ui_addspa.datafile_info[2])
+                        N_dbloaded=len(self.exp_selected.data_experiment[data_type])
+                        if N_dbloaded>N_dbloaded_0:
+                            d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][1], "%Y-%m-%d %H:%M:%S")
+                            d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][2], "%Y-%m-%d %H:%M:%S")
+                            d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
+                            d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
+                            if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
+                                r=self.tableWidget_db.rowCount()
+                                self.tableWidget_db.insertRow(r)                    
+                                for c in range(self.tableWidget_db.columnCount()):
+                                    r=self.tableWidget_db.rowCount()
+                                    item=QtWidgets.QTableWidgetItem()
+                                    self.tableWidget_db.setItem(r-1, c, item)
+                                    
+                                    item=self.tableWidget_db.item(r-1,c)
+                                    item.setText(self.exp_selected.data_experiment_info[data_type][N_dbloaded-1][c])
+                                msgbox.Message_popup("Info","Data Added", "Data succesfully added")
+                            else:
+                                del self.exp_selected.data_experiment[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                del self.exp_selected.data_experiment_info[data_type][N_dbloaded-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                                msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not intersect with the one of the experiment, please check the times and upload again the file")    
+                    except:
+                        msgbox.Message_popup("Error","Data Error", "An error ocurred while getting the data from the file. Please check the dates and/or the file and upload it again") 
+            
+            self.label_dataloaded.setText("Data Loaded: {}".format(self.tableWidget_db.rowCount()))
+            self.label_status.setText("Status: Ready!")
+            
             
     def new_point(self):
         default_attributes=""
@@ -645,6 +704,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def delete_point(self):
         pass
+
+    def modify_attrib(self):
+        self.label_status.setText("Status: Modifying Attributes...")
+        if self.text_name.isEnabled()==True:
+            self.exp_selected.exp_name=self.text_name.toPlainText()
+            self.exp_selected.date_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
+            self.exp_selected.date_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()
+            self.exp_selected.fuel_type=self.text_fuel.toPlainText()
+            self.exp_selected.bed_type=self.text_bed.toPlainText()
+            self.exp_selected.exp_comments=self.text_comments.toPlainText()
+            
+            self.populate_attributes()
+            self.label_status.setText("Status: Ready...")
+        else:
+            text_boxes=[self.text_name,self.text_DateStart,self.text_TimeStart,self.text_DateEnd,self.text_TimeEnd,self.text_fuel,self.text_bed,self.text_comments]
+            for t_box in text_boxes:
+                t_box.setEnabled(True)                    
+        
 
 
 # if __name__ == "__main__":
