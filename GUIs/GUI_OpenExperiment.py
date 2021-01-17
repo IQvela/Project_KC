@@ -15,6 +15,7 @@ from . import GUI_MessageBoxKC as msgbox
 from . import GUI_OpenPoint as gui_openpoint
 from . import GUI_AddSCADA as gui_addscada
 from . import GUI_AddGC as gui_addgc
+from . import GUI_AddSPA as gui_addspa
 # import Classes_Backend as KCbckend
 
 
