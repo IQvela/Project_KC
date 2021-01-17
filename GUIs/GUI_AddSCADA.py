@@ -9,16 +9,16 @@
 
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from . import GUI_MessageBoxKC as msgbox
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,n_scada_loaded):
+    def __init__(self,n_db_loaded):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
 
-        self.n_scada_loaded=n_scada_loaded #number of scada databases loaded
-        self.scada_info=""
+        self.n_db_loaded=n_db_loaded #number of scada databases loaded
+        self.datafile_info=""
         self.default_attributes=""
         
         self.finish_window=False
@@ -168,7 +168,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if self.default_attributes=="":
             d_ini="2021-01-22 10:00:00"
             d_end="2021-01-22 12:00:00"
-            comments="This is SCADA_{}".format(self.n_scada_loaded)
+            comments="This is SCADA_{}".format(self.n_db_loaded)
             self.default_attributes=(d_ini,d_end,comments)
         # print("default_attributes ",self.default_attributes)
 
@@ -191,9 +191,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         delay="00:00:00"
         self.text_comments.setText(self.default_attributes[-1])
-        self.scada_info=[self.text_filepath.toPlainText(),delay,self.text_comments.toPlainText()]
-        print(self.scada_info)
-        self.cancel_button()
+        if self.text_filepath=="":
+            msgbox.Message_popup("Error","No file","No file selected. Please select the respective file")
+            self.datafile_info=""
+        else:        
+            self.datafile_info=[self.text_filepath.toPlainText(),delay,self.text_comments.toPlainText()]
+            print(self.datafile_info)
+            self.cancel_button()
 
     def cancel_button(self):
         self.finish_window=True

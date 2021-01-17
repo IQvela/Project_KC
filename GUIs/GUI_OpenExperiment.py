@@ -572,9 +572,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                     QtCore.QCoreApplication.processEvents()
                     time.sleep(0.05)          
                 
-                if ui_addscada.scada_info!="":
+                if ui_addscada.datafile_info!="" and ui_addscada.text_filepath!="":
                     try:
-                        self.exp_selected.add_data(data_type,ui_addscada.scada_info[0],ui_addscada.scada_info[1],ui_addscada.scada_info[2])
+                        self.exp_selected.add_data(data_type,ui_addscada.datafile_info[0],ui_addscada.datafile_info[1],ui_addscada.datafile_info[2])
                         d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][1], "%Y-%m-%d %H:%M:%S")
                         d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][2], "%Y-%m-%d %H:%M:%S")
                         d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
@@ -596,6 +596,39 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                     except:
                         msgbox.Message_popup("Error","Data Error", "An error ocurred while getting the data from the file. Please check the dates and/or the file and upload it again") 
             
+            if data_type=="GC1" or data_type=="INFERNO":
+                ui_addgc=gui_addgc.Ui_MainWindow(len(self.exp_selected.data_experiment[data_type]))
+                ui_addgc.setupUi()
+                ui_addgc.show()            
+                while ui_addgc.finish_window==False:
+                    QtCore.QCoreApplication.processEvents()
+                    time.sleep(0.05)          
+                
+                if ui_addgc.datafile_info!="" and ui_addgc.text_filepath!="":
+                    try:
+                        self.exp_selected.add_data(data_type,ui_addgc.datafile_info[0],ui_addgc.datafile_info[1],ui_addgc.datafile_info[2])
+                        d_ini_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][1], "%Y-%m-%d %H:%M:%S")
+                        d_end_file=datetime.strptime(self.exp_selected.data_experiment_info[data_type][-1][2], "%Y-%m-%d %H:%M:%S")
+                        d_ini_exp=datetime.strptime(self.exp_selected.date_ini, "%Y-%m-%d %H:%M:%S")            
+                        d_end_exp=datetime.strptime(self.exp_selected.date_end, "%Y-%m-%d %H:%M:%S")
+                        if max(d_ini_file,d_ini_exp)<min(d_end_file,d_end_exp): #checks if the timesets of the file and the experiment intersect
+                            r=self.tableWidget_db.rowCount()
+                            self.tableWidget_db.insertRow(r)                    
+                            for c in range(self.tableWidget_db.columnCount()):
+                                r=self.tableWidget_db.rowCount()
+                                item=QtWidgets.QTableWidgetItem()
+                                self.tableWidget_db.setItem(r-1, c, item)
+                                
+                                item=self.tableWidget_db.item(r-1,c)
+                                item.setText(self.exp_selected.data_experiment_info[data_type][-1][c])
+                            msgbox.Message_popup("Info","Data Added", "Data succesfully added")
+                        else:
+                            del self.exp_selected.data_experiment_info[data_type][-1] #deletes the last database added for the data_type evaluated (SCADA,GC1,etc..)
+                            msgbox.Message_popup("Error","Dates error", "The timeframe of the selected file does not interesect with the one of the experiment, please check the times and upload again the file")    
+                    except:
+                        msgbox.Message_popup("Error","Data Error", "An error ocurred while getting the data from the file. Please check the dates and/or the file and upload it again") 
+            
+
             
     def new_point(self):
         default_attributes=""
