@@ -43,13 +43,116 @@ and have the following fuction:</p>
 <li><p>Seasson</p></li>
 <li><p>Experiment</p></li>
 <li><p>Point</p></li>
-<li><p>Time_interval: defines time and all of the above contain this class</p></li>
+<li><p>Time_interval</p></li>
 </ul>
 <div class="figure align-center">
 <img alt="_images/Classes.png" src="_images/Classes.png" />
 </div>
-<p>The data is stored as following:</p>
-<p>insert image data storage</p>
+<p><strong>Summary of the classes</strong></p>
+<p>The following image shows all the classes and its variables and functions:</p>
+<div class="figure align-center">
+<img alt="_images/Classes_details.png" src="_images/Classes_details.png" />
+</div>
+<p><strong>Class timeinterval</strong></p>
+<p>The class timeinterval only contains the data when something starts and ends, as sowhn below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">date_ini</span><span class="p">,</span><span class="n">date_end</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date_ini</span><span class="o">=</span><span class="n">date_ini</span> <span class="c1">#the format should be YYYY-MM-DD HH:MM:SS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date_end</span><span class="o">=</span><span class="n">date_end</span>
+</pre></div>
+</div>
+<p><strong>Class Point</strong></p>
+<p>The class point consist of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">point_name</span><span class="p">,</span><span class="n">point_comments</span><span class="p">,</span><span class="n">point_route</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>including: the point name, comments and the point route (String which contains the indexes of the Project/Season/Experiment/Point)</p>
+<p>and</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">set_point_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">collect_data</span><span class="p">,</span><span class="n">time_type</span><span class="p">,</span><span class="n">date_ini</span><span class="p">,</span><span class="n">date_end</span><span class="p">,</span><span class="n">delay</span><span class="p">,</span><span class="n">db_experiment</span><span class="p">):</span>
+        <span class="c1">#collect_data (str) = type of data to be introduced SCADA,GC1,Inferno,SPA</span>
+        <span class="c1">#time_type (str)= SCADA or GC</span>
+        <span class="c1">#date_ini (str) = initial date of the point</span>
+        <span class="c1">#date_end (str) = end date of the point</span>
+        <span class="c1">#delay (str) = delay in minutes respect the SCADA time (SCADA -&gt; delay=0 minutes)</span>
+        <span class="c1">#db_experiment = dictionary with all the data added to the experiment given by the attribute data_experiment of the Experiment class</span>
+</pre></div>
+</div>
+<p>Also adding the data acquired of the point to the database is needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">update_db_global</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">pnt</span><span class="p">):</span>
+</pre></div>
+</div>
+<p><strong>Class Experiment</strong></p>
+<p>The class Experiment(timeinterval) consist of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">exp_name</span><span class="p">,</span><span class="n">date_ini</span><span class="p">,</span><span class="n">date_end</span><span class="p">,</span><span class="n">fuel_type</span><span class="p">,</span><span class="n">bed_type</span><span class="p">,</span><span class="n">exp_comments</span><span class="p">,</span><span class="n">exp_route</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>including: the experiment name, dates, fuel and sand types, comments and the experiment route (String which contains the indexes of the Project/Season/Experiment)</p>
+<p>and</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">modify_Exp_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">date_ini</span><span class="p">,</span><span class="n">date_end</span><span class="p">,</span><span class="n">fuel_type</span><span class="p">,</span><span class="n">exp_comments</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">add_Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">point_name</span><span class="p">,</span><span class="n">point_description</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_type</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="n">delay</span><span class="p">,</span><span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_data_fromfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_type</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_dates_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">db</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+<span class="c1">#get the maximum and the minimum dates of the files loaded</span>
+<span class="k">def</span> <span class="nf">get_dbnames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">#get the names of the database</span>
+</pre></div>
+</div>
+<p>Also adding nother database to the names list is needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">add_dbtype</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">new_db</span><span class="p">):</span>
+</pre></div>
+</div>
+<p><strong>Class Season</strong></p>
+<p>The class Season consist of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season_name</span><span class="p">,</span><span class="n">season_description</span><span class="p">,</span><span class="n">season_route</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>including: the season name, description and the route (String which contains the indexes of the Project/Season/)</p>
+<p>and</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_Experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">exp_name</span><span class="p">,</span><span class="n">date_ini</span><span class="p">,</span><span class="n">date_end</span><span class="p">,</span><span class="n">fuel_type</span><span class="p">,</span><span class="n">bed_type</span><span class="p">,</span><span class="n">exp_comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">modify_Season_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season_name</span><span class="p">,</span><span class="n">season_description</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">delete_Experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">exp_index</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_dates_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">#get the date of the object given the subclasses that are within it</span>
+<span class="k">def</span> <span class="nf">get_fuel_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">#returns if during the season only use one type of fuel (ex. PE) or different fuel: Mix</span>
+</pre></div>
+</div>
+<p><strong>Class Project</strong></p>
+<p>The class Project consist of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">project_name</span><span class="p">,</span><span class="n">project_description</span><span class="p">,</span><span class="n">project_responsible</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>including: the project name, description, dates, fuel and sand types, seasons, and  route (project_index)</p>
+<p>and</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_Season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season_name</span><span class="p">,</span><span class="n">season_description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">modify_Project_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">project_name</span><span class="p">,</span><span class="n">project_description</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">delete_Season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season_index</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">transfer_Season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">to_project</span><span class="p">,</span><span class="n">season_index_list</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_dates_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">#get the date of the object given the subclasses that are within it</span>
+<span class="k">def</span> <span class="nf">get_fuel_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>Also adding another project to the list if needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">get_numberprojects</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Totalnumberprojects</span>
+
+<span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">modify_numberprojects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">new_number</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">Totalnumberprojects</span><span class="o">=</span><span class="n">new_number</span>
+</pre></div>
+</div>
+<p><strong>Data storage</strong></p>
+<p>The data is stored as the folllowing picture depicts.
+The SCADA data is stored every minute of the day, while the others (GC, inferno, SPA) has a limited timeframe.
+GC and Inferno data (which is also GC data type) can be store one or more minutes, while SPA correspond to only one minute of time.
+Other data will also be able to be stored in the future, but now it is underconstruction.</p>
+<div class="figure align-center">
+<img alt="_images/Data_storage.png" src="_images/Data_storage.png" />
+</div>
 </div>
 
 

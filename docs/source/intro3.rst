@@ -1,14 +1,14 @@
 Structure of GUI
 ============================================
 
-This page summarises the code structure of a GUI.
+This page summarises the code structure of a GUI (class).
 
 
 .. code-block:: python
 
 	class Ui_MainWindow(QtWidgets.QMainWindow):
 
-inside you need to define::
+inside you need to define the innit fuction::
 
 	def __init__(self,n_db_loaded):
 		# define window
@@ -18,12 +18,14 @@ inside you need to define::
 		#define closing window false
 		self.finish_window=False
 
-and also::
+and ::
     
     	def closeEvent(self, event):
 		#define close window
         	self.finish_window=True
         	self.close()
+
+and the main fuction defining the window an its functions::
         
     	def setupUi(self):
 		#define main characteristic window
