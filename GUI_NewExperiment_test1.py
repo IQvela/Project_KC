@@ -232,6 +232,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.comboBox_seasons.setItemText(s_i, _translate("MainWindow", s.season_name))
                 
         if self.index_season_selected!="ND":
+            self.index_season_selected=int(self.index_season_selected)
             self.comboBox_seasons.setCurrentIndex(int(self.index_season_selected))        
             self.write_default_attrib(self.index_season_selected)
         else:

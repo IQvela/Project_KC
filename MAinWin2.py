@@ -389,14 +389,14 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 # Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
         
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui_Mother = Ui_MainWindow()
-    ui_Mother.setupUi()
-    ui_Mother.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui_Mother = Ui_MainWindow()
+#     ui_Mother.setupUi()
+#     ui_Mother.show()
+#     sys.exit(app.exec_())
 
-# ui_Mother=Ui_MainWindow()
-# ui_Mother.setupUi()
-# ui_Mother.show()
+ui_Mother=Ui_MainWindow()
+ui_Mother.setupUi()
+ui_Mother.show()

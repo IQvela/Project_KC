@@ -327,7 +327,7 @@ class Message_popup:
         self.msg=QMessageBox()
         self.msg.setWindowTitle(m_title)
         self.msg.setText(m_text)
-        self.ret="No"
+        self.response="No"
         if m_type=="Error":
             self.msgError()            
         elif m_type=="Warning":
@@ -355,9 +355,9 @@ class Message_popup:
 
     def button_selected(self,i):
         if i.text()=="&Yes":
-            self.ret="Yes"
+            self.response="Yes"
         else:
-            self.ret="No"
+            self.response="No"
     
 #if __name__ == "__main__":
 # import sys

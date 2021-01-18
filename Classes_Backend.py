@@ -12,6 +12,7 @@ import time
 from PyQt5 import QtCore,QtGui,QtWidgets
 
 import GUIs.GUI_SPA as guiSPA
+import GUIs.GUI_MessageBoxKC as msgbox
 
 # #Function which defines the filename #this should come from a explorer window to select the file
 #later the file must to be saved in the backup folder
@@ -137,7 +138,7 @@ class Point:
             #    continue
             if len(db_experiment[k])==0:
                 #pop up a message saying that the database k is missing
-                guiSPA.Message_popup("Error","Missed Database", f"the database {k} is missing, please add it to the experiment")
+                msgbox.Message_popup("Error","Missed Database", f"the database {k} is missing, please add it to the experiment")
                 continue
             if k in ["SCADA","GC1","INFERNO"]: #this must to be taken from a function (to generalize for the case when data_type!=automatic) 
                 d_t0,d_t1=None,None
@@ -147,7 +148,7 @@ class Point:
                     d_t0=db[Experiment.name_timecolumn[k]]>=self.date_ini+timedelta(minutes=delay_db[k]) 
                     d_t1=db[Experiment.name_timecolumn[k]]<=self.date_end+timedelta(minutes=delay_db[k])
                     if all(d_t0==False) and all(d_t1==False): #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
-                        guiSPA.Message_popup("Warning","time error", 
+                        msgbox.Message_popup("Warning","time error", 
                                               f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")                                
                         continue                                                    
 
@@ -181,7 +182,7 @@ class Point:
                                 break # maybe not <- the loop must continue because it must allow the case when 2 SPA syringes are used (both are marked at the same hour)                        
                     
                     #at the end, all the list fields should be joined together into just one list (not a list of lists as it is right know (one list for each SPA file))  
-                    #guiSPA.Message_popup("Info","SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
+                    #msgbox.Message_popup("Info","SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
                     self.time_db_pnt[k].append(SPA_samples)                            
                         
                     if len(SPA_samples)>0:
@@ -189,7 +190,7 @@ class Point:
                     #else:
                         #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1]
                         #print(f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
-                        # guiSPA.Message_popup("Error","time error",
+                        # msgbox.Message_popup("Error","time error",
                         #                      f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
 
                         #continue                            
@@ -290,16 +291,16 @@ class Experiment(timeinterval):
                 d_min_list=[datetime.strptime(d_info[1],"%Y-%m-%d %H:%M:%S") for d_info in self.data_experiment_info[data_type]]
                 d_max_list=[datetime.strptime(d_info[2],"%Y-%m-%d %H:%M:%S") for d_info in self.data_experiment_info[data_type]]
                 if datetime.strptime(d_min,"%Y-%m-%d %H:%M:%S")>=min(d_min_list) or datetime.strptime(d_max,"%Y-%m-%d %H:%M:%S")<=max(d_max_list):
-                    yesorno=guiSPA.Message_popup("YesorNo","Time intervals overlapped","The time interval of the new data is overlapping with one of the databases already uploaded. keep it anyway?")
-                    if yesorno.ret=="Yes":
+                    yesorno=msgbox.Message_popup("YesorNo","Time intervals overlapped","The time interval of the new data is overlapping with one of the databases already uploaded. keep it anyway?")
+                    if yesorno.response=="Yes":
                         self.data_experiment_info[data_type].append((data_type+"_"+str(len(self.data_experiment[data_type])-1),d_min,d_max,delay,comments))  
                     else:
                         del self.data_experiment[data_type][-1]
-                        guiSPA.Message_popup("Warning","Data overlapped","Data times overlapped. Check the file and upload it again")
+                        msgbox.Message_popup("Warning","Data overlapped","Data times overlapped. Check the file and upload it again")
                                               
         else:
             del self.data_experiment[data_type][-1] #deletes the last element because the times dont interesect
-            guiSPA.Message_popup("Error","Time interval error","The time interval of the experiment does not intersect with the time interval of the data in the file selected. Please check the times") 
+            msgbox.Message_popup("Error","Time interval error","The time interval of the experiment does not intersect with the time interval of the data in the file selected. Please check the times") 
 
 
     
@@ -343,7 +344,7 @@ class Experiment(timeinterval):
             try:
                 sheets_dates=spa_win.sh_dates
             except:
-                guiSPA.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
+                msgbox.Message_popup("Error","Error reading SPA table","The sheets were not read from SPA file")
                 Table_timeinterval={}
                 return Table_timeinterval
                 #sheets_dates is a dictionary where the key is the time => dict["YYY-MM-DD HH:MM:SS"]. the keys must be sorted by the time

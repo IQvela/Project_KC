@@ -276,14 +276,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # font2=QtGui.QFont()
         # font2.setItalic(True)
         # font2.setPointSize(9)        
-        for s in self.project_selected.seasons:
-            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
-            # for c in range(7):
-            #     item_0.setFont(c,font1)
-            for e in s.experiments:
-                item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-                for pnt in e.points:
-                    item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
+        # for s in self.project_selected.seasons:
+        #     item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
+        #     # for c in range(7):
+        #     #     item_0.setFont(c,font1)
+        #     for e in s.experiments:
+        #         item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
+        #         for pnt in e.points:
+        #             item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
         
         # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
         # item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
@@ -372,14 +372,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         
         ncols=self.treeWidget.columnCount()
+
         # print(f"number of columns:{ncols}")
-        
-        # for s in self.project_selected.seasons:
-        #     item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
-        #     for e in s.experiments:
-        #         item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
-        #         for pnt in e.points:
-        #             item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
+        self.treeWidget.clear()
+        for s in self.project_selected.seasons:
+            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget) #creates high hierarchical entry
+            # for c in range(7):
+            #     item_0.setFont(c,font1)
+            for e in s.experiments:
+                item_1 = QtWidgets.QTreeWidgetItem(item_0) #sub entry
+                for pnt in e.points:
+                    item_2 = QtWidgets.QTreeWidgetItem(item_1) #sub-sub-entry
         
         
         font1=QtGui.QFont()
@@ -451,8 +454,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
     #Opens Add Experiment window------------------------------------------------------------------------------------------
     def new_experiment(self):
-        ind_season_selected=self.treeWidget.selectedIndexes()[-1].data().split("/")[0]
-        n_seasons0=len(self.project_selected.seasons)#total number fo seasons of the selected project
+        try:
+            ind_season_selected=self.treeWidget.selectedIndexes()[-1].data().split("/")[0]
+        except:
+            ind_season_selected="0"
+        n_seasons0=len(self.project_selected.seasons)#total number of seasons of the selected project
         print(f"season_selected:{ind_season_selected}")
         default_attributes=""
         ui_newexperiment=gui_newexperiment.Ui_MainWindow(self.project_selected,default_attributes,ind_season_selected)
@@ -473,10 +479,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 (exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)=ui_newexperiment.exp_attributes
                 # print("creating the experiment object. attributes:",ui_newexperiment.exp_attributes)
                 self.project_selected.seasons[ind_season_selected].add_Experiment(exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)
-                if len(self.project_selected.seasons)>n_seasons0:
-                    item=QtWidgets.QTreeWidgetItem(self.treeWidget)
-                if len(self.project_selected.seasons[ind_season_selected].experiments)>n_exp0:
-                    item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
+                # if len(self.project_selected.seasons)>n_seasons0:
+                #     item=QtWidgets.QTreeWidgetItem(self.treeWidget)
+                # if len(self.project_selected.seasons[ind_season_selected].experiments)>n_exp0:
+                #     item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
                 self.populate_tree()
                 print("tree populated")
             else:
@@ -484,8 +490,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
     #Delete experiment---------------------------------------------------------------------------------------------------- 
     def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment
-        pass
-    
+        try:
+            exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+        except:
+            msgbox.Message_popup("Error","Error","Please select an Experiment")
+        else:
+            if len(exp_selected.split("/"))<2 or len(exp_selected.split("/"))>3:
+                msgbox.Message_popup("Error","Error","Please select an Experiment row")
+            else:
+                season_selected=int(exp_selected.split("/")[0])
+                exp_selected=int(exp_selected.split("/")[1])
+                
+                yesorno=msgbox.Message_popup("YesorNo","Delete Experiment", "Are you sure you want to delete the selected experiment? Note: All data uploaded to this entry will be deleted (not the files)")
+                if yesorno.response=="Yes":
+                    del self.Pr_list[self.ind_pr_selected].seasons[season_selected].experiments[exp_selected]
+                    self.populate_tree()
+                    item=self.treeWidget.topLevelItem(season_selected)
+                    self.treeWidget.expandItem(item)
+
     #Opens window Experiment---------------------------------------------------------------------------------------------
     def open_experiment(self):        
         #exp_selected1=self.treeWidget.selectedItems()
@@ -549,16 +571,16 @@ for p in range(0,N_P):
 
         
         
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     ui = Ui_MainWindow(Pr[1])
-#     ui.setupUi()
-#     ui.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ui = Ui_MainWindow(Pr,1)
+    ui.setupUi()
+    ui.show()
+    sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow(Pr,1)
-ui.setupUi()
+# ui=Ui_MainWindow(Pr,1)
+# ui.setupUi()
 
-ui.show()
+# ui.show()
