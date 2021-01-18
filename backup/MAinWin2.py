@@ -21,12 +21,11 @@ import GUIs.GUI_MessageBoxKC as msgbox
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
-    
+    Table_Project_headers=["Index","Project Name","Timeframe","Description","Responsible"]
     def __init__(self):
         #self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.Table_Project_headers=["Index","Project Name","Timeframe","Description","Responsible"]
 
     def closeEvent(self, event):
         self.finish_window=True
@@ -216,7 +215,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Table_Project_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers) #disable text editing
         #self.Table_Project_list.setUpdatesEnabled(False)
         
-        self.Table_Project_list.setColumnCount(len(self.Table_Project_headers)) #number of columns
+        self.Table_Project_list.setColumnCount(len(Ui_MainWindow.Table_Project_headers)) #number of columns
         self.Table_Project_list.setRowCount(len(Pr)) #number of rows --- need to change by list length
         
         # #vertical headers
@@ -225,9 +224,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #     self.Table_Project_list.setVerticalHeaderItem(i, item)
 
         #horizontal header
-        # for i in range(self.Table_Project_list.columnCount()):
-        #     item = QtWidgets.QTableWidgetItem()
-        #     self.Table_Project_list.setHorizontalHeaderItem(i, item)
+        for i in range(self.Table_Project_list.columnCount()):
+            item = QtWidgets.QTableWidgetItem()
+            self.Table_Project_list.setHorizontalHeaderItem(i, item)
 
         #other table defs
         self.Table_Project_list.horizontalHeader().setMinimumSectionSize(36)
@@ -256,28 +255,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_DeleteProject.setText(_translate("MainWindow", "DELETE PROJECT"))
         #table info definition
         #vertical header names
-        self.populate_projecttable()
 
-    def populate_projecttable(self):
+
         #horizontal header names
-        self.Table_Project_list.clear()
-        self.Table_Project_list.setRowCount(len(Pr))
-
-        for i in range(self.Table_Project_list.columnCount()):
-            item = QtWidgets.QTableWidgetItem()
-            self.Table_Project_list.setHorizontalHeaderItem(i, item)
-            
-        for i,n in list(enumerate(self.Table_Project_headers)):
+        for i,n in list(enumerate(Ui_MainWindow.Table_Project_headers)):
             item = self.Table_Project_list.horizontalHeaderItem(i)
-            item.setText(n)
+            item.setText(_translate("MainWindow", n))
         
         if len(Pr)>0:
-            for i in range(len(Pr)):
-                item = QtWidgets.QTableWidgetItem()
-                self.Table_Project_list.setVerticalHeaderItem(i, item)                         
-                item = self.Table_Project_list.verticalHeaderItem(i)
-                item.setText("")#f"{i}")
-                item=self.Table_Project_list.item(i,0)
+            # for i in range(len(Pr)):         
+            #     item = self.Table_Project_list.verticalHeaderItem(i)
+            #     item.setText(_translate("MainWindow", f"{i}"))
+                # item=self.Table_Project_list.item(i,0)
             
             attr={}
             for i,p in list(enumerate(Pr)):
@@ -285,12 +274,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 attr[1]=p.project_name
                 attr[3]=p.project_description
                 attr[4]=p.project_responsible
-                # print(attr)
+                print(attr)
                 for j,v in attr.items():
                     item = QtWidgets.QTableWidgetItem()
                     self.Table_Project_list.setItem(i, j, item)
                     item=self.Table_Project_list.item(i,j)
-                    item.setText(v)
+                    item.setText(_translate("MainWindow", v))
+        # #things inside table --- need to be changed with function calling class/list, more items need to be added here and above
+        # __sortingEnabled = self.Table_Project_list.isSortingEnabled()
+        # self.Table_Project_list.setSortingEnabled(False)
+        # i=0
+        # j=0
+        # for i in [0,1,2,3,4]:
+        #     for j in [0,1,2,3]:
+        #         item = self.Table_Project_list.item(i, j)
+        #         item.setText(_translate("MainWindow", "a"))
 
         # self.Table_Project_list.setSortingEnabled(__sortingEnabled)
 
@@ -302,11 +300,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             msgbox.Message_popup("Error","Error","Please select an Project")
         else:
             if ind_pr_selected >-1:
-                # print(f"this is the selected: {ind_pr_selected}")
+                print(f"this is the selected: {ind_pr_selected}")
                 yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
                 if yesorno.response=="Yes":
                     del Pr[ind_pr_selected]
-                    self.populate_projecttable()
             
         
 
@@ -325,26 +322,26 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # print(project_attributes)
         
         Pr.append(KCbckend.Project(project_attributes[0],project_attributes[1],project_attributes[2]))
-        self.populate_projecttable()
-        # attr={}
-        # attr[0]=str(len(Pr)-1)
-        # attr[1]=Pr[-1].project_name
-        # attr[3]=Pr[-1].project_description
-        # attr[4]=Pr[-1].project_responsible
-        # # print(attr)
-        # self.Table_Project_list.setRowCount(len(Pr))
-        # item = QtWidgets.QTableWidgetItem()
-        # i=self.Table_Project_list.rowCount()-1
-        # # print(i)
-        # self.Table_Project_list.setVerticalHeaderItem(i, item)        
-        # item = self.Table_Project_list.verticalHeaderItem(i)
-        # item.setText(str(int(attr[0])+1))
+        
+        attr={}
+        attr[0]=str(len(Pr)-1)
+        attr[1]=Pr[-1].project_name
+        attr[3]=Pr[-1].project_description
+        attr[4]=Pr[-1].project_responsible
+        # print(attr)
+        self.Table_Project_list.setRowCount(len(Pr))
+        item = QtWidgets.QTableWidgetItem()
+        i=self.Table_Project_list.rowCount()-1
+        # print(i)
+        self.Table_Project_list.setVerticalHeaderItem(i, item)        
+        item = self.Table_Project_list.verticalHeaderItem(i)
+        item.setText(str(int(attr[0])+1))
             
-        # for j,v in attr.items():
-        #     item = QtWidgets.QTableWidgetItem()
-        #     self.Table_Project_list.setItem(i, j, item)
-        #     item=self.Table_Project_list.item(i,j)
-        #     item.setText(v)
+        for j,v in attr.items():
+            item = QtWidgets.QTableWidgetItem()
+            self.Table_Project_list.setItem(i, j, item)
+            item=self.Table_Project_list.item(i,j)
+            item.setText(v)
         # print("done")
         
     def open_project(self):
