@@ -16,7 +16,7 @@ import Classes_Backend as KCbckend
 
 import GUIs.GUI_NewProject as gui_newproject
 import GUIs.GUI_OpenProject as gui_openproject
-
+import GUIs.GUI_MessageBoxKC as msgbox
 
 
 
@@ -171,6 +171,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
         self.setPalette(palette)
+        
         #window general widget
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
@@ -181,6 +182,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setBold(True)
         font.setUnderline(False)
         font.setWeight(75)
+        
         #define label: title of the window
         self.Title.setFont(font)
         self.Title.setObjectName("Title")
@@ -196,6 +198,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_NewProject.setCheckable(False)
         self.Button_NewProject.clicked.connect(self.new_project)
         
+        #define button: Delete project
+        self.Button_DeleteProject = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_DeleteProject.setGeometry(QtCore.QRect(100, 290, 110, 40))
+        self.Button_DeleteProject.clicked.connect(self.delete_project)
+
         #define button: check data
         self.Button_CheckData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_CheckData.setGeometry(QtCore.QRect(230, 290, 100, 40))
@@ -245,6 +252,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_OpenProject.setText(_translate("MainWindow", "OPEN PROJECT"))
         self.Button_NewProject.setText(_translate("MainWindow", "ADD PROJECT"))
         self.Button_CheckData.setText(_translate("MainWindow", "CHECK DATA"))
+        self.Button_DeleteProject.setText(_translate("MainWindow", "DELETE PROJECT"))
         #table info definition
         #vertical header names
 
@@ -284,7 +292,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         # self.Table_Project_list.setSortingEnabled(__sortingEnabled)
 
-    
+    def delete_project (self):
+        #ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
+        try:
+            ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
+        except:
+            msgbox.Message_popup("Error","Error","Please select an Project")
+        else:
+            if ind_pr_selected >-1:
+                print(f"this is the selected: {ind_pr_selected}")
+                yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
+                if yesorno.response=="Yes":
+                    del Pr[ind_pr_selected]
+            
+        
+
     def new_project(self):
 
         ui_newproject=gui_newproject.Ui_MainWindow()
@@ -389,14 +411,14 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 # Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
         
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     ui_Mother = Ui_MainWindow()
-#     ui_Mother.setupUi()
-#     ui_Mother.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ui_Mother = Ui_MainWindow()
+    ui_Mother.setupUi()
+    ui_Mother.show()
+    sys.exit(app.exec_())
 
-ui_Mother=Ui_MainWindow()
-ui_Mother.setupUi()
-ui_Mother.show()
+#ui_Mother=Ui_MainWindow()
+#ui_Mother.setupUi()
+#ui_Mother.show()
