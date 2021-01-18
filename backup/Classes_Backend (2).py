@@ -88,7 +88,7 @@ class Point:
     
     
     def set_point_data(self,collect_data,time_type,date_ini,date_end,delay,db_experiment):#,name_timecolumn): #delete data_type
-        #collect_data (list) = list with the type of data to be introduced SCADA,GC1,Inferno,SPA
+        #collect_data (str) = type of data to be introduced SCADA,GC1,Inferno,SPA
         #time_type (str)= SCADA or GC
         #date_ini (str) = initial date of the point
         #date_end (str) = end date of the point
@@ -128,80 +128,80 @@ class Point:
             date_i+=timedelta(minutes=1)
         
         
-        # if collect_data=="AUTOMATIC": #the time taken by the point is the SCADA time      
-        #collect data from all databases
-        Nentries={k:0 for k in Experiment.db_names}
-        for k in collect_data:
-            #if k in self.data_point.keys(): #the data from the database k has already added to the point
-            #    tk.messagebox.showwarning("Database already added", f"the database {k} has been already added to this point")
-            #    continue
-            if len(db_experiment[k])==0:
-                #pop up a message saying that the database k is missing
-                guiSPA.Message_popup("Error","Missed Database", f"the database {k} is missing, please add it to the experiment")
-                continue
-            if k in ["SCADA","GC1","INFERNO"]: #this must to be taken from a function (to generalize for the case when data_type!=automatic) 
-                d_t0,d_t1=None,None
-                Nentries[k]=0
-                #search which of the list elements added to the db_experiment[k] has the time interval it is being looking for
-                for db in db_experiment[k]: #db_experiment[k] is a dictionary with a list per each key (when more that one SCADA or GC has been added to the experiment)
-                    d_t0=db[Experiment.name_timecolumn[k]]>=self.date_ini+timedelta(minutes=delay_db[k]) 
-                    d_t1=db[Experiment.name_timecolumn[k]]<=self.date_end+timedelta(minutes=delay_db[k])
-                    if all(d_t0==False) and all(d_t1==False): #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
-                        guiSPA.Message_popup("Warning","time error", 
-                                              f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")                                
-                        continue                                                    
+        if collect_data=="AUTOMATIC": #the time taken by the point is the SCADA time      
+            #collect data from all databases
+            Nentries={k:0 for k in Experiment.db_names}
+            for k in db_experiment.keys():
+                #if k in self.data_point.keys(): #the data from the database k has already added to the point
+                #    tk.messagebox.showwarning("Database already added", f"the database {k} has been already added to this point")
+                #    continue
+                if len(db_experiment[k])==0:
+                    #pop up a message saying that the database k is missing
+                    guiSPA.Message_popup("Error","Missed Database", f"the database {k} is missing, please add it to the experiment")
+                    continue
+                if k in ["SCADA","GC1","INFERNO"]: #this must to be taken from a function (to generalize for the case when data_type!=automatic) 
+                    d_t0,d_t1=None,None
+                    Nentries[k]=0
+                    #search which of the list elements added to the db_experiment[k] has the time interval it is being looking for
+                    for db in db_experiment[k]: #db_experiment[k] is a dictionary with a list per each key (when more that one SCADA or GC has been added to the experiment)
+                        d_t0=db[Experiment.name_timecolumn[k]]>=self.date_ini+timedelta(minutes=delay_db[k]) 
+                        d_t1=db[Experiment.name_timecolumn[k]]<=self.date_end+timedelta(minutes=delay_db[k])
+                        if all(d_t0==False) and all(d_t1==False): #means that the timeslot defined is not on the evaluated data entry of the experiment (an experiment can have several GC´s or SCADA´s)
+                            guiSPA.Message_popup("Warning","time error", 
+                                                  f"the times defined are not within the database {k}, please add the data within the timeframe or check the time intervals defined")                                
+                            continue                                                    
 
-                    #extracts the row dataframes from the different databases to create self.time_db_pnt[database] 
-                    for t_i in self.time_db_pnt["DATE"]:
-                        t0=db[Experiment.name_timecolumn[k]]>=t_i+timedelta(minutes=delay_db[k])
-                        t1=db[Experiment.name_timecolumn[k]]<=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
-                        self.time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
-                        if len(self.time_db_pnt[k][-1])>0:
+                        #extracts the row dataframes from the different databases to create self.time_db_pnt[database] 
+                        for t_i in self.time_db_pnt["DATE"]:
+                            t0=db[Experiment.name_timecolumn[k]]>=t_i+timedelta(minutes=delay_db[k])
+                            t1=db[Experiment.name_timecolumn[k]]<=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
+                            self.time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
+                            if len(self.time_db_pnt[k][-1])>0:
+                                Nentries[k]+=1
+                                               
+                elif k=="SPA": 
+                    Nentries[k]=0 #number of entries of the database k
+                    for t_i in self.time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt (each date will be at each row of the pandas dataframe)
+                        t0=t_i+timedelta(minutes=delay_db[k])
+                        t1=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
+                        #self.data_point[k]={}
+                        fv=0 #number of entries found
+                        G_PX0="G_None"
+                        #temp=time_db_pnt[k]
+                        SPA_samples=[]                        
+                        for db in db_experiment[k]: #considering that several SPA files were added in that experiment
+                            
+                            #When two SPA's are in series both share the same time, therefore two dataframes must to be in the db_experiment["SPA"] dictionary for a specific key (since the key is the time)
+                            for t_spa,v_list in db.items():
+                                time_SPA=datetime.strptime(t_spa,"%Y-%m-%d %H:%M:%S") #gets the time from the keys of the SPA data (check method get_data_fromfile)
+                                if t0<=time_SPA<=t1:                               
+                                    SPA_samples.append([[t_spa,v[0],v[1],v[2]] for v in v_list]) #collect the different F/C matrices for the evaluated time 
+                                    #each SPA file has its data grouped into certain times, then once the time is found it must to jump to the other SPA file added
+                                    
+                                    break # maybe not <- the loop must continue because it must allow the case when 2 SPA syringes are used (both are marked at the same hour)                        
+                        
+                        #at the end, all the list fields should be joined together into just one list (not a list of lists as it is right know (one list for each SPA file))  
+                        #guiSPA.Message_popup("Info","SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
+                        self.time_db_pnt[k].append(SPA_samples)                            
+                            
+                        if len(SPA_samples)>0:
                             Nentries[k]+=1
-                                           
-            elif k=="SPA": 
-                Nentries[k]=0 #number of entries of the database k
-                for t_i in self.time_db_pnt["DATE"]: #goes for all the dates that are stored in time_db_pnt (each date will be at each row of the pandas dataframe)
-                    t0=t_i+timedelta(minutes=delay_db[k])
-                    t1=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
-                    #self.data_point[k]={}
-                    fv=0 #number of entries found
-                    G_PX0="G_None"
-                    #temp=time_db_pnt[k]
-                    SPA_samples=[]                        
-                    for db in db_experiment[k]: #considering that several SPA files were added in that experiment
-                        
-                        #When two SPA's are in series both share the same time, therefore two dataframes must to be in the db_experiment["SPA"] dictionary for a specific key (since the key is the time)
-                        for t_spa,v_list in db.items():
-                            time_SPA=datetime.strptime(t_spa,"%Y-%m-%d %H:%M:%S") #gets the time from the keys of the SPA data (check method get_data_fromfile)
-                            if t0<=time_SPA<=t1:                               
-                                SPA_samples.append([[t_spa,v[0],v[1],v[2]] for v in v_list]) #collect the different F/C matrices for the evaluated time 
-                                #each SPA file has its data grouped into certain times, then once the time is found it must to jump to the other SPA file added
-                                
-                                break # maybe not <- the loop must continue because it must allow the case when 2 SPA syringes are used (both are marked at the same hour)                        
-                    
-                    #at the end, all the list fields should be joined together into just one list (not a list of lists as it is right know (one list for each SPA file))  
-                    #guiSPA.Message_popup("Info","SPA Added",f"It has been added {len(SPA_samples)} samples at time t_i={t_i} of the SPA taken at t_spa={t_spa}")
-                    self.time_db_pnt[k].append(SPA_samples)                            
-                        
-                    if len(SPA_samples)>0:
-                        Nentries[k]+=1
-                    #else:
-                        #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1]
-                        #print(f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
-                        # guiSPA.Message_popup("Error","time error",
-                        #                      f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+                        #else:
+                            #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1]
+                            #print(f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+                            # guiSPA.Message_popup("Error","time error",
+                            #                      f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
 
-                        #continue                            
-                    #else:
-                    #    tk.message.showinfo("No SPA Added","No data of SPA was added at time t_i=. Please check the SPA dates")
-            
-            #Add the log of the database added to show it in the table of the databases added in the Add_point window
-            #data_added[k]=[database date_ini,database date_end,delay,Nentries]
-            
-            self.data_added[k]=[self.date_ini+timedelta(minutes=delay_db[k]),
-                                self.date_end+timedelta(minutes=delay_db[k]),
-                                delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k]] 
+                            #continue                            
+                        #else:
+                        #    tk.message.showinfo("No SPA Added","No data of SPA was added at time t_i=. Please check the SPA dates")
+                
+                #Add the log of the database added to show it in the table of the databases added in the Add_point window
+                #data_added[k]=[database date_ini,database date_end,delay,Nentries]
+                
+                self.data_added[k]=[self.date_ini+timedelta(minutes=delay_db[k]),
+                                    self.date_end+timedelta(minutes=delay_db[k]),
+                                    delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k]] 
         
         for k,v in self.time_db_pnt.items():
             if len(v)==0:
@@ -634,7 +634,7 @@ class Project:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=P[0].seasons[0].experiments[0].data_experiment
-# P[0].seasons[0].experiments[0].points[0].set_point_data(Experiment.db_names,"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# P[0].seasons[0].experiments[0].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
 
 #type (ExcelRead)
 #print(ExcelRead)

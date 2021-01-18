@@ -789,7 +789,7 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
-# Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# Pr[0].seasons[0].experiments[-1].points[0].set_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
 # if __name__ == "__main__":
 #     import sys

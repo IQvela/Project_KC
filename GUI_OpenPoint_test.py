@@ -24,6 +24,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ind_season_selected=point_route[1] #index of the selected season       
         self.ind_exp_selected=point_route[2] #index of the selected experiment
         self.ind_point_selected=point_route[3]
+        self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         self.point_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected].points[self.ind_point_selected]
         
         self.finish_window=False
@@ -219,40 +220,49 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.centralwidget)
 
         #Table Data Avaible/already existing---------------------------------------------------------------------------------
-        self.table_DataAvailable = QtWidgets.QTableWidget(self.centralwidget)
-        self.table_DataAvailable.setGeometry(QtCore.QRect(50, 240, 531, 221))
-        self.table_DataAvailable.setColumnCount(5)
-        self.table_DataAvailable.setRowCount(4)
+        self.table_DataLinked = QtWidgets.QTableWidget(self.centralwidget)
+        self.table_DataLinked.setGeometry(QtCore.QRect(50, 240, 531, 221))
+        self.table_DataLinked.setColumnCount(5)
+        self.table_DataLinked.setRowCount(4)
+        
+        for i in range(self.table_DataLinked.columnCount()):
+            item=QtWidgets.QTableWidgetItem()
+            self.table_DataLinked.setHorizontalHeaderItem(i,item)
+            if self.table_DataLinked.rowCount()>0:
+                for j in range(self.table_DataLinked.rowCount()):
+                    item=QtWidgets.QTableWidgetItem()
+                    self.table_DataLinked.setItem(j, i, item)        
+        
         item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setVerticalHeaderItem(0, item)
+        self.table_DataLinked.setVerticalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setVerticalHeaderItem(1, item)
+        self.table_DataLinked.setVerticalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setVerticalHeaderItem(2, item)
+        self.table_DataLinked.setVerticalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setVerticalHeaderItem(3, item)
+        self.table_DataLinked.setVerticalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setItem(0, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataAvailable.setItem(3, 1, item)
+        # self.table_DataLinked.setHorizontalHeaderItem(0, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setHorizontalHeaderItem(1, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setHorizontalHeaderItem(2, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setHorizontalHeaderItem(3, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setHorizontalHeaderItem(4, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setItem(0, 1, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # self.table_DataLinked.setItem(3, 1, item)
 
         #Label Data available
-        self.label_DataAvailable = QtWidgets.QLabel(self.centralwidget)
-        self.label_DataAvailable.setGeometry(QtCore.QRect(50, 200, 191, 21))
+        self.label_DataLinked = QtWidgets.QLabel(self.centralwidget)
+        self.label_DataLinked.setGeometry(QtCore.QRect(50, 200, 191, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setUnderline(True)
-        self.label_DataAvailable.setFont(font)
+        self.label_DataLinked.setFont(font)
         
         #Buttons under data available---------------------------------------------------------------------------------
 
@@ -260,10 +270,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AnalyseData.setGeometry(QtCore.QRect(340, 480, 100, 40))
         
         self.Button_ModifyData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ModifyData.setGeometry(QtCore.QRect(190, 480, 100, 40))
+        self.Button_ModifyData.setGeometry(QtCore.QRect(190, 505, 100, 40))
         
-        self.Button_ReadData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ReadData.setGeometry(QtCore.QRect(480, 480, 100, 40))
+        self.Button_CreatePoint = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_CreatePoint.setGeometry(QtCore.QRect(190, 455, 100, 40))
         
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(50, 480, 100, 40))
@@ -279,18 +289,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.list_types = QtWidgets.QListWidget(self.centralwidget)
         self.list_types.setGeometry(QtCore.QRect(670, 280, 221, 101))
         self.list_types.setObjectName("list_types")
-        item = QtWidgets.QListWidgetItem()
-        self.list_types.addItem(item)
-        item = QtWidgets.QListWidgetItem()
-        self.list_types.addItem(item)
-        item = QtWidgets.QListWidgetItem()
-        self.list_types.addItem(item)
-        item = QtWidgets.QListWidgetItem()
-        self.list_types.addItem(item)
+        for i in range(len(self.exp_selected.get_dbnames())+1):
+            item = QtWidgets.QListWidgetItem()
+            self.list_types.addItem(item)
+
 
         #Button Add new data (after selecting data TYPE)
-        self.Button_AddNewData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AddNewData.setGeometry(QtCore.QRect(920, 310, 100, 40))
+        self.Button_LinkData = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_LinkData.setGeometry(QtCore.QRect(920, 310, 100, 40))
         
         #line for visual separation
         self.line_separate = QtWidgets.QFrame(self.centralwidget)
@@ -324,64 +330,61 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Title_PointName.setText(_translate("MainWindows", "Season 1/ Experiment 1/Point 1"))
         self.Button_AnalyseData.setText(_translate("MainWindows", "ANALYZE DATA"))
         self.Button_ModifyData.setText(_translate("MainWindows", "MODIFY DATA"))
-        self.Button_ReadData.setText(_translate("MainWindows", "READ DATA"))
+        self.Button_CreatePoint.setText(_translate("MainWindows", "CREATE POINT"))
         self.Button_ViewData.setText(_translate("MainWindows", "VIEW DATA"))
         self.label_comments.setText(_translate("MainWindows", "Comments"))
         self.label_SelectType.setText(_translate("MainWindows", "Select type "))
-        self.text_comments.setHtml(_translate("MainWindows", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.Button_ModifyInfoPoint.setText(_translate("ProjectWin", "MODIFY INFO"))
 
         #buttons existing data--------------------------------------------------------
         self.Button_AnalyseData.setText(_translate("ProjectWin", "ANALYZE DATA"))
         self.Button_ModifyData.setText(_translate("ProjectWin", "MODIFY DATA"))
-        self.Button_ReadData.setText(_translate("ProjectWin", "READ DATA"))
+        self.Button_CreatePoint.setText(_translate("ProjectWin", "READ DATA"))
         self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
 
         #table existing/available data-------------------------------------------
-        item = self.table_DataAvailable.horizontalHeaderItem(0)
+        item = self.table_DataLinked.horizontalHeaderItem(0)
         item.setText(_translate("MainWindows", "Index"))
-        item = self.table_DataAvailable.horizontalHeaderItem(1)
+        item = self.table_DataLinked.horizontalHeaderItem(1)
         item.setText(_translate("MainWindows", "StartDate"))
-        item = self.table_DataAvailable.horizontalHeaderItem(2)
+        item = self.table_DataLinked.horizontalHeaderItem(2)
         item.setText(_translate("MainWindows", "EndDate"))
-        item = self.table_DataAvailable.horizontalHeaderItem(3)
+        item = self.table_DataLinked.horizontalHeaderItem(3)
         item.setText(_translate("MainWindows", "Type"))
-        item = self.table_DataAvailable.horizontalHeaderItem(4)
+        item = self.table_DataLinked.horizontalHeaderItem(4)
         item.setText(_translate("MainWindows", "Comment"))
-        __sortingEnabled = self.table_DataAvailable.isSortingEnabled()
-        self.table_DataAvailable.setSortingEnabled(False)
-        self.table_DataAvailable.setSortingEnabled(__sortingEnabled)
-        self.label_DataAvailable.setText(_translate("MainWindows", "Data available"))
+        __sortingEnabled = self.table_DataLinked.isSortingEnabled()
+        self.table_DataLinked.setSortingEnabled(False)
+        self.table_DataLinked.setSortingEnabled(__sortingEnabled)
+        self.label_DataLinked.setText(_translate("MainWindows", "Data Linked"))
         self.Button_Ok.setText(_translate("MainWindows", "OK"))
         self.Button_Cancel.setText(_translate("MainWindows", "CANCEL"))
         __sortingEnabled = self.list_types.isSortingEnabled()
         self.list_types.setSortingEnabled(False)
-        item = self.list_types.item(0)
-        item.setText(_translate("MainWindows", "SCADA"))
-        item = self.list_types.item(1)
-        item.setText(_translate("MainWindows", "GC"))
-        item = self.list_types.item(2)
-        item.setText(_translate("MainWindows", "SPA"))
-        item = self.list_types.item(3)
-        item.setText(_translate("MainWindows", "Others"))
+        
+        list_items=["AUTOMATIC"]+self.exp_selected.get_dbnames()
+        
+        for lst_i,lst in enumerate(list_items):
+            item = self.list_types.item(lst_i)
+            item.setText(_translate("MainWindows", lst))
+
         self.list_types.setSortingEnabled(__sortingEnabled)
-        self.Button_AddNewData.setText(_translate("MainWindows", "ADD DATA"))
-        self.label_AddNewData.setText(_translate("MainWindows", "Add data to point"))
+        self.Button_LinkData.setText(_translate("MainWindows", "ADD DATA"))
+        self.label_AddNewData.setText(_translate("MainWindows", "Link data to point"))
         self.label_name.setText(_translate("MainWindows", "Name"))
-        self.text_PointName.setHtml(_translate("MainWindows", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.Button_ModifyInfoPoint.setText(_translate("MainWindows", "MODIFY INFO"))
         
         #basic buttons------------------------------------------------------------------
         self.Button_Ok.setText(_translate("ProjectWin", "OK"))
         self.Button_Cancel.setText(_translate("ProjectWin", "CANCEL"))
+
+    
+    def link_data(self):
+        ui_linkdata=gui_linkdata.Ui_MainWindow()
+        ui_linkdata.setupUi()
+        ui_linkdata.show()
+
+
 
 def randomclasses(a,b):
     global seed
@@ -420,7 +423,7 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
-# Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# Pr[0].seasons[0].experiments[-1].points[0].set_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
 # if __name__ == "__main__":
 #     import sys
@@ -431,6 +434,6 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 #     sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow(Pr,[0,0,-1])#[0,0,-1])
+ui=Ui_MainWindow(Pr,[1,0,0,0])#[0,0,-1])
 ui.setupUi()
 ui.show()
