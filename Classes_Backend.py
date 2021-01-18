@@ -84,7 +84,7 @@ class Point:
         self.point_comments=point_comments
         self.date_ini="ND"
         self.date_end="ND"       
-        self.data_added={}
+        self.data_added={k:[] for k in Experiment.db_names}
         self.point_route=point_route #String which contains the indexes of the Project/Season/Experiment/Point
     
     
@@ -133,6 +133,7 @@ class Point:
         #collect data from all databases
         Nentries={k:0 for k in Experiment.db_names}
         for k in collect_data:
+            print(k)
             #if k in self.data_point.keys(): #the data from the database k has already added to the point
             #    tk.messagebox.showwarning("Database already added", f"the database {k} has been already added to this point")
             #    continue
@@ -157,7 +158,7 @@ class Point:
                         t0=db[Experiment.name_timecolumn[k]]>=t_i+timedelta(minutes=delay_db[k])
                         t1=db[Experiment.name_timecolumn[k]]<=t_i+timedelta(minutes=delay_db[k])+timedelta(seconds=59.999)
                         self.time_db_pnt[k].append(db[t0 & t1]) #in this way each entry in the list will correspond with a time in the row of the pnadas dataframe
-                        if len(self.time_db_pnt[k][-1])>0:
+                        if len(self.time_db_pnt[k][-1])>0: #each element of the list corresponds with one minute (if there is data of the data_type k at that minute then Nentries+=1)
                             Nentries[k]+=1
                                            
             elif k=="SPA": 
@@ -199,10 +200,10 @@ class Point:
             
             #Add the log of the database added to show it in the table of the databases added in the Add_point window
             #data_added[k]=[database date_ini,database date_end,delay,Nentries]
-            
-            self.data_added[k]=[self.date_ini+timedelta(minutes=delay_db[k]),
+            index0_time_db_global=len(Point.time_db_global.index) #initial index where this data will be saved in the time_db_global (the whole data is extracted based on this index0 and the Nentries of the SCADA)
+            self.data_added[k].append([self.date_ini+timedelta(minutes=delay_db[k]),
                                 self.date_end+timedelta(minutes=delay_db[k]),
-                                delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k]] 
+                                delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k],index0_time_db_global]) 
         
         for k,v in self.time_db_pnt.items():
             if len(v)==0:
@@ -217,6 +218,10 @@ class Point:
         
         cls.time_db_global=cls.time_db_global.append(pnt.time_db_pnt,ignore_index=True,sort=False) #the time_db_pnt must to be appended to the global data
     
+    
+    #returns the time_db_global
+    def get_time_db_global(self):
+        return Point.time_db_global
     #def point_attributes(self,times...):
         #takes the maximum and minimum (SCADA) time to define the point that will be shown in the list presented in the experiment window 
         #the kind of db added to the point will be given by the data_point keys  

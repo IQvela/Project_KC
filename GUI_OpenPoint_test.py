@@ -12,6 +12,7 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import Classes_Backend as KCbckend
 import GUIs.GUI_MessageBoxKC as msgbox
+import GUIs.GUI_LinkDataPoint as gui_linkdatapoint
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -27,6 +28,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         self.point_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected].points[self.ind_point_selected]
         
+        self.table_col_headers=["Index","Type","StartDate","EndDate","Delay","Nentries"]
         self.finish_window=False
     
     def closeEvent(self, event):
@@ -219,42 +221,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_ModifyInfoPoint.setGeometry(QtCore.QRect(910, 110, 100, 40))
         self.setCentralWidget(self.centralwidget)
 
+
         #Table Data Avaible/already existing---------------------------------------------------------------------------------
         self.table_DataLinked = QtWidgets.QTableWidget(self.centralwidget)
         self.table_DataLinked.setGeometry(QtCore.QRect(50, 240, 531, 221))
-        self.table_DataLinked.setColumnCount(5)
-        self.table_DataLinked.setRowCount(4)
-        
-        for i in range(self.table_DataLinked.columnCount()):
-            item=QtWidgets.QTableWidgetItem()
-            self.table_DataLinked.setHorizontalHeaderItem(i,item)
-            if self.table_DataLinked.rowCount()>0:
-                for j in range(self.table_DataLinked.rowCount()):
-                    item=QtWidgets.QTableWidgetItem()
-                    self.table_DataLinked.setItem(j, i, item)        
-        
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataLinked.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataLinked.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataLinked.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_DataLinked.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setHorizontalHeaderItem(0, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setHorizontalHeaderItem(1, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setHorizontalHeaderItem(2, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setHorizontalHeaderItem(3, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setHorizontalHeaderItem(4, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setItem(0, 1, item)
-        # item = QtWidgets.QTableWidgetItem()
-        # self.table_DataLinked.setItem(3, 1, item)
+        self.table_DataLinked.setColumnCount(len(self.table_col_headers))
+
 
         #Label Data available
         self.label_DataLinked = QtWidgets.QLabel(self.centralwidget)
@@ -342,23 +314,29 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_CreatePoint.setText(_translate("ProjectWin", "READ DATA"))
         self.Button_ViewData.setText(_translate("ProjectWin", "VIEW DATA"))
 
+        self.Button_Ok.setText(_translate("MainWindows", "OK"))
+        self.Button_Cancel.setText(_translate("MainWindows", "CANCEL"))
+        self.Button_ModifyInfoPoint.setText(_translate("MainWindows", "MODIFY INFO"))
+        self.Button_LinkData.setText(_translate("MainWindows", "ADD DATA"))        
+        
+        self.populate_textboxes()
+        
         #table existing/available data-------------------------------------------
-        item = self.table_DataLinked.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindows", "Index"))
-        item = self.table_DataLinked.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindows", "StartDate"))
-        item = self.table_DataLinked.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindows", "EndDate"))
-        item = self.table_DataLinked.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindows", "Type"))
-        item = self.table_DataLinked.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindows", "Comment"))
+        self.table_DataLinked.setColumnWidth(0, 50)
+        self.table_DataLinked.setColumnWidth(1, 70)
+        self.table_DataLinked.setColumnWidth(2, 120)
+        self.table_DataLinked.setColumnWidth(3, 120)
+        self.table_DataLinked.setColumnWidth(4, 70)
+        self.table_DataLinked.setColumnWidth(5, 50)
+        
+        self.populate_linkeddatatable()
+
+        
         __sortingEnabled = self.table_DataLinked.isSortingEnabled()
         self.table_DataLinked.setSortingEnabled(False)
         self.table_DataLinked.setSortingEnabled(__sortingEnabled)
-        self.label_DataLinked.setText(_translate("MainWindows", "Data Linked"))
-        self.Button_Ok.setText(_translate("MainWindows", "OK"))
-        self.Button_Cancel.setText(_translate("MainWindows", "CANCEL"))
+
+
         __sortingEnabled = self.list_types.isSortingEnabled()
         self.list_types.setSortingEnabled(False)
         
@@ -369,21 +347,73 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             item.setText(_translate("MainWindows", lst))
 
         self.list_types.setSortingEnabled(__sortingEnabled)
-        self.Button_LinkData.setText(_translate("MainWindows", "ADD DATA"))
+
         self.label_AddNewData.setText(_translate("MainWindows", "Link data to point"))
         self.label_name.setText(_translate("MainWindows", "Name"))
-        self.Button_ModifyInfoPoint.setText(_translate("MainWindows", "MODIFY INFO"))
+        self.label_DataLinked.setText(_translate("MainWindows", "Data Linked"))
         
         #basic buttons------------------------------------------------------------------
-        self.Button_Ok.setText(_translate("ProjectWin", "OK"))
-        self.Button_Cancel.setText(_translate("ProjectWin", "CANCEL"))
+        # self.Button_Ok.setText(_translate("ProjectWin", "OK"))
+        # self.Button_Cancel.setText(_translate("ProjectWin", "CANCEL"))
 
-    
+    #write the info of the point in the text boxes
+    def populate_textboxes(self):
+        self.text_PointName.setText(self.point_selected.point_name)
+        self.text_comments.setText(self.point_selected.point_comments)
+        
+        self.text_PointName.setEnabled(False)
+        self.text_comments.setEnabled(False)
+        
+        
+        
+    #write the info in the tablewidget of the data linked to the point selected
+    def populate_linkeddatatable(self):
+        self.table_DataLinked.setRowCount(sum(len(self.point_selected.data_added[k]) for k in self.point_selected.data_added.keys()))
+        
+        # self.table_col_headers=["Index","Type","StartDate","EndDate","Delay","Nentries"]
+
+        #from the point class in the backend
+        # self.data_added[k]=[self.date_ini+timedelta(minutes=delay_db[k]),
+        #                     self.date_end+timedelta(minutes=delay_db[k]),
+        #                     delay_db[k]+delay*(delay_db["SCADA"]!=0),Nentries[k]] 
+        
+        for c_i,c in enumerate(self.table_col_headers):
+            item=QtWidgets.QTableWidgetItem()
+            self.table_DataLinked.setHorizontalHeaderItem(c_i,item)
+            item = self.table_DataLinked.horizontalHeaderItem(c_i)
+            item.setText(c)
+        
+        self.table_info={k:[] for k in self.exp_selected.get_dbnames()}
+        if self.table_DataLinked.rowCount()>0:
+            r_i=0
+            for k,v in self.point_selected.data_added.items():                    
+                for db in v:
+                    item=QtWidgets.QTableWidgetItem()
+                    self.table_DataLinked.setVerticalHeaderItem(r_i,item)
+                    item = self.table_DataLinked.verticalHeaderItem(r_i)
+                    item.setText("") #no id number in the row header
+                    d_ini=db[0].strftime("%Y-%m-%d %H:%M:%S")#self.point_selected.data_added[k][0].strftime("%Y-%m-%d %H:%M:%S")
+                    d_end=db[1].strftime("%Y-%m-%d %H:%M:%S")#self.point_selected.data_added[k][1].strftime("%Y-%m-%d %H:%M:%S")
+                    
+                    self.table_info[k].append([r_i,k,d_ini,d_end,db[2],db[3]]) #table_info will have information about the index in the table for a particular data linked to the point 
+                    #print(self.table_info)
+                    for c_i in range(len(self.table_col_headers)):
+                        item=QtWidgets.QTableWidgetItem()
+                        self.table_DataLinked.setItem(r_i, c_i, item)
+                        item=self.table_DataLinked.item(r_i, c_i)
+                        item.setText(str(self.table_info[k][-1][c_i]))
+                    r_i+=1    
+        
+      
+        
     def link_data(self):
-        ui_linkdata=gui_linkdata.Ui_MainWindow()
-        ui_linkdata.setupUi()
-        ui_linkdata.show()
-
+        ui_linkdatapoint=gui_linkdatapoint.Ui_MainWindow()
+        ui_linkdatapoint.setupUi()
+        ui_linkdatapoint.show()
+        
+        while ui_linkdatapoint.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.05)   
 
 
 def randomclasses(a,b):
@@ -415,15 +445,15 @@ for p in range(0,N_P):
                 Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")     
 
 Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
-# Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
-# Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
+Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
+Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
 # Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
-# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","this was the point 1 and we used gas bags")
+Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","this was the point 1 and we used gas bags")
 # # In[1]:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
-# db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
-# Pr[0].seasons[0].experiments[-1].points[0].set_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
+Pr[0].seasons[0].experiments[-1].points[-1].set_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
 # if __name__ == "__main__":
 #     import sys
@@ -434,6 +464,6 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 #     sys.exit(app.exec_())
 
 
-ui=Ui_MainWindow(Pr,[1,0,0,0])#[0,0,-1])
+ui=Ui_MainWindow(Pr,[0,0,-1,-1])#[0,0,-1])
 ui.setupUi()
 ui.show()
