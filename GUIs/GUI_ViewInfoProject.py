@@ -9,9 +9,24 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from . import GUI_MessageBoxKC as msgbox
 
 
 class Ui_MainWindow(object):
+    
+      def __init__(self,Pr_list,ind_pr_selected):
+        # self.MainWindow=QtWidgets.QMainWindow()
+        super(Ui_MainWindow,self).__init__()
+        
+        self.finish_window=False
+        self.Pr_list=Pr_list
+        #self.ind_pr_selected=ind_pr_selected
+        #self.project_selected=self.Pr_list[ind_pr_selected]
+    
+    def closeEvent(self, event):
+        self.finish_window=True
+        self.close()
+        
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(591, 529)
@@ -71,10 +86,11 @@ class Ui_MainWindow(object):
         #buttons--------------------------------------------------------
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(330, 420, 100, 40))
+        self.Button_Cancel.clicked.connect(self.cancel_button)
         
         self.Button_OK = QtWidgets.QPushButton(self.centralwidget)
         self.Button_OK.setGeometry(QtCore.QRect(450, 420, 100, 40))
-        
+        self.Button_OK.clicked.connect(self.ok_button)
 
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -120,6 +136,14 @@ class Ui_MainWindow(object):
         self.Button_Cancel.setText(_translate("MainWindow", "CANCEL"))
         self.Button_OK.setText(_translate("MainWindow", "OK"))
 
+    def ok_button(self):
+        #save new data in project
+        
+    def cancel_button(self):
+        self.finish_window=True
+        self.close()
+            
+            
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
