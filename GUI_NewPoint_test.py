@@ -240,12 +240,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #Button Modify info point
         self.Button_CreatePoint = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_CreatePoint.setGeometry(QtCore.QRect(910, 80, 100, 30))
+        self.Button_CreatePoint.setGeometry(QtCore.QRect(910, 85, 100, 30))
         self.setCentralWidget(self.centralwidget)
         self.Button_CreatePoint.clicked.connect(self.create_point)
 
         self.Button_ModifyInfoPoint = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_ModifyInfoPoint.setGeometry(QtCore.QRect(910, 130, 100, 30))
+        self.Button_ModifyInfoPoint.setGeometry(QtCore.QRect(910, 125, 100, 30))
         self.setCentralWidget(self.centralwidget)
         self.Button_ModifyInfoPoint.clicked.connect(self.modify_attrib)
 
@@ -378,7 +378,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindows", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindows", "New Point"))
         
         self.Title_PointName.setText(_translate("MainWindows", "Season 1/ Experiment 1/Point 1"))
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
@@ -479,57 +479,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 t_box.setPlaceholderText(str(self.default_attributes[i]))
                 #t_box.setEnabled(False)
 
-    
-    def create_point(self):
-
-        for i,t_box in enumerate(self.text_boxes):
-            if t_box.toPlainText()=="":
-                t_box.setText(self.default_attributes[i])
-        
-        d_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
-        d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
-        print("{},{}".format(d_ini,d_end))
-        if len(self.text_TimeStart.toPlainText().split(":"))==2:
-            d_ini+=":00"
-        if len(self.text_TimeEnd.toPlainText().split(":"))==2:
-            d_end+=":00"
-        try:
-            d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
-            d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")   
-            
-            if d_ini>d_end or d_ini<datetime.strptime(self.exp_selected.date_ini,"%Y-%m-%d %H:%M:%S") or d_end>datetime.strptime(self.exp_selected.date_ini,"%Y-%m-%d %H:%M:%S")  :
-                raise Exception("overtime","overtime")            
-        except Exception as exc:
-            if exc.args[0]=="overtime":
-                if d_ini>d_end:
-                    msgbox.Message_popup("Error","Error Date","Start date is later than End Date. Check that!")
-                elif d_ini<datetime.strptime(self.exp_selected.date_ini,"%Y-%m-%d %H:%M:%S"):
-                    msgbox.Message_popup("Error","Error Date","Start date is earlier than Experiment's Start Date. Check that!")
-                elif d_end>datetime.strptime(self.exp_selected.date_end,"%Y-%m-%d %H:%M:%S"):
-                    msgbox.Message_popup("Error","Error Date","End date is later than Experiment's End Date. Check that!")
-            else:
-                msgbox.Message_popup("Error","Error Date","the date or the time or the delay has not the right format. Please check: Date: YYYY-MM-DD, time: HH:MM:SS")
-        else:
-            d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
-            d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
-            
-            # for t_box in self.text_boxes:
-            #     if t_box.toPlainText()=="":
-            #         t_box.setText(self.default_attributes)
-                    
-            self.exp_selected.add_Point(self.text_name.toPlainText(),d_ini,d_end,self.text_comments.toPlainText()) #creates the point in the selected experiment
-            self.point_selected=self.exp_selected.points[-1]
-            
-            for item in self.modifypoint_items:
-                item.setEnabled(True)
-            time.sleep(0.1)
-            
-            self.populate_attributes()
-            #self.Button_ModifyInfoPoint.setText("MODIFY INFO")
-            self.Button_CreatePoint.setEnabled(False)
-            #self.populate_linkeddatatable()
-            self.label_status.setText("Status: Point Created!")
-            #self.Button_ModifyInfoPoint.clicked.connect(self.modify_attrib)
             
     #write the info in the tablewidget of the data linked to the point selected
     def populate_linkeddatatable(self):
@@ -660,6 +609,57 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
             for t_box in self.text_boxes:
                 t_box.setEnabled(True)                    
+
+    # Create Point
+    def create_point(self):
+
+        for i,t_box in enumerate(self.text_boxes):
+            if t_box.toPlainText()=="":
+                t_box.setText(self.default_attributes[i])
+        
+        d_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
+        d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
+        # print("1{},{}".format(d_ini,d_end))
+        if len(self.text_TimeStart.toPlainText().split(":"))==2:
+            d_ini+=":00"
+        if len(self.text_TimeEnd.toPlainText().split(":"))==2:
+            d_end+=":00"
+        try:
+            d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
+            d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")   
+            if d_ini>=d_end or d_ini<datetime.strptime(self.exp_selected.date_ini,"%Y-%m-%d %H:%M:%S") or d_end>datetime.strptime(self.exp_selected.date_end,"%Y-%m-%d %H:%M:%S")  :
+                raise Exception("overtime","overtime")            
+        except Exception as exc:
+            if exc.args[0]=="overtime":
+                if d_ini>=d_end:
+                    msgbox.Message_popup("Error","Error Date","Start date is later than End Date. Check that!")
+                elif d_ini<datetime.strptime(self.exp_selected.date_ini,"%Y-%m-%d %H:%M:%S"):
+                    msgbox.Message_popup("Error","Error Date","Start date is earlier than Experiment's Start Date. Check that!")
+                elif d_end>datetime.strptime(self.exp_selected.date_end,"%Y-%m-%d %H:%M:%S"):
+                    msgbox.Message_popup("Error","Error Date","End date is later than Experiment's End Date. Check that!")
+                else:
+                    msgbox.Message_popup("Error","Error Date","There is an error with the dates. Check them!")   
+            else:
+                msgbox.Message_popup("Error","Error Date","the date or the time or the delay has not the right format. Please check: Date: YYYY-MM-DD, time: HH:MM:SS")
+        else:
+            d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
+            d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
+            print("4{},{}".format(d_ini,d_end))
+                    
+            self.exp_selected.add_Point(self.text_name.toPlainText(),d_ini,d_end,self.text_comments.toPlainText()) #creates the point in the selected experiment
+            self.point_selected=self.exp_selected.points[-1]
+            
+            for item in self.modifypoint_items:
+                item.setEnabled(True)
+            time.sleep(0.1)
+            
+            self.populate_attributes()
+            #self.Button_ModifyInfoPoint.setText("MODIFY INFO")
+            self.Button_CreatePoint.setEnabled(False)
+            #self.populate_linkeddatatable()
+            self.label_status.setText("Status: Point Created!")
+            print("Point Created")
+            #self.Button_ModifyInfoPoint.clicked.connect(self.modify_attrib)
         
     def delete_data(self):
         pass
