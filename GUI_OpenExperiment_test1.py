@@ -12,7 +12,7 @@ import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import datetime
 import GUIs.GUI_MessageBoxKC as msgbox
-# import GUIs.GUI_NewPoint as gui_newpoint
+import GUIs.GUI_NewPoint as gui_newpoint
 import GUIs.GUI_OpenPoint as gui_openpoint
 import GUIs.GUI_AddSCADA as gui_addscada
 import GUIs.GUI_AddGC as gui_addgc
@@ -31,6 +31,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ind_exp_selected=exp_route[2] #index of the selected experiment
         self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         
+        self.col_labels_db=["Index","DB Type","Date Start","Date End","Delay","Comment"]        
+        self.col_labels_points=["Index","Name","Date Start","Date End","DB added","Comment"]
         self.finish_window=False
     
     def closeEvent(self, event):
@@ -371,10 +373,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AddPoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddPoint.setGeometry(QtCore.QRect(380, 390, 100, 40))
         self.Button_AddPoint.setObjectName("Button_AddPoint")
+        self.Button_AddPoint.clicked.connect(self.new_point)
         
         self.Button_OpenPoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_OpenPoint.setGeometry(QtCore.QRect(50, 445, 100, 40))
-        self.Button_OpenPoint.setObjectName("Button_OpenPoint")
+        self.Button_OpenPoint.clicked.connect(self.open_point)
 
         self.Button_DeletePoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_DeletePoint.setGeometry(QtCore.QRect(50, 490, 100, 40))
@@ -383,14 +386,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #table widget database (table where the loaded databases will be shown)
         self.tableWidget_db = QtWidgets.QTableWidget(self.centralwidget) 
         self.tableWidget_db.setGeometry(QtCore.QRect(580, 130, 480, 150))
-        self.tableWidget_db.setColumnCount(5)
+        self.tableWidget_db.setColumnCount(len(self.col_labels_db))
         self.tableWidget_db.setRowCount(sum([len(self.exp_selected.data_experiment[k]) for k in self.exp_selected.data_experiment.keys()]))
         self.tableWidget_db.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         
         #Table points. Table where the points registered to the selected experiment will be displayed
         self.tableWidget_points = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget_points.setGeometry(QtCore.QRect(170, 435, 750, 160))
-        self.tableWidget_points.setColumnCount(5)
+        self.tableWidget_points.setColumnCount(len(self.col_labels_points))
         self.tableWidget_points.setRowCount(len(self.exp_selected.points))
         self.tableWidget_points.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         
@@ -459,17 +462,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.populate_pointstable()
         
 
-        self.tableWidget_db.setColumnWidth(0, 70)
-        self.tableWidget_db.setColumnWidth(1, 120)
+        self.tableWidget_db.setColumnWidth(0, 50)
+        self.tableWidget_db.setColumnWidth(1, 70)
         self.tableWidget_db.setColumnWidth(2, 120)
-        self.tableWidget_db.setColumnWidth(3, 70)
-        self.tableWidget_db.setColumnWidth(4, 200)
-        
-        self.tableWidget_points.setColumnWidth(0, 80)
-        self.tableWidget_points.setColumnWidth(1, 120)
+        self.tableWidget_db.setColumnWidth(3, 120)
+        self.tableWidget_db.setColumnWidth(4, 70)
+        self.tableWidget_db.setColumnWidth(5, 200)
+
+        self.tableWidget_points.setColumnWidth(0, 50)        
+        self.tableWidget_points.setColumnWidth(1, 80)
         self.tableWidget_points.setColumnWidth(2, 120)
-        self.tableWidget_points.setColumnWidth(3, 70)
-        self.tableWidget_points.setColumnWidth(4, 350)
+        self.tableWidget_points.setColumnWidth(3, 120)
+        self.tableWidget_points.setColumnWidth(4, 120)
+        self.tableWidget_points.setColumnWidth(5, 350)
         
         # __sortingEnabled = self.tableWidget.isSortingEnabled()
         # self.tableWidget.setSortingEnabled(False)
@@ -513,11 +518,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             if self.tableWidget_db.rowCount()>0:
                 for j in range(self.tableWidget_db.rowCount()):
                     item=QtWidgets.QTableWidgetItem()
+                    self.tableWidget_db.setVerticalHeaderItem(i,item)
+                    item=QtWidgets.QTableWidgetItem()
                     self.tableWidget_db.setItem(j, i, item)
 
-        col_labels_db=["DB Type","Date Start","Date End","Delay","Comment"]
 
-        for c_i,c_label in enumerate(col_labels_db):
+
+        for c_i,c_label in enumerate(self.col_labels_db):
             item = self.tableWidget_db.horizontalHeaderItem(c_i)
             item.setText(c_label)        
 
@@ -526,9 +533,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             if len(db_tot)>0:
                 for ind_db,db in enumerate(db_tot): #goes over the differente databases loaded for the data_type k in the data_experiment dictionary
                     tabledb_info=self.exp_selected.data_experiment_info[k][ind_db] #(datatype_entrynumber,d_min,d_max,comments,delay(HH:MM:SS))
+                    #tabledb_info.insert(0,str(r)) #insert at index cero r
                     for c in range(self.tableWidget_db.columnCount()):
                         item=self.tableWidget_db.item(r,c)
-                        item.setText(tabledb_info[c])
+                        if c==0:
+                            item.setText(str(r))
+                        else:    
+                            item.setText(tabledb_info[c-1])
                     r+=1
         self.label_dataloaded.setText("Data Loaded: {}".format(self.tableWidget_db.rowCount()))    
 
@@ -545,15 +556,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             if self.tableWidget_points.rowCount()>0:
                 for j in range(self.tableWidget_points.rowCount()):
                     item=QtWidgets.QTableWidgetItem()
+                    self.tableWidget_points.setVerticalHeaderItem(i,item)
+                    item=QtWidgets.QTableWidgetItem()
                     self.tableWidget_points.setItem(j, i, item)   
 
-        col_labels_points=["Name","Date Start","Date End","DB added","Comment"]
+        # self.col_labels_points=["Index","Name","Date Start","Date End","DB added","Comment"]
 
-        for c_i,c_label in enumerate(col_labels_points):
+        for c_i,c_label in enumerate(self.col_labels_points):
             item = self.tableWidget_points.horizontalHeaderItem(c_i)
             item.setText(c_label)
         
-        tablepoints_info=lambda j: [self.exp_selected.points[j].point_name,
+        tablepoints_info=lambda j: [j, self.exp_selected.points[j].point_name,
                                     self.exp_selected.points[j].date_ini,self.exp_selected.points[j].date_end,
                                     list(self.exp_selected.points[j].data_added.keys()),self.exp_selected.points[j].point_comments]
         for r in range(self.tableWidget_points.rowCount()):
@@ -661,7 +674,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
     def new_point(self):
         default_attributes=""
-        ui_newpoint=gui_newpoint.Ui_MainWindow(self.exp_selected,default_attributes)
+        ui_newpoint=gui_newpoint.Ui_MainWindow(self.Pr_list,[self.ind_pr_selected,self.ind_season_selected,self.ind_exp_selected])
         ui_newpoint.setupUi()
         ui_newpoint.show()
         
@@ -669,8 +682,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.05)  
 
+        self.populate_pointstable()
+
     def open_point(self):
-        pass
+        try:
+            ind_point_selected=int(self.tableWidget_points.selectedIndexes()[0].data())
+        except:
+            msgbox.Message_popup("Error","Error","Please select an Experiment")
+        else:        
+            #self.tableWidget_points.selectedItems().
+            # print(ind_point_selected)
+            point_route=[self.ind_pr_selected,self.ind_season_selected,self.ind_exp_selected,ind_point_selected]
+            ui_openpoint=gui_openpoint.Ui_MainWindow(self.Pr_list,point_route)
+            ui_openpoint.setupUi()
+            ui_openpoint.show()
+            
+            while ui_openpoint.finish_window==False:
+                QtCore.QCoreApplication.processEvents()
+                time.sleep(0.05)  
+            self.populate_pointstable()
 
     def delete_point(self):
         pass
@@ -683,23 +713,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
             if len(self.text_TimeStart.toPlainText().split(":"))==2:
                 d_ini+=":00"
-            elif len(self.text_TimeEnd.toPlainText().split(":"))==2:
-                d_ini+=":00"
+            if len(self.text_TimeEnd.toPlainText().split(":"))==2:
+                d_end+=":00"
             try:
                 d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
                 d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")
                 if d_ini>d_end:
-                    raise Exception                    
-            except:
-                if d_ini>d_end:
+                    raise Exception("overtime","overtime")                    
+            except Exception as exc:
+                if exc.args[0]=="overtime":
                     msgbox.Message_popup("Error","Dates Error","The Date Start is later than Date End")
                 else:
                     msgbox.Message_popup("Error","Dates Format Error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
             else:
                 
                 if self.tableWidget_db.rowCount()>0: #if there is any data already loaded to the experiment check that the new dates intersects with the data loaded
-                    d_ini_list=[datetime.strptime(d_info[1],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.data_experiment_info[d_type]]
-                    d_end_list=[datetime.strptime(d_info[2],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.data_experiment_info[d_type] ]
+                    d_ini_list=[datetime.strptime(d_info[1],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.exp_selected.data_experiment_info[d_type]]
+                    d_end_list=[datetime.strptime(d_info[2],"%Y-%m-%d %H:%M:%S") for d_type in self.exp_selected.get_dbnames() for d_info in self.exp_selected.data_experiment_info[d_type]]
                     if max(min(d_ini_list),d_ini)<min(max(d_end_list),d_end):                                        
                         self.exp_selected.date_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
                         self.exp_selected.date_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
@@ -720,7 +750,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
                 self.populate_attributes()
                 msgbox.Message_popup("Info","Modify Attributes","Valid attributes have been succesfully updated")
-                self.label_status.setText("Status: Ready...")
+                self.label_status.setText("Status: Ready!")
         else:
             text_boxes=[self.text_name,self.text_DateStart,self.text_TimeStart,self.text_DateEnd,self.text_TimeEnd,self.text_fuel,self.text_bed,self.text_comments]
             for t_box in text_boxes:
@@ -754,7 +784,9 @@ for p in range(0,N_P):
             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
             for pnt in range(0,randomclasses(0,5)):
                 # print(f"p{p},s{s},e{e}")
-                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")     
+                d_0="2020-10-11 {}:00:00".format(randomclasses(6,12))
+                d_1="2020-10-15 {}:00:00".format(randomclasses(13,18))
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",d_0,d_1,f"this is the point {pnt}")     
 
 Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
 # Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
@@ -770,7 +802,7 @@ Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    ui = Ui_MainWindow(Pr,[1,0,0])
+    ui = Ui_MainWindow(Pr,[0,0,-1])
     ui.setupUi()
     ui.show()
     sys.exit(app.exec_())

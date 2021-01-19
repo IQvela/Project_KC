@@ -323,9 +323,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # print("data collected of the new project")
         project_attributes=ui_newproject.project_attributes
         # print(project_attributes)
-        
-        Pr.append(KCbckend.Project(project_attributes[0],project_attributes[1],project_attributes[2]))
-        self.populate_projecttable()
+        if len(project_attributes)>0:
+            Pr.append(KCbckend.Project(project_attributes[0],project_attributes[1],project_attributes[2]))
+            self.populate_projecttable()
         # attr={}
         # attr[0]=str(len(Pr)-1)
         # attr[1]=Pr[-1].project_name
@@ -400,18 +400,20 @@ for p in range(0,N_P):
             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
             for pnt in range(0,randomclasses(0,5)):
                 # print(f"p{p},s{s},e{e}")
-                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")     
+                d_0="2020-10-11 {}:00:00".format(randomclasses(6,12))
+                d_1="2020-10-15 {}:00:00".format(randomclasses(13,18))
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",d_0,d_1,f"this is the point {pnt}")     
 
-Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
 # Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
 # Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
 # Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
-# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","2019-02-01 11:55:00","2019-02-01 12:27:00","this was the point 1 and we used gas bags")
 # # In[1]:
 # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
 # #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
-# Pr[0].seasons[0].experiments[-1].points[0].set_point_data("AUTOMATIC","SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# Pr[0].seasons[0].experiments[-1].points[-1].link_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
     
         
 if __name__ == "__main__":

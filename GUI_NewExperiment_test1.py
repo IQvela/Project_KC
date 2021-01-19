@@ -16,11 +16,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self,project_selected,default_attributes="",index_season_selected="ND"):
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.project_selected=self.project_selected
+        self.project_selected=project_selected
         self.index_season_selected=index_season_selected
         
         self.default_attributes=default_attributes #attributes to be written in the different text box by default (when the windows shows up)
-        self.exp_attributes=0
+        self.exp_attributes=[]
 
 
     def closeEvent(self, event):
@@ -303,13 +303,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
             if len(self.text_TimeStart.toPlainText().split(":"))==2:
                 d_ini+=":00"
-            elif len(self.text_TimeEnd.toPlainText().split(":"))==2:
-                d_ini+=":00"
+            if len(self.text_TimeEnd.toPlainText().split(":"))==2:
+                d_end+=":00"
             try:
                 d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
-                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")                
-            except:
-                msgbox.Message_popup("Error","No Text","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
+                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")
+                if d_ini>d_end:
+                    raise Exception("overtime","overtime")                    
+            except Exception as exc:
+                if exc.args[0]=="overtime":
+                    msgbox.Message_popup("Error","Dates Error","The Date Start is later than Date End")
+                else:                
+                    msgbox.Message_popup("Error","Dates Format error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
             else:
                 d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
                 d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
@@ -364,7 +369,20 @@ for p in range(0,N_P):
             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
             for pnt in range(0,randomclasses(0,5)):
                 # print(f"p{p},s{s},e{e}")
-                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",f"this is the point {pnt}")   
+                d_0="2020-10-11 {}:00:00".format(randomclasses(6,12))
+                d_1="2020-10-15 {}:00:00".format(randomclasses(13,18))
+                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",d_0,d_1,f"this is the point {pnt}")     
+
+# Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
+# Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
+# Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
+# Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
+# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","2019-02-01 11:55:00","2019-02-01 12:27:00","this was the point 1 and we used gas bags")
+# # In[1]:
+# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
+# Pr[0].seasons[0].experiments[-1].points[-1].link_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
 
 
 #if __name__ == "__main__":

@@ -20,7 +20,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #self.MainWindow=QtWidgets.QMainWindow()
         self.finish_window=False        
         
-        self.project_attributes=0
+        self.project_attributes=[]
         
     def closeEvent(self, event):
         self.finish_window=True

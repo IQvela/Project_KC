@@ -17,7 +17,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow,self).__init__()
         self.finish_window=False
-        self.season_attributes=""
+        self.season_attributes=[]
    
     def closeEvent(self, event):
         self.finish_window=True

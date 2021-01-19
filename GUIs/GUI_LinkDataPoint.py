@@ -9,15 +9,19 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from datetime import datetime
+from . import GUI_MessageBoxKC as msgbox
+# import GUI_MessageBoxKC as msgbox
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
-    def __init__(self,collect_data):
+    def __init__(self,collect_data,ref_date):
         # self.MainWindow=QtWidgets.QMainWindow()
         super(Ui_MainWindow,self).__init__()
         self.collect_data=collect_data
+        self.ref_date=ref_date
         
+        self.linkdata_attrib=[]
         self.finish_window=False
     
     def closeEvent(self, event):
@@ -41,7 +45,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Title_ReadData.setAlignment(QtCore.Qt.AlignCenter)
         
         self.label_DataFrom = QtWidgets.QLabel(self.centralwidget)
-        self.label_DataFrom.setGeometry(QtCore.QRect(60, 100, 91, 16))
+        self.label_DataFrom.setGeometry(QtCore.QRect(60, 100, 120, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_DataFrom.setFont(font)
@@ -71,7 +75,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_DateEnd.setFont(font)
 
         self.label_delay = QtWidgets.QLabel(self.centralwidget)
-        self.label_delay.setGeometry(QtCore.QRect(60, 300, 121, 31))
+        self.label_delay.setGeometry(QtCore.QRect(60, 300, 270, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_delay.setFont(font)
@@ -89,7 +93,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #where data type come from (SCADA, GC....)
         self.text_DataFrom = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DataFrom.setGeometry(QtCore.QRect(170, 90, 291, 31))
+        self.text_DataFrom.setGeometry(QtCore.QRect(200, 90, 260, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DataFrom.setFont(font)
@@ -122,7 +126,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         #delay
         self.text_delay = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_delay.setGeometry(QtCore.QRect(170, 300, 301, 31))
+        self.text_delay.setGeometry(QtCore.QRect(350, 300, 120, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_delay.setFont(font)
@@ -132,9 +136,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #Buttons---------------------------------------------------------------
         self.Button_OK = QtWidgets.QPushButton(self.centralwidget)
         self.Button_OK.setGeometry(QtCore.QRect(440, 450, 100, 40))
+        self.Button_OK.clicked.connect(self.link_data)
         
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(300, 450, 100, 40))
+        self.Button_Cancel.clicked.connect(self.cancel_button)
         
                
         self.setCentralWidget(self.centralwidget)
@@ -149,16 +155,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def retranslateUi(self):
 
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "Link Data to Point"))
 
         #naming labels----------------------------------------------------------------------
-        self.Title_ReadData.setText(_translate("MainWindow", "Read Data"))
-        self.label_DataFrom.setText(_translate("MainWindow", "COLLECT DATA"))
+        self.Title_ReadData.setText(_translate("MainWindow", "Link Data to Point"))
+        self.label_DataFrom.setText(_translate("MainWindow", "Collect Data"))
         self.label_date.setText(_translate("MainWindow", "Date (YYYY-MM-DD)"))
         self.label_DateStart.setText(_translate("MainWindow", "Date start"))
         self.label_DateEnd.setText(_translate("MainWindow", "Date end"))
-        self.label_time.setText(_translate("MainWindow", "Time (HH:MM)"))
-        self.label_delay.setText(_translate("MainWindow", "Time Delay"))
+        self.label_time.setText(_translate("MainWindow", "Time (HH:MM:SS)"))
+        self.label_delay.setText(_translate("MainWindow", "Time Delay resp. SCADA (HH:MM:SS)"))
 
         self.label_explain1.setText(_translate("MainWindow", "Delay of data selected with regards SCADA. For example,\nif GC computer time is 10:05 and KC computer time is 10:02,\nthe delay is of +3min"))
         # self.label_explain2.setText(_translate("MainWindow", "if GC computer time is 10:05 and KC computer time is 10:02,"))
@@ -170,24 +176,78 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         #text input--------------------------------------------------------------
         #type date (SCADA,GC...)
-        self.text_DataFrom.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">SCADA</p></body></html>"))
+        self.text_DataFrom.setText(str(self.collect_data))
+        self.text_DataFrom.setEnabled(False)
 
-        #date start
-        self.text_DateStart.setHtml(_translate("MainWindow", " "))
-        self.text_TimeStart.setHtml(_translate("MainWindow", " "))
+
+        if self.collect_data=="SCADA":
+            delay="00:00:00"
+        else:
+            delay="00:03:00"
+            
+        self.default_attributes=[self.ref_date[0].split(" ")[0],self.ref_date[0].split(" ")[1],
+                                 self.ref_date[1].split(" ")[0],self.ref_date[1].split(" ")[1],delay]
         
-        #date end
-        self.text_DateEnd.setHtml(_translate("MainWindow", " "))
-        self.text_TimeEnd.setHtml(_translate("MainWindow", " "))
+        self.text_boxes=[self.text_DateStart,self.text_TimeStart,self.text_DateEnd,self.text_TimeEnd,self.text_delay]
         
-        #delay 
-        self.text_delay.setHtml(_translate("MainWindow", " "))
+        for i,t_box in enumerate(self.text_boxes):
+            # print(t_box)
+            t_box.setPlaceholderText(self.default_attributes[i])
+        # #date start
+        # self.text_DateStart.setPlaceholderText(self.default_attributes[0].split(" ")[0])
+        # self.text_TimeStart.setPlaceholderText(self.default_attributes[0].split(" ")[1])
+        
+        # #date end
+        
+        # self.text_DateEnd.setPlaceholderText(self.default_attributes[1].split(" ")[0])
+        # self.text_TimeEnd.setPlaceholderText(self.default_attributes[1].split(" ")[1])
+        
+        # #delay        
+        # self.text_delay.setPlaceholderText(self.default_attributes[-1])
 
 
+
+    def link_data(self):
+        for i,t_box in enumerate(self.text_boxes):
+            if t_box.toPlainText()=="":
+                t_box.setText(self.default_attributes[i])
+        
+        d_ini=self.text_DateStart.toPlainText()+" "+self.text_TimeStart.toPlainText()
+        d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
+        delay=self.text_delay.toPlainText()
+        print(len(self.text_TimeStart.toPlainText().split(":")))
+        if len(self.text_TimeStart.toPlainText().split(":"))==2:
+            d_ini+=":00"
+        if len(self.text_TimeEnd.toPlainText().split(":"))==2:
+            d_end+=":00"
+        try:
+            d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
+            d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")   
+            delay=datetime.strptime(delay,"%H:%M:%S")
+            
+            if d_ini>d_end or d_ini<datetime.strptime(self.ref_date[0],"%Y-%m-%d %H:%M:%S") or d_end>datetime.strptime(self.ref_date[1],"%Y-%m-%d %H:%M:%S")  :
+                raise Exception("overtime","overtime")            
+        except Exception as exc:
+            if exc.args[0]=="overtime":
+                if d_ini>d_end:
+                    msgbox.Message_popup("Error","Error Date","Start date is later than End Date. Check that!")
+                elif d_ini<datetime.strptime(self.ref_date[0],"%Y-%m-%d %H:%M:%S"):
+                    msgbox.Message_popup("Error","Error Date","Start date is earlier than Point's Start Date. Check that!")
+                elif d_end>datetime.strptime(self.ref_date[1],"%Y-%m-%d %H:%M:%S"):
+                    msgbox.Message_popup("Error","Error Date","End date is later than Point's End Date. Check that!")
+            else:
+                msgbox.Message_popup("Error","Error Date","the date or the time or the delay has not the right format. Please check: Date: YYYY-MM-DD, time: HH:MM:SS")
+        else:
+            d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
+            d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
+            
+            self.linkdata_attrib=[self.collect_data,d_ini,d_end,self.text_delay.toPlainText()]
+            #print(self.linkdata_attrib)
+            self.cancel_button()
+            
+    def cancel_button(self):
+        self.finish_window=True
+        self.close()
 # if __name__ == "__main__":
 #     import sys
 #     app = QtWidgets.QApplication(sys.argv)
@@ -196,6 +256,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 #     ui.show()
 #     sys.exit(app.exec_())
 
-ui = Ui_MainWindow("AUTOMATIC")
-ui.setupUi()
-ui.show()
+# ui = Ui_MainWindow("AUTOMATIC",["2019-02-01 11:55:00","2019-02-01 12:27:00"])
+# ui.setupUi()
+# ui.show()
+
+# aa=datetime.strptime(ui.linkdata_attrib[1],"%Y-%m-%d %H:%M:%S")

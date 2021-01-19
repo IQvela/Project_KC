@@ -17,7 +17,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.index_season_selected=index_season_selected
         
         self.default_attributes=default_attributes #attributes to be written in the different text box by default (when the windows shows up)
-        self.exp_attributes=0
+        self.exp_attributes=[]
 
 
     def closeEvent(self, event):
@@ -30,7 +30,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         
-        #Labels------------------------------------------------------------------------------------------
         self.Title = QtWidgets.QLabel(self.centralwidget)
         self.Title.setGeometry(QtCore.QRect(170, 20, 311, 41))
         font = QtGui.QFont()
@@ -239,7 +238,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     #writes the default attributes into the text boxes
     def write_default_attrib(self,ind_season):
         _translate = QtCore.QCoreApplication.translate
-        #print("default_attributes =",self.default_attributes)
+        print("default_attributes =",self.default_attributes)
         if self.default_attributes=="":
             name="Experiment {}".format(len(self.project_selected.seasons[ind_season].experiments)+1)
             d_ini="2021-01-22 10:00:00"
@@ -301,18 +300,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             d_end=self.text_DateEnd.toPlainText()+" "+self.text_TimeEnd.toPlainText()   
             if len(self.text_TimeStart.toPlainText().split(":"))==2:
                 d_ini+=":00"
-            elif len(self.text_TimeEnd.toPlainText().split(":"))==2:
-                d_ini+=":00"
+            if len(self.text_TimeEnd.toPlainText().split(":"))==2:
+                d_end+=":00"
             try:
                 d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
-                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S") 
+                d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")
                 if d_ini>d_end:
-                    raise Exception                 
-            except:
-                if d_ini>d_end:
+                    raise Exception("overtime","overtime")                    
+            except Exception as exc:
+                if exc.args[0]=="overtime":
                     msgbox.Message_popup("Error","Dates Error","The Date Start is later than Date End")
                 else:                
-                    msgbox.Message_popup("Error","Dates Format Error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
+                    msgbox.Message_popup("Error","Dates Format error","the date or time has not the right format. Please check: Date: YYYY-MM-DD, time:HH:MM:SS")
             else:
                 d_ini=d_ini.strftime("%Y-%m-%d %H:%M:%S")
                 d_end=d_end.strftime("%Y-%m-%d %H:%M:%S")
