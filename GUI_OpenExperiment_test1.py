@@ -9,6 +9,7 @@
 
 import random
 import time
+import pickle
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import datetime
 import GUIs.GUI_MessageBoxKC as msgbox
@@ -18,6 +19,7 @@ import GUIs.GUI_AddSCADA as gui_addscada
 import GUIs.GUI_AddGC as gui_addgc
 import GUIs.GUI_AddSPA as gui_addspa
 import Classes_Backend as KCbckend
+import GUIs.Save_Projects as backup_projects
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -365,10 +367,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_Ok = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Ok.setGeometry(QtCore.QRect(960, 470, 100, 40))
         self.Button_Ok.setObjectName("Button_Ok")
+        self.Button_Ok.clicked.connect(self.ok_button)
         
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(960, 520, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
+        self.Button_Cancel.clicked.connect(self.cancel_button)
         
         self.Button_AddPoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddPoint.setGeometry(QtCore.QRect(380, 390, 100, 40))
@@ -756,7 +760,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             for t_box in text_boxes:
                 t_box.setEnabled(True)                    
         
+     
+    def ok_button(self):        
+        self.cancel_button()
         
+    def save_projects(self):
+        filepath="C:\\Users\\refor\\Documents\\GitHub\\Project_KC"
+        filename="Projec_List1"        
+        backup_projects.save_pr(self.Pr_list,filepath,filename)
+        print("File Saved!")
+        
+    def cancel_button(self):
+        self.save_projects() #ask first
+        self.finish_window=True
+        self.close()
     
 def randomclasses(a,b):
     global seed
@@ -766,48 +783,63 @@ def randomclasses(a,b):
 
 seed=25
 
-Pr=[]
-N_P=randomclasses(1,5)
-#P=list(range(N_P))
-for p in range(0,N_P):
-    Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
-    for s in range(0,randomclasses(1,5)):
-        Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}. In this season many techniques were applied, also the temperature was controlled and many parameters were varied")
-        for e in range(0,randomclasses(1,5)):
-            d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
-            d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
-            descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
-                    "the bed was with iron, and it was neessary to verify potential leakages"]
-            fuel=["Polyethylene","Textiles","PVC"]
-            ind=random.randint(0,1)
-            ind2=randomclasses(0,len(fuel)-1)
-            Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
-            for pnt in range(0,randomclasses(0,5)):
-                # print(f"p{p},s{s},e{e}")
-                d_0="2020-10-11 {}:00:00".format(randomclasses(6,12))
-                d_1="2020-10-15 {}:00:00".format(randomclasses(13,18))
-                Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",d_0,d_1,f"this is the point {pnt}")     
+# Pr=[]
+# N_P=randomclasses(1,5)
+# #P=list(range(N_P))
+# for p in range(0,N_P):
+#     Pr.append(KCbckend.Project(f"Proj{p}",f"this is project {p}",f"resp{p}"))
+#     for s in range(0,randomclasses(1,5)):
+#         Pr[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}. In this season many techniques were applied, also the temperature was controlled and many parameters were varied")
+#         for e in range(0,randomclasses(1,5)):
+#             d_0="2020-10-{} 10:00:00".format(randomclasses(1,10))
+#             d_1="2020-10-{} 12:00:00".format(randomclasses(15,30))
+#             descrp=["added some moisture with alakali, the temperature was controlled during all the process and many variables were taken into account",
+#                     "the bed was with iron, and it was neessary to verify potential leakages"]
+#             fuel=["Polyethylene","Textiles","PVC"]
+#             ind=random.randint(0,1)
+#             ind2=randomclasses(0,len(fuel)-1)
+#             Pr[p].seasons[s].add_Experiment(f"exp{e}",d_0,d_1,fuel[ind2],"silica sand",descrp[ind])
+#             for pnt in range(0,randomclasses(0,5)):
+#                 # print(f"p{p},s{s},e{e}")
+#                 d_0="2020-10-11 {}:00:00".format(randomclasses(6,12))
+#                 d_1="2020-10-15 {}:00:00".format(randomclasses(13,18))
+#                 Pr[p].seasons[s].experiments[e].add_Point(f"Point{pnt}",d_0,d_1,f"this is the point {pnt}")     
 
-Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
-Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
-Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
-# Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
-Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","2019-02-01 11:55:00","2019-02-01 12:27:00","this was the point 1 and we used gas bags")
-# # In[1]:
-# #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
-# #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# Pr[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this is a test experiment") #if the date is in HH:MM add the == for the seconds
+# Pr[0].seasons[0].experiments[-1].add_data("SCADA","190201 trend.XLS","00:00:00","This is first SCADA")
+# Pr[0].seasons[0].experiments[-1].add_data("GC1","190201_mGC.xlsx","00:03:00","This is first GC1")
+# # # Pr[0].seasons[0].experiments[-1].add_data("SPA","430_190201_G_190201.xls","00:03:00","This is first SPA")
+# Pr[0].seasons[0].experiments[-1].add_Point("Point 1A","2019-02-01 11:55:00","2019-02-01 12:27:00","this was the point 1 and we used gas bags")
+# # # In[1]:
+# # #set_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# # #pnt_route=Pr[0].project_name+"/"+P[0].seasons[0].season_name+"/"+Pr[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
 # db_exp=Pr[0].seasons[0].experiments[-1].data_experiment
-# Pr[0].seasons[0].experiments[-1].points[-1].link_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+# Pr[0].seasons[0].experiments[-1].points[-1].link_point_data(["SCADA","GC1","INFERNO","SPA"],"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00","00:03:00",db_exp)
    
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui = Ui_MainWindow(Pr,[0,0,-1])
-    ui.setupUi()
-    ui.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     ui = Ui_MainWindow(Pr,[0,0,-1])
+#     ui.setupUi()
+#     ui.show()
+#     sys.exit(app.exec_())
 
 
-# ui=Ui_MainWindow(Pr,[0,0,-1])#[0,0,-1])
-# ui.setupUi()
-# ui.show()
+# with open("Project_List.pkl","wb") as f:
+#     pickle.dump(Pr,f)   
+
+# default_path="C:\\Users\\refor\\Documents\\GitHub\\Project_KC"
+Pr=[]
+# with open("{}\Project_List.pkl".format(default_path),"wb") as f:
+# with open("Project_List1.pkl","rb") as f:
+#     Pr=pickle.load(f)
+# Pr=Pr_l
+Pr=[]
+filepath="C:\\Users\\refor\\Documents\\GitHub\\Project_KC"
+filename="Projec_List1"        
+Pr=backup_projects.load_pr(filepath,filename)
+
+ui=Ui_MainWindow(Pr,[0,0,-1])#[0,0,-1])
+ui.setupUi()
+ui.show()
+print("Done")
