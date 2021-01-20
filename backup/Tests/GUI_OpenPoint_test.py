@@ -26,6 +26,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ind_season_selected=point_route[1] #index of the selected season       
         self.ind_exp_selected=point_route[2] #index of the selected experiment
         self.ind_point_selected=point_route[3]
+        self.project_selected=self.Pr_list[self.ind_pr_selected]
         self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         self.point_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected].points[self.ind_point_selected]
         
@@ -33,6 +34,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.finish_window=False
     
     def closeEvent(self, event):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
 
@@ -586,6 +588,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
     def cancel_button(self):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
     

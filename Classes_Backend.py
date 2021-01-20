@@ -1,57 +1,24 @@
 ###
 #Importing data from excel
 ###
-import sys
-import numpy as np
+# import sys
+# import numpy as np
 import pandas as pd 
-import tkinter as tk
-import random
+import pickle
+import os
+# import random
 from datetime import datetime,timedelta
 import time
 
 from PyQt5 import QtCore,QtGui,QtWidgets
 
+# import GUIs.Backup_Projects as backup_projects
 import GUIs.GUI_SPA as guiSPA
 import GUIs.GUI_MessageBoxKC as msgbox
 
-# #Function which defines the filename #this should come from a explorer window to select the file
-#later the file must to be saved in the backup folder
-# def define_file(dataname):
 
-#      if dataname=="SCADA":
-#          filename="190201 trend.XLS"
-
-#      elif dataname=="GC1":
-#          filename="190201_mGC.xlsx"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
-     
-#      elif dataname=="SPA":
-#          filename="430_190201_G_190123.xls"#"C:/Users/rforero/Documents/GitHub/Project_KC/190201_mGC.xlsx"
-         
-#      return filename
- 
     
 # In[1]:
-# #we need to create the collect_data function
-
-# dsource="GC"
-# ExcelTable = pd.read_excel(define_file(dsource))
-
-# t0,t1=0,0
-# if dsource=="GC":
-#     columns_list=["Acquisition Date & Time","Quantity/He","Quantity/H2","Quantity/O2"]#,"Quantity/N2","Quantity/CH4"]
-#     t0="12:00"
-#     t1="13:00"
-
-# ExcelTable["Acquisition Date & Time"]=pd.to_datetime(ExcelTable["Acquisition Date & Time"])
-
-# d_t0=ExcelTable["Acquisition Date & Time"].dt.strftime("%H:%M")>t0
-# d_t1=ExcelTable["Acquisition Date & Time"].dt.strftime("%H:%M")<t1
-# Table_timeslot=ExcelTable[d_t0 & d_t1]
-
-# Table_timeslot=Table_timeslot[columns_list]
-
-# print(Table_timeslot)
-
 
 class timeinterval: #this is the most elemental and general class
     
@@ -153,7 +120,7 @@ class Point:
         for k in collect_data:
             print(k)
             #if k in self.data_point.keys(): #the data from the database k has already added to the point
-            #    tk.messagebox.showwarning("Database already added", f"the database {k} has been already added to this point")
+
             #    continue
             if len(db_experiment[k])==0:
                 #pop up a message saying that the database k is missing
@@ -443,13 +410,12 @@ class Season:
         
     def delete_Experiment(self,exp_index): #experiment_number is the index of the list of experiments
         #a windows must pop up asking for confimration
-        Msgbox=tk.messagebox.askquestion("Delete Experiment",
-                                         "Are you sure you want to delete the Experiment(s): {} from season: {}".format(exp_index,self.season_name),
-                                         icon="warning")
-        if Msgbox=="yes":
+        yesorno=msgbox.Message_Popup("YesorNo","Delete Experiment",
+                                         "Are you sure you want to delete the Experiment(s): {} from season: {}".format(exp_index,self.season_name))
+        if yesorno.response=="Yes": 
             del self.experiments[exp_index]
         else:
-            tk.messagebox.showinfo("Delete Experiment", "None experiment will be deleted")
+            msgbox.Message_Popup("Info","Delete Experiment", "None experiment will be deleted")
 
         
     #transfers seasons to other project (to_project is the object to which the seasons will be transferred)
@@ -457,12 +423,11 @@ class Season:
     def transfer_Experiment(self,to_season,Exp_index_list):
         #a windows must pop up asking for confimration
         Exp_index_list.sort()
-        Msgbox=tk.messagebox.askquestion("Transfer Experiment",
-                                         "Are you sure you want to transfer the Experiment(s):{} from season:{} to season:{}".format(Exp_index_list,self.season_name,to_season.season_name),
-                                         icon="warning")
+        yesorno=msgbox.Message_Popup("YesorNo","Transfer Experiment",
+                                         "Are you sure you want to transfer the Experiment(s):{} from season:{} to season:{}".format(Exp_index_list,self.season_name,to_season.season_name))
         #seasons_selected=[self.seasons[i] for i in season_index_list]
         
-        if Msgbox=="yes": 
+        if yesorno.response=="Yes": 
             j=0
             for i in Exp_index_list:            
                 to_season.experiments.append(self.experiments[i]) #insert the experiment(s) into the other project 
@@ -470,7 +435,7 @@ class Season:
                 del self.experiments[i-j] #deletes the experiment(s) from the actual project
                 j+=1
         else:
-            tk.messagebox.showinfo("Delete Experiment", "None experiment will be deleted")
+            msgbox.Message_Popup("Info","Delete Experiment", "None experiment will be deleted")
             
     def get_dates_total(self): #get the date of the object given the subclasses that are within it
         d_ini,d_end=[],[]
@@ -500,6 +465,8 @@ class Season:
 class Project:
     
     Totalnumberprojects=0 #stores the total number of projects
+    filepath=os.getcwd()
+    filename="Project_List_Final"
     
     #allprojects=[] #the initial value of this variable should be loaded from a special python .pkl file which contains the objects (projects) with its resepctive attributes
     
@@ -554,13 +521,12 @@ class Project:
 
     def delete_Season(self,season_index): #experiment_number is the index of the list of seasons
         #A windows must pop up asking for confirmation
-        Msgbox=tk.messagebox.askquestion("Delete Season",
-                                         "Are you sure you want to delete the season(s): {} from project: {}".format(season_index,self.project_name),
-                                         icon="warning")
-        if Msgbox=="yes":                   
+        yesorno=msgbox.Message_Popup("YesorNo","Delete Season",
+                                         "Are you sure you want to delete the season(s): {} from project: {}".format(season_index,self.project_name))
+        if yesorno.response=="Yes":                    
             del self.seasons[season_index]
         else:
-            tk.messagebox.showinfo("Delete Season", "None season will be deleted")
+            msgbox.Message_Popup("Info","Delete Season", "None season will be deleted")
             
 
     #transfers seasons to other project (to_project is the object to which the seasons will be transferred)
@@ -568,10 +534,9 @@ class Project:
     def transfer_Season(self,to_project,season_index_list):
         #a windows must pop up asking for confimration
         season_index_list.sort()
-        Msgbox=tk.messagebox.askquestion("Transfer Season",
-                                         "Are you sure you want to transer the season(s):{} from project:{} to project:{} ".format(season_index_list,self.project_name,to_project.project_name),
-                                         icon="warning")
-        if Msgbox=="yes":
+        yesorno=msgbox.Message_Popup("YesorNo","Transfer Season",
+                                         "Are you sure you want to transer the season(s):{} from project:{} to project:{} ".format(season_index_list,self.project_name,to_project.project_name))
+        if yesorno.response=="Yes": 
             #seasons_selected=[self.seasons[i] for i in season_index_list]
             j=0
             for i in season_index_list:            
@@ -580,7 +545,7 @@ class Project:
                 del self.seasons[i-j] #deletes the seasons from the actual project
                 j+=1
         else:
-            tk.messagebox.showinfo("Delete Season", "None season will be transfered")
+            msgbox.Message_Popup("Info","Delete Season", "None season will be transfered")
 
     def get_dates_total(self): #get the date of the object given the subclasses that are within it
         d_ini,d_end=[],[]
@@ -607,6 +572,12 @@ class Project:
                 self.fuel_type="Mix"
         return self.fuel_type
 
+    def save_allprojects(self,project_list_0):
+        # backup_projects.save_pr(project_list_0,Project.filepath,Project.filename)
+        with open("{}\{}.pkl".format(Project.filepath,Project.filename),"wb") as f:
+            pickle.dump(project_list_0,f)   
+        print("Projects saved")
+    
     @classmethod
     def get_numberprojects(cls):
         return cls.Totalnumberprojects
@@ -615,7 +586,16 @@ class Project:
     def modify_numberprojects(cls,new_number):
         cls.Totalnumberprojects=new_number
 
-
+    @classmethod
+    def change_pathorname(cls,whattochange,new_value):
+        if whattochange=="NAME":
+            cls.filename=new_value
+        elif whattochange=="PATH":
+            cls.filepath=new_value
+        elif whattochange=="BOTH":
+            cls.filepath=new_value[0]
+            cls.filename=new_value[1]
+            
 # def randomclasses(a,b):
 #     global seed
 #     seed+=1

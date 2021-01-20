@@ -19,7 +19,7 @@ import GUIs.GUI_AddSCADA as gui_addscada
 import GUIs.GUI_AddGC as gui_addgc
 import GUIs.GUI_AddSPA as gui_addspa
 import Classes_Backend as KCbckend
-import GUIs.Save_Projects as backup_projects
+import GUIs.Backup_Projects as backup_projects
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -31,6 +31,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ind_pr_selected=exp_route[0] #index of the selected project
         self.ind_season_selected=exp_route[1] #index of the selected season       
         self.ind_exp_selected=exp_route[2] #index of the selected experiment
+        self.project_selected=self.Pr_list[self.ind_pr_selected]
         self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         
         self.col_labels_db=["Index","DB Type","Date Start","Date End","Delay","Comment"]        
@@ -38,6 +39,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.finish_window=False
     
     def closeEvent(self, event):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
         
@@ -764,14 +766,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def ok_button(self):        
         self.cancel_button()
         
-    def save_projects(self):
-        filepath="C:\\Users\\refor\\Documents\\GitHub\\Project_KC"
-        filename="Projec_List1"        
-        backup_projects.save_pr(self.Pr_list,filepath,filename)
-        print("File Saved!")
+    # def save_projects(self):
+    #     filepath="C:\\Users\\refor\\Documents\\GitHub\\Project_KC"
+    #     filename="Projec_List1"        
+    #     backup_projects.save_pr(self.Pr_list,filepath,filename)
+    #     print("File Saved!")
         
     def cancel_button(self):
-        self.save_projects() #ask first
+        # self.save_projects() #ask first
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
     

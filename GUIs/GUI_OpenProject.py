@@ -34,6 +34,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.project_selected=self.Pr_list[ind_pr_selected]
     
     def closeEvent(self, event):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
         # print(self.finish_window)
@@ -541,6 +542,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     
     #closes the window
     def back_button(self):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
 

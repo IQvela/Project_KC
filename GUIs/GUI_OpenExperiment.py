@@ -37,6 +37,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ind_pr_selected=exp_route[0] #index of the selected project
         self.ind_season_selected=exp_route[1] #index of the selected season       
         self.ind_exp_selected=exp_route[2] #index of the selected experiment
+        self.project_selected=self.Pr_list[self.ind_pr_selected]
         self.exp_selected=self.Pr_list[self.ind_pr_selected].seasons[self.ind_season_selected].experiments[self.ind_exp_selected]
         
         self.col_labels_db=["Index","DB Type","Date Start","Date End","Delay","Comment"]        
@@ -44,6 +45,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.finish_window=False
     
     def closeEvent(self, event):
+        self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
         self.close()
         
@@ -373,10 +375,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_Ok = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Ok.setGeometry(QtCore.QRect(960, 470, 100, 40))
         self.Button_Ok.setObjectName("Button_Ok")
+        self.Button_Ok.clicked.connect(self.ok_button)
         
         self.Button_Cancel = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Cancel.setGeometry(QtCore.QRect(960, 520, 100, 40))
         self.Button_Cancel.setObjectName("Button_Cancel")
+        self.Button_Cancel.clicked.connect(self.cancel_button)
         
         self.Button_AddPoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddPoint.setGeometry(QtCore.QRect(380, 390, 100, 40))
@@ -763,6 +767,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             text_boxes=[self.text_name,self.text_DateStart,self.text_TimeStart,self.text_DateEnd,self.text_TimeEnd,self.text_fuel,self.text_bed,self.text_comments]
             for t_box in text_boxes:
                 t_box.setEnabled(True)                    
+
+
+    def ok_button(self):        
+        self.cancel_button()
+        
+        
+    def cancel_button(self):
+        # self.save_projects() #ask first
+        self.project_selected.save_allprojects(self.Pr_list)
+        self.finish_window=True
+        self.close()
                      
 # if __name__ == "__main__":
 #     import sys
