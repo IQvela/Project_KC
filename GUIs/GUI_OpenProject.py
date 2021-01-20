@@ -344,6 +344,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Label_Title.setText(_translate("MainWindow", "Project: " + self.project_selected.project_name))
 
         self.Textbox_Description.setText(self.project_selected.project_description)
+        self.Textbox_Description.setEnabled(False)
                
         self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
         self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
@@ -441,7 +442,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         while ui_newseason.finish_window==False:
             QtCore.QCoreApplication.processEvents()
             time.sleep(0.05) 
-        if ui_newseason.season_attributes!="":
+        if len(ui_newseason.season_attributes)>0:
             # print("N. seasons of project selected:{}".format(len(self.project_selected.seasons)))
             (season_name,season_description)=ui_newseason.season_attributes
             self.project_selected.add_Season(season_name,season_description)
@@ -452,7 +453,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             # print("tree populated!")            
             
         else:
-            msgbox.Message_popup("Error","Season Error","Season cannot be created because neither the season name nor its description was given, please check!")
+            msgbox.Message_popup("Warning","Season not created","Season cannot be created because neither the season name nor its description was given, please check!")
 
     #Opens the season information window
     def view_infoseason(self):
@@ -481,7 +482,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if type(ind_season_selected)==int:
             n_exp0=len(self.project_selected.seasons[ind_season_selected].experiments)
             # print(f"{n_seasons0}, season:{ind_season_selected}, exp:{n_exp0}")
-            if ui_newexperiment.exp_attributes!="":            
+            if len(ui_newexperiment.exp_attributes)>0:            
                 (exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)=ui_newexperiment.exp_attributes
                 # print("creating the experiment object. attributes:",ui_newexperiment.exp_attributes)
                 self.project_selected.seasons[ind_season_selected].add_Experiment(exp_name,d_ini,d_end,fuel_type,bed_type,exp_comments)
@@ -491,8 +492,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 #     item_child=QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(ind_season_selected))
                 self.populate_tree()
                 print("tree populated")
-            else:
-                msgbox.Message_popup("Error","Error","The Experiment attributes were not read. Please check and add again the info")    
+            # else:
+            #     msgbox.Message_popup("Error","Error","The Experiment attributes were not read. Please check and add again the info")    
         
     #Delete experiment---------------------------------------------------------------------------------------------------- 
     def delete_experiment(self): #must to display a message to make sure the user wants to delete the selected experiment
@@ -517,25 +518,28 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     #Opens window Experiment---------------------------------------------------------------------------------------------
     def open_experiment(self):        
         #exp_selected1=self.treeWidget.selectedItems()
-        exp_selected=self.treeWidget.selectedIndexes()[-1].data()
-        
-        if len(exp_selected.split("/"))<2 or len(exp_selected.split("/"))>3:
+        try:
+            exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+        except:
             msgbox.Message_popup("Error","Error","Please select an Experiment row")
         else:
-            season_selected=int(exp_selected.split("/")[0])
-            exp_selected=int(exp_selected.split("/")[1])
-                    
-        print("opening the open_experiment window")
-        ui_openexperiment=gui_openexperiment.Ui_MainWindow(self.Pr_list,[self.ind_pr_selected,season_selected,exp_selected])
-        ui_openexperiment.setupUi()
-        ui_openexperiment.show()
-
-        #print("window openned")
-        while ui_openexperiment.finish_window==False:
-            QtCore.QCoreApplication.processEvents()
-            time.sleep(0.05)  
+            if len(exp_selected.split("/"))<2 or len(exp_selected.split("/"))>3:
+                msgbox.Message_popup("Error","Error","Please select an Experiment row")
+            else:
+                season_selected=int(exp_selected.split("/")[0])
+                exp_selected=int(exp_selected.split("/")[1])
+                        
+                print("opening the open_experiment window")
+                ui_openexperiment=gui_openexperiment.Ui_MainWindow(self.Pr_list,[self.ind_pr_selected,season_selected,exp_selected])
+                ui_openexperiment.setupUi()
+                ui_openexperiment.show()
         
-        self.populate_tree()    
+                #print("window openned")
+                while ui_openexperiment.finish_window==False:
+                    QtCore.QCoreApplication.processEvents()
+                    time.sleep(0.05)  
+                
+                self.populate_tree()      
     #opens the window to analysis of the data------------------------------------------------------------------------------    
     def data_analysis(self):
         pass

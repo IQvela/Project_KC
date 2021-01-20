@@ -387,7 +387,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.Pr_list=pickle.load(f)            
         except:
             msgbox.Message_popup("Error","Load File error","Something Ocurred when loading the file")
-            yesorno=msgbox.Message_popup("YesorNo","Load Test Projects","Do you want to create a test porject list?")
+            yesorno=msgbox.Message_popup("YesorNo","Load Test Projects","Do you want to create a test project list?")
             if yesorno.response=="Yes":
                 self.Pr_list=create_test()
                 msgbox.Message_popup("Info","Load Test List","Test List Succesfully Created")
