@@ -195,7 +195,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #Labels------------------------------------------------------------------------------------------------
         self.Title_ExperimentName = QtWidgets.QLabel(self.centralwidget)
-        self.Title_ExperimentName.setGeometry(QtCore.QRect(40, 25, 500, 41))
+        self.Title_ExperimentName.setGeometry(QtCore.QRect(40, 25, 600, 41))
         font = QtGui.QFont()
         font.setPointSize(16)
         font.setBold(True)
@@ -211,8 +211,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_comments.setFont(font)
-        self.label_comments.setObjectName("label_comments")
- 
+         
         self.label_name = QtWidgets.QLabel(self.centralwidget)
         self.label_name.setGeometry(QtCore.QRect(50, 90, 90, 16))
         font = QtGui.QFont()

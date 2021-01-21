@@ -33,7 +33,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Pr_list=Pr_list
         self.ind_pr_selected=ind_pr_selected
         self.project_selected=self.Pr_list[ind_pr_selected]
-    
+           
     def closeEvent(self, event):
         self.project_selected.save_allprojects(self.Pr_list)
         self.finish_window=True
@@ -199,13 +199,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Label_Title.setAlignment(QtCore.Qt.AlignCenter)
                 
         self.Label_Description = QtWidgets.QLabel(self.centralwidget)
-        self.Label_Description.setGeometry(QtCore.QRect(80, 60, 81, 41))
+        self.Label_Description.setGeometry(QtCore.QRect(80, 60, 100, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.Label_Description.setFont(font)
 
         self.Label_Responsible = QtWidgets.QLabel(self.centralwidget)
-        self.Label_Responsible.setGeometry(QtCore.QRect(80, 100, 20, 41))
+        self.Label_Responsible.setGeometry(QtCore.QRect(80, 140, 100, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.Label_Responsible.setFont(font)
@@ -213,11 +213,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #TextBoxes---------------------------------------------------------------------------------       
         self.Textbox_Description = QtWidgets.QTextEdit(self.centralwidget)
-        self.Textbox_Description.setGeometry(QtCore.QRect(80, 100, 500, 21))
+        self.Textbox_Description.setGeometry(QtCore.QRect(80, 100, 600, 35))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.Textbox_Description.setFont(font)  
         
+        self.Text_Responsible = QtWidgets.QTextEdit(self.centralwidget)
+        self.Text_Responsible.setGeometry(QtCore.QRect(170, 150, 200, 32))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.Text_Responsible.setFont(font)  
         
         #GroupBox
         self.groupBox_season=QtWidgets.QGroupBox((self.centralwidget))
@@ -232,6 +237,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #fontb.setPointSize(10)
         fontb.setBold(True)
        
+
+        #New Season
+        self.Button_ModifyInfoProject = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_ModifyInfoProject.setGeometry(QtCore.QRect(720, 100, 100, 40))
+        self.Button_ModifyInfoProject.clicked.connect(self.modify_info_project)
+        self.Button_ModifyInfoProject.setFont(fontb)
+
         #New Season
         self.Button_NewSeason = QtWidgets.QPushButton(self.centralwidget)
         self.Button_NewSeason.setGeometry(QtCore.QRect(720, 195, 100, 40))
@@ -278,7 +290,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #Treeview---------------------------------------------------------------------------------
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
-        self.treeWidget.setGeometry(QtCore.QRect(80, 190, 600, 291))
+        self.treeWidget.setGeometry(QtCore.QRect(80, 200, 600, 291))
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.treeWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) #the selection behaviour is by rows 
@@ -333,6 +345,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "OPEN PROJECT"))
         
+        #buttons
+        self.Button_ModifyInfoProject.setText(_translate("MainWindow", "MODIFY INFO"))
         self.Button_NewSeason.setText(_translate("MainWindow", "NEW SEASON"))
         self.Button_viewinfoseason.setText(_translate("MainWindow", "VIEW INFO"))
         self.Button_NewExperiment.setText(_translate("MainWindow", "NEW EXPERIMENT"))
@@ -343,6 +357,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Button_back.setText(_translate("MainWindow", "BACK"))
 
+        #labels 
         self.Label_Description.setText(_translate("MainWindow", "Description"))
         self.Label_Responsible.setText(_translate("MainWindow", "Responsible"))
         self.menu1.setTitle(_translate("MainWindow", "Project"))
@@ -350,9 +365,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Label_Title.setText(_translate("MainWindow", "Project: " + self.project_selected.project_name))
 
+        #text box
         self.Textbox_Description.setText(self.project_selected.project_description)
         self.Textbox_Description.setEnabled(False)
-               
+        self.Text_Responsible.setText(_translate("MainWindow", "hola"))
+        self.Text_Responsible.setEnabled(False)
+              
         self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
         self.groupBox_exp.setTitle(_translate("MainWindow", u"Experiment", None))
 
@@ -440,6 +458,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.treeWidget.resizeColumnToContents(2) #date_end
         self.treeWidget.resizeColumnToContents(4) #fueltype        
     
+
+    #allows modify attributes project
+    def modify_info_project(self):
+        print('modify')
+        self.Textbox_Description.setEnabled(True)
+        self.Text_Responsible.setEnabled(True)
+
+        if self.Textbox_Description.toPlainText()=="" or self.Text_Responsible.toPlainText()=="":
+            print("No text was written")
+            msgbox.Message_popup("Error","No Text","No text was written")
+        else:
+            #self.Textbox_Description=(self.Textbox_Description.toPlainText())
+            #self.Text_Responsible=(self.Text_Responsible.toPlainText())
+            print("the text was read")
+            #self.cancel_window()
+
+
     #Opens the window to create a new season and add the new season to project selected
     def new_season(self):
         ui_newseason=gui_newseason.Ui_MainWindow()
