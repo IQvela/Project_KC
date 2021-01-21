@@ -27,9 +27,9 @@ class Ui_MainWindow(object):
         self.finish_window=True
         self.close()
         
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(591, 529)
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(591, 529)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Title_ViewInfoProject = QtWidgets.QLabel(self.centralwidget)

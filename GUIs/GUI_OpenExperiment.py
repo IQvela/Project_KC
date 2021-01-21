@@ -357,11 +357,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AnalyseData.setGeometry(QtCore.QRect(840, 290, 100, 40))
-        self.Button_AnalyseData.setObjectName("Button_AnalyseData")
         
         self.Button_DeleteData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_DeleteData.setGeometry(QtCore.QRect(710, 290, 100, 40))
-        self.Button_DeleteData.setObjectName("Button_DeleteData")
+        self.Button_DeleteData.clicked.connect(self.delete_data)
         
         self.Button_AddData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_AddData.setGeometry(QtCore.QRect(820, 60, 100, 40))#960, 50, 100, 70
@@ -393,6 +392,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.Button_DeletePoint = QtWidgets.QPushButton(self.centralwidget)
         self.Button_DeletePoint.setGeometry(QtCore.QRect(50, 490, 100, 40))
+        self.Button_DeletePoint.clicked.connect(self.delete_point)
 
         #TableWidgets--------------------------------------------------------------------------
         #table widget database (table where the loaded databases will be shown)
@@ -715,7 +715,36 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.populate_pointstable()
 
     def delete_point(self):
-        pass
+        print('delete point')
+        try:
+            ind_point_selected=int(self.tableWidget_points.selectedItems()[0].text())
+            print(ind_point_selected)
+        except:
+            msgbox.Message_popup("Error","Error","Please select a Point")
+        else:
+            if ind_point_selected >-1:
+                print(f"this is the selected: {ind_point_selected}")
+                yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
+                if yesorno.response=="Yes":
+                    print('this will delete point soon')
+                    #del self.Pr_list[ind_pr_selected]
+                    #self.populate_projecttable()
+
+    def delete_data(self):
+        print('delete data')
+        try:
+            ind_data_selected=int(self.tableWidget_db.selectedItems()[0].text())
+            print(ind_data_selected)
+        except:
+            msgbox.Message_popup("Error","Error","Please select a Point")
+        else:
+            if ind_data_selected >-1:
+                print(f"this is the selected: {ind_data_selected}")
+                yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
+                if yesorno.response=="Yes":
+                    print('this will delete data soon')
+                    #del self.Pr_list[ind_pr_selected]
+                    #self.populate_projecttable()
 
     def modify_attrib(self):
         self.label_status.setText("Status: Modifying Attributes...")

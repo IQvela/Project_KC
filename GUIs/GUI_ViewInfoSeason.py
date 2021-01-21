@@ -24,10 +24,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.finish_window=True
         self.close()
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(576, 541)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(576, 541)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.Title_ViewInfoSeason = QtWidgets.QLabel(self.centralwidget)
         self.Title_ViewInfoSeason.setGeometry(QtCore.QRect(30, 40, 521, 41))
@@ -116,21 +116,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_Cancel.setGeometry(QtCore.QRect(300, 450, 100, 40))
         self.Button_Cancel.clicked.connect(self.ok)
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 576, 26))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "ViewInfoSeason"))
+        self.setWindowTitle(_translate("MainWindow", "ViewInfoSeason"))
 
         #labels-------------------------------------------------------------------
         self.Title_ViewInfoSeason.setText(_translate("MainWindow", "View info Season X"))
@@ -185,11 +185,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.finish_window=True
         self.close()
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+#if __name__ == "__main__":
+#    import sys
+#    app = QtWidgets.QApplication(sys.argv)
+#    MainWindow = QtWidgets.QMainWindow()
+#    ui = Ui_MainWindow()
+#    ui.setupUi(MainWindow)
+#    MainWindow.show()
+#    sys.exit(app.exec_())

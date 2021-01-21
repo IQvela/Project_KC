@@ -215,6 +215,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_CheckData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_CheckData.setGeometry(QtCore.QRect(230, 290, 100, 40))
         self.Button_CheckData.setObjectName("Button_CheckData")
+        
         #define table: project list
         self.Table_Project_list = QtWidgets.QTableWidget(self.centralwidget)
         self.Table_Project_list.setGeometry(QtCore.QRect(20, 60, 571, 201))

@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from . import GUI_NewSeason as gui_newseason
 from . import GUI_NewExperiment as gui_newexperiment
 from . import GUI_OpenExperiment as gui_openexperiment
+from . import GUI_ViewInfoSeason as gui_viewinfoseason
 from . import GUI_MessageBoxKC as msgbox
 
 # import GUIs.GUI_NewSeason as gui_newseason
@@ -196,18 +197,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setStrikeOut(False)
         self.Label_Title.setFont(font)
         self.Label_Title.setAlignment(QtCore.Qt.AlignCenter)
-        self.Label_Title.setObjectName("Title")
-        
+                
         self.Label_Description = QtWidgets.QLabel(self.centralwidget)
-        self.Label_Description.setGeometry(QtCore.QRect(80, 60, 101, 41))
+        self.Label_Description.setGeometry(QtCore.QRect(80, 60, 81, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.Label_Description.setFont(font)
-        self.Label_Description.setObjectName("label_5")
+
+        self.Label_Responsible = QtWidgets.QLabel(self.centralwidget)
+        self.Label_Responsible.setGeometry(QtCore.QRect(80, 100, 20, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Label_Responsible.setFont(font)
+        
         
         #TextBoxes---------------------------------------------------------------------------------       
         self.Textbox_Description = QtWidgets.QTextEdit(self.centralwidget)
-        self.Textbox_Description.setGeometry(QtCore.QRect(80, 100, 761, 61))
+        self.Textbox_Description.setGeometry(QtCore.QRect(80, 100, 500, 21))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.Textbox_Description.setFont(font)  
@@ -338,6 +344,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_back.setText(_translate("MainWindow", "BACK"))
 
         self.Label_Description.setText(_translate("MainWindow", "Description"))
+        self.Label_Responsible.setText(_translate("MainWindow", "Responsible"))
         self.menu1.setTitle(_translate("MainWindow", "Project"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         
@@ -457,7 +464,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     #Opens the season information window
     def view_infoseason(self):
-        pass
+        try:
+            season_selected=self.treeWidget.selectedIndexes()[0].data()
+            print(season_selected)
+        except:
+            msgbox.Message_popup("Error","Error","Please select an Season row")
+        else:
+            ui_viewinfoseason=gui_viewinfoseason.Ui_MainWindow()
+            ui_viewinfoseason.setupUi()
+            ui_viewinfoseason.show()
+
+            while ui_viewinfoseason.finish_window==False:
+                QtCore.QCoreApplication.processEvents()
+                time.sleep(0.05) 
         
     #Opens Add Experiment window------------------------------------------------------------------------------------------
     def new_experiment(self):
