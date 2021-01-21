@@ -462,6 +462,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         else:
             msgbox.Message_popup("Warning","Season not created","Season cannot be created because neither the season name nor its description was given, please check!")
 
+    def delete_season(self):
+        # print('delete data')
+        try:
+            ind_season_selected=exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+        except:
+            msgbox.Message_popup("Error","Error","Please select a Season row")
+        else:
+            season_selected=int(exp_selected.split("/")[0])
+           
+            yesorno=msgbox.Message_popup("YesorNo","Delete Season", "Are you sure you want to delete the selected season? Note: All data associated to this season will be deleted (but not the files)")
+            if yesorno.response=="Yes":
+                del self.Pr_list[self.ind_pr_selected].seasons[season_selected]
+                self.populate_tree()
+     
+
     #Opens the season information window
     def view_infoseason(self):
         try:

@@ -540,11 +540,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             item = self.tableWidget_db.horizontalHeaderItem(c_i)
             item.setText(c_label)        
 
+        self.tabledb_info_index=[]
         r=0
         for k,db_tot in self.exp_selected.data_experiment.items():
             if len(db_tot)>0:
                 for ind_db,db in enumerate(db_tot): #goes over the differente databases loaded for the data_type k in the data_experiment dictionary
                     tabledb_info=self.exp_selected.data_experiment_info[k][ind_db] #(datatype_entrynumber,d_min,d_max,comments,delay(HH:MM:SS))
+                    self.tabledb_info_index.append([k,ind_db]) #index in the .data_experiment dictionary 
                     #tabledb_info.insert(0,str(r)) #insert at index cero r
                     for c in range(self.tableWidget_db.columnCount()):
                         item=self.tableWidget_db.item(r,c)
@@ -722,13 +724,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         except:
             msgbox.Message_popup("Error","Error","Please select a Point")
         else:
-            if ind_point_selected >-1:
-                print(f"this is the selected: {ind_point_selected}")
-                yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
-                if yesorno.response=="Yes":
-                    print('this will delete point soon')
-                    #del self.Pr_list[ind_pr_selected]
-                    #self.populate_projecttable()
+            print(f"this is the selected: {ind_point_selected}")
+            yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
+            if yesorno.response=="Yes":
+                del self.exp_selected.points[ind_point_selected]
+                self.populate_pointstable()
+                print('Point deleted')
+
 
     def delete_data(self):
         print('delete data')
@@ -736,15 +738,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             ind_data_selected=int(self.tableWidget_db.selectedItems()[0].text())
             print(ind_data_selected)
         except:
-            msgbox.Message_popup("Error","Error","Please select a Point")
+            msgbox.Message_popup("Error","Error","Please select an entry from table")
         else:
-            if ind_data_selected >-1:
-                print(f"this is the selected: {ind_data_selected}")
-                yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
-                if yesorno.response=="Yes":
-                    print('this will delete data soon')
-                    #del self.Pr_list[ind_pr_selected]
-                    #self.populate_projecttable()
+            print(f"this is the selected: {ind_data_selected}")
+            yesorno=msgbox.Message_popup("YesorNo","Delete Project", "Are you sure you want to delete the selected Project? Note: All data uploaded to this entry will be deleted (not the files)")
+            if yesorno.response=="Yes":
+                d_type=self.tabledb_info_index[ind_data_selected][0]
+                d_type_ind=self.tabledb_info_index[ind_data_selected][1]
+                del self.exp_selected.data_experiment[d_type][d_type_ind]
+                del self.exp_selected.data_experiment_info[d_type][d_type_ind]
+                self.populate_dbtable()
+                print('Data entry deleted')
+
 
     def modify_attrib(self):
         self.label_status.setText("Status: Modifying Attributes...")
