@@ -238,7 +238,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         fontb.setBold(True)
        
 
-        #New Season
+        #Modify info proeject
         self.Button_ModifyInfoProject = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ModifyInfoProject.setGeometry(QtCore.QRect(720, 100, 100, 40))
         self.Button_ModifyInfoProject.clicked.connect(self.modify_info_project)
@@ -368,7 +368,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #text box
         self.Textbox_Description.setText(self.project_selected.project_description)
         self.Textbox_Description.setEnabled(False)
-        self.Text_Responsible.setText(_translate("MainWindow", "hola"))
+        self.Text_Responsible.setText(_translate("MainWindow", self.project_selected.project_responsible))
         self.Text_Responsible.setEnabled(False)
               
         self.groupBox_season.setTitle(_translate("MainWindow", u"Season", None))
@@ -462,17 +462,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     #allows modify attributes project
     def modify_info_project(self):
         print('modify')
-        self.Textbox_Description.setEnabled(True)
-        self.Text_Responsible.setEnabled(True)
+        if self.Textbox_Description.isEnabled()==True:
+            self.project_selected.project_description=(self.Textbox_Description.toPlainText())
+            print(self.project_selected.project_description)
+            self.Textbox_Description.setEnabled(False)
+        if self.Text_Responsible.isEnabled()==True:
+            self.Text_Responsible=(self.Text_Responsible.toPlainText())
+            print(self.project_selected.project_responsible)
+            self.Text_Responsible.setEnabled(False)
 
-        if self.Textbox_Description.toPlainText()=="" or self.Text_Responsible.toPlainText()=="":
-            print("No text was written")
-            msgbox.Message_popup("Error","No Text","No text was written")
         else:
+            self.Textbox_Description.setEnabled(True)   
+            self.Text_Responsible.setEnabled(True)
+            
             #self.Textbox_Description=(self.Textbox_Description.toPlainText())
             #self.Text_Responsible=(self.Text_Responsible.toPlainText())
-            print("the text was read")
-            #self.cancel_window()
+            #msgbox.Message_popup("Info","Modify Attributes","Valid attributes were succesfully updated")
 
 
     #Opens the window to create a new season and add the new season to project selected
