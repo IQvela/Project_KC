@@ -14,11 +14,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
-    def __init__(self):
+    def __init__(self,project_selected,season_selected):
         super(Ui_MainWindow,self).__init__()
+        #info need
+        self.project_selected=project_selected
+        #self.ind_season_selected=ind_season_selected  
+        print(self.project_selected)
+        self.season=self.project_selected.seasons[season_selected]
+
+
         self.finish_window=False
-        #self.project_selected=project_selected
-        #self.season_data or similar
 
     def closeEvent(self, event):
         self.finish_window=True
@@ -130,7 +135,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "ViewInfoSeason"))
+        self.setWindowTitle(_translate("MainWindow", "Information Season"+" "+self.season.season_name))
 
         #labels-------------------------------------------------------------------
         self.Title_ViewInfoSeason.setText(_translate("MainWindow", "View info Season X"))
@@ -160,16 +165,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #list-------------------------------------------------------------
         __sortingEnabled = self.list_experiments.isSortingEnabled()
         self.list_experiments.setSortingEnabled(False)
-        item = self.list_experiments.item(0)
-        item.setText(_translate("MainWindow", "Exp A: high temperature"))
-        item = self.list_experiments.item(1)
-        item.setText(_translate("MainWindow", "Exp B: Low temperature"))
-        item = self.list_experiments.item(2)
-        item.setText(_translate("MainWindow", "Exp C: Circulation"))
-        item = self.list_experiments.item(3)
-        item.setText(_translate("MainWindow", "Exp D: asadfad"))
-        item = self.list_experiments.item(4)
-        item.setText(_translate("MainWindow", "Exp X: test"))
+        for i in self.season:
+            item = self.list_experiments.item(i)
+            item.setText(_translate("MainWindow", self.season[i]))
+        #item = self.list_experiments.item(1)
+        #item.setText(_translate("MainWindow", "Exp B: Low temperature"))
+        #item = self.list_experiments.item(2)
+        #item.setText(_translate("MainWindow", "Exp C: Circulation"))
+        #item = self.list_experiments.item(3)
+        #item.setText(_translate("MainWindow", "Exp D: asadfad"))
+        #item = self.list_experiments.item(4)
+        #item.setText(_translate("MainWindow", "Exp X: test"))
         self.list_experiments.setSortingEnabled(__sortingEnabled)
         
         #buttons-------------------------------------------------------------------

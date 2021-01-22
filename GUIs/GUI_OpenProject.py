@@ -44,7 +44,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self):
         
         self.setObjectName("MainWindow")
-        self.resize(900, 550)
+        self.resize(900, 600)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -226,10 +226,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #GroupBox
         self.groupBox_season=QtWidgets.QGroupBox((self.centralwidget))
-        self.groupBox_season.setGeometry(QtCore.QRect(710, 240, 120, 85))        
+        self.groupBox_season.setGeometry(QtCore.QRect(710, 240, 120, 120))        
         
         self.groupBox_exp=QtWidgets.QGroupBox((self.centralwidget))
-        self.groupBox_exp.setGeometry(QtCore.QRect(710, 335, 120, 100))
+        self.groupBox_exp.setGeometry(QtCore.QRect(710, 370, 120, 100))
         
                 
         #Buttons---------------------------------------------------------------------------------
@@ -253,11 +253,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #View Info < GroupBox_season
         self.Button_viewinfoseason = QtWidgets.QPushButton(self.groupBox_season)
         self.Button_viewinfoseason.setGeometry(QtCore.QRect(10, 15, 100, 25))
-        self.Button_viewinfoseason.clicked.connect(self.view_infoseason)         
-        
+        self.Button_viewinfoseason.clicked.connect(self.view_infoseason)
+
+        #Delete Season < GroupBox_season         
+        self.Button_deleteseason = QtWidgets.QPushButton(self.groupBox_season)
+        self.Button_deleteseason.setGeometry(QtCore.QRect(10, 45, 100, 20))
+        self.Button_deleteseason.clicked.connect(self.delete_season)
+
         #Add experiment < GroupBox_season
         self.Button_NewExperiment = QtWidgets.QPushButton(self.groupBox_season)
-        self.Button_NewExperiment.setGeometry(QtCore.QRect(10, 45, 100, 35))
+        self.Button_NewExperiment.setGeometry(QtCore.QRect(10, 70, 100, 35))
         self.Button_NewExperiment.clicked.connect(self.new_experiment) 
 
         
@@ -276,21 +281,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         #Analysis
         self.Button_AnalyseData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 440, 100, 40))
+        self.Button_AnalyseData.setGeometry(QtCore.QRect(720, 470, 100, 40))
         self.Button_AnalyseData.setObjectName("Button_AnalyseData")
         self.Button_AnalyseData.clicked.connect(self.data_analysis)
         self.Button_AnalyseData.setFont(fontb)
         
         #back button
         self.Button_back = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_back.setGeometry(QtCore.QRect(830, 480, 60, 30))
+        self.Button_back.setGeometry(QtCore.QRect(830, 520, 60, 30))
         self.Button_back.clicked.connect(self.back_button)
         
 
         
         #Treeview---------------------------------------------------------------------------------
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
-        self.treeWidget.setGeometry(QtCore.QRect(80, 200, 600, 291))
+        self.treeWidget.setGeometry(QtCore.QRect(80, 200, 600, 310))
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.treeWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) #the selection behaviour is by rows 
@@ -349,6 +354,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_ModifyInfoProject.setText(_translate("MainWindow", "MODIFY INFO"))
         self.Button_NewSeason.setText(_translate("MainWindow", "NEW SEASON"))
         self.Button_viewinfoseason.setText(_translate("MainWindow", "VIEW INFO"))
+        self.Button_deleteseason.setText(_translate("MainWindow", "DELETE SEASON"))
         self.Button_NewExperiment.setText(_translate("MainWindow", "NEW EXPERIMENT"))
         
         self.Button_ViewData.setText(_translate("MainWindow", "VIEW DATA"))
@@ -520,12 +526,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     #Opens the season information window
     def view_infoseason(self):
         try:
-            season_selected=self.treeWidget.selectedIndexes()[0].data()
-            print(season_selected)
+            ind_season_selected=exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+            print(ind_season_selected)
         except:
             msgbox.Message_popup("Error","Error","Please select an Season row")
         else:
-            ui_viewinfoseason=gui_viewinfoseason.Ui_MainWindow()
+            season_selected=int(exp_selected.split("/")[0])
+            ui_viewinfoseason=gui_viewinfoseason.Ui_MainWindow(self.project_selected,season_selected)
             ui_viewinfoseason.setupUi()
             ui_viewinfoseason.show()
 
