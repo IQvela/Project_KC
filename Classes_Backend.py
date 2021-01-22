@@ -194,16 +194,36 @@ class Point:
         
         for k,v in self.time_db_pnt.items():
             if len(v)==0:
-                self.time_db_pnt[k]=["No Data" for i in self.time_db_pnt["DATE"]]
-                
+                self.time_db_pnt[k]=["" for i in self.time_db_pnt["DATE"]]
+        
+        #transform the time_db_pnt in a dictionary where the keys correspond with the date
+        self.time_dp_pnt_dict={}
+        for k_i,k_time in enumerate(self.time_db_pnt["DATE"]): #ktime is already a datetime object (great!)
+            self.time_dp_pnt_dict[k_time]=[v1[k_i] for k1,v1 in self.time_db_pnt.items()] #if k1!="DATE"
+        
+        #create the dataframe with only yes or no (for instance: if SCADA then put 1 if not 0, for SPA in future can be written 2 in the case of serial SPAs)
+        self.time_db_pnt_overview={}
+        for k,v in self.time_db_pnt.items():
+            self.time_db_pnt_overview[k]=v
+            if k in Experiment.db_names:
+                for v1_i,v1 in enumerate(v): #go for the different elements:
+                    a=0
+                    if len(v1)>0:   
+                        a=1
+                    self.time_db_pnt_overview[k][v1_i]=a
+
+        self.time_db_pnt_overview=pd.DataFrame.from_dict(self.time_db_pnt_overview)
+        self.time_db_pnt=self.time_dp_pnt_dict
+        
+        
         self.update_db_global(self)
     ############################################################################
     #add the data acquired of the point to the global time_db database
     ############################################################################
     @classmethod
     def update_db_global(cls,pnt):
-        
-        cls.time_db_global=cls.time_db_global.append(pnt.time_db_pnt,ignore_index=True,sort=False) #the time_db_pnt must to be appended to the global data
+        pass
+        # #the time_db_pnt must to be appended to the global data
     
     
     #returns the time_db_global
