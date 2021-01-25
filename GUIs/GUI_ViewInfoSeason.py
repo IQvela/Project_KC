@@ -138,7 +138,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(_translate("MainWindow", "Information Season"+" "+self.season_selected.season_name))
 
         #labels-------------------------------------------------------------------
-        self.Title_ViewInfoSeason.setText(_translate("MainWindow", "View info Season X"))
+        self.Title_ViewInfoSeason.setText(self.season_selected.season_name)
         self.label_DateStartFrom.setText(_translate("MainWindow", "From"))
         self.label_DateEndTo.setText(_translate("MainWindow", "To"))
         self.label_ExperimentList.setText(_translate("MainWindow", "Experiments list"))
