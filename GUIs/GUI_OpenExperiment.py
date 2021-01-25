@@ -703,7 +703,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         try:
             ind_point_selected=int(self.tableWidget_points.selectedIndexes()[0].data())
         except:
-            msgbox.Message_popup("Error","Error","Please select an Experiment")
+            msgbox.Message_popup("Error","Error","Please select a Point")
         else:        
             #self.tableWidget_points.selectedItems().
             # print(ind_point_selected)

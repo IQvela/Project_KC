@@ -45,8 +45,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        d_ini=self.time_db.iloc[0,0]
-        d_end=self.time_db.iloc[-1,0]
+
+        d_ini,d_end="No Data","No Data"
+        if len(self.time_db)>0:
+            d_ini=self.time_db.iloc[0,0]
+            d_end=self.time_db.iloc[-1,0]
         self.setWindowTitle(_translate("MainWindows", "View Data: {} - {}".format(d_ini,d_end)))
         
         self.Button_ok.setText("OK")
@@ -60,7 +63,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         brush_red.setStyle(QtCore.Qt.SolidPattern) 
         
         c_names=list(self.time_db.columns)
-        print(c_names)
+        # print(c_names)
         for c_i,c in enumerate(c_names):
             item=QtWidgets.QTableWidgetItem()
             self.table_timedb.setHorizontalHeaderItem(c_i,item)
@@ -83,7 +86,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
        
         
-        print("Done!")            
+        # print("Done!")            
                 
         
     def cancel_button(self):
