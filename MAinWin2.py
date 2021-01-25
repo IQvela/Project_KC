@@ -19,6 +19,7 @@ import GUIs.GUI_NewProject as gui_newproject
 import GUIs.GUI_OpenProject as gui_openproject
 # import GUIs.Backup_Projects as backup_projects
 import GUIs.GUI_MessageBoxKC as msgbox
+import GUIs.GUI_ViewData as gui_viewdata
 
 
 
@@ -212,9 +213,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_DeleteProject.clicked.connect(self.delete_project)
 
         #define button: check data
-        self.Button_CheckData = QtWidgets.QPushButton(self.centralwidget)
-        self.Button_CheckData.setGeometry(QtCore.QRect(230, 290, 100, 40))
-        self.Button_CheckData.setObjectName("Button_CheckData")
+        self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
+        self.Button_ViewData.setGeometry(QtCore.QRect(230, 290, 100, 40))
+        self.Button_ViewData.setObjectName("Button_ViewData")
+        self.Button_ViewData.clicked.connect(self.view_data)
         
         #define table: project list
         self.Table_Project_list = QtWidgets.QTableWidget(self.centralwidget)
@@ -260,7 +262,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Title.setText(_translate("MainWindow", "KC - data"))
         self.Button_OpenProject.setText(_translate("MainWindow", "OPEN PROJECT"))
         self.Button_NewProject.setText(_translate("MainWindow", "ADD PROJECT"))
-        self.Button_CheckData.setText(_translate("MainWindow", "CHECK DATA"))
+        self.Button_ViewData.setText(_translate("MainWindow", "CHECK DATA"))
         self.Button_DeleteProject.setText(_translate("MainWindow", "DELETE PROJECT"))
         #table info definition
         #vertical header names
@@ -398,8 +400,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         else:
             msgbox.Message_popup("Info","Load Project","Projects succesfully loaded")
             
+    def view_data(self):
+        try:
+            self.ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
+        except:
+            msgbox.Message_popup("Warning","No project Selected","Please select one Project")
+        else:
+            project_selected=self.Pr_list[self.ind_pr_selected]
+            if project_selected.date_ini!="ND":
+                time_db=project_selected.get_time_db_global("overview",project_selected.date_ini,project_selected.date_end)
+                
+                ui_viewdata=gui_viewdata.Ui_MainWindow(time_db,project_selected.get_dbnames())
+                ui_viewdata.setupUi()
+                ui_viewdata.show()
         
-        
+                while ui_viewdata.finish_window==False:
+                    QtCore.QCoreApplication.processEvents()
+                    time.sleep(0.05)          
+            else:
+                msgbox.Message_popup("Warning","Project has no date","The Project has no uploaded data to get the timespan")
         
     def cancel_window(self):
         with open("{}\{}.pkl".format(KCbckend.Project.filepath,KCbckend.Project.filename),"wb") as f:

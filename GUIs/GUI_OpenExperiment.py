@@ -17,6 +17,7 @@ from . import GUI_OpenPoint as gui_openpoint
 from . import GUI_AddSCADA as gui_addscada
 from . import GUI_AddGC as gui_addgc
 from . import GUI_AddSPA as gui_addspa
+from . import GUI_ViewData as gui_viewdata
 # import Classes_Backend as KCbckend
 
 
@@ -369,6 +370,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(580, 290, 100, 40))
         self.Button_ViewData.setObjectName("Button_ViewData")
+        self.Button_ViewData.clicked.connect(self.view_data)
         
         self.Button_Ok = QtWidgets.QPushButton(self.centralwidget)
         self.Button_Ok.setGeometry(QtCore.QRect(960, 470, 100, 40))
@@ -801,6 +803,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             for t_box in text_boxes:
                 t_box.setEnabled(True)                    
 
+
+    def view_data(self):
+        time_db=self.project_selected.get_time_db_global("overview",self.exp_selected.date_ini,self.exp_selected.date_end)
+        
+        ui_viewdata=gui_viewdata.Ui_MainWindow(time_db,self.project_selected.get_dbnames())
+        ui_viewdata.setupUi()
+        ui_viewdata.show()
+
+        while ui_viewdata.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.05)  
 
     def ok_button(self):        
         self.cancel_button()

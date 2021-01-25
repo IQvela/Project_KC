@@ -42,7 +42,9 @@ class Point:
     #each row corresponds with a minute
     
     time_db_fields=["DATE","POINT_ROUTE","SCADA","GC1","INFERNO","SPA"] #fields (or columns) of the database time_db
-    time_db_global=pd.DataFrame(columns=time_db_fields)
+    time_db_global={}    
+    time_db_global_overview=pd.DataFrame(columns=time_db_fields)
+
     
     def __init__(self,point_name,date_ini,date_end,point_comments,point_route):
         #self.date_ini=date_ini
@@ -187,7 +189,7 @@ class Point:
             #data_added[k]=[database date_ini,database date_end,delay,Nentries]
             # delaystr=[str(elem) if len(str(elem))>1 else "0"+str(elem) for elem in delay_db[k]]
             # delaystr=":".join(delaystr) #turns the list of delay_db[k] into a single string witht he forma HH:MM:SS
-            index0_time_db_global=len(Point.time_db_global.index) #initial index where this data will be saved in the time_db_global (the whole data is extracted based on this index0 and the Nentries of the SCADA)
+            index0_time_db_global=len(Point.time_db_global_overview.index) #initial index where this data will be saved in the time_db_global (the whole data is extracted based on this index0 and the Nentries of the SCADA)
             self.data_added[k].append([date_ini+timedelta(hours=delay_db[k][0],minutes=delay_db[k][1],seconds=delay_db[k][2]) ,
                                 date_end+timedelta(hours=delay_db[k][0],minutes=delay_db[k][1],seconds=delay_db[k][2]),
                                 timedelta(hours=delay_db[k][0],minutes=delay_db[k][1],seconds=delay_db[k][2]),Nentries[k],index0_time_db_global]) 
@@ -197,11 +199,11 @@ class Point:
                 self.time_db_pnt[k]=["" for i in self.time_db_pnt["DATE"]]
         
         #transform the time_db_pnt in a dictionary where the keys correspond with the date
-        self.time_dp_pnt_dict={}
+        time_dp_pnt_dict={}
         for k_i,k_time in enumerate(self.time_db_pnt["DATE"]): #ktime is already a datetime object (great!)
-            self.time_dp_pnt_dict[k_time]=[v1[k_i] for k1,v1 in self.time_db_pnt.items()] #if k1!="DATE"
+            time_dp_pnt_dict[k_time]=[v1[k_i] for k1,v1 in self.time_db_pnt.items()] #if k1!="DATE"
         
-        #create the dataframe with only yes or no (for instance: if SCADA then put 1 if not 0, for SPA in future can be written 2 in the case of serial SPAs)
+        #create the dataframe with only yes or no (for instance: if SCADA exists then it shows 1 if not 0, for SPA in future can be written 2 in the case of serial SPAs (or maybe not snce all the SPA is read at once))
         self.time_db_pnt_overview={}
         for k,v in self.time_db_pnt.items():
             self.time_db_pnt_overview[k]=v
@@ -213,7 +215,8 @@ class Point:
                     self.time_db_pnt_overview[k][v1_i]=a
 
         self.time_db_pnt_overview=pd.DataFrame.from_dict(self.time_db_pnt_overview)
-        self.time_db_pnt=self.time_dp_pnt_dict
+        
+        self.time_db_pnt=time_dp_pnt_dict
         
         
         self.update_db_global(self)
@@ -222,8 +225,14 @@ class Point:
     ############################################################################
     @classmethod
     def update_db_global(cls,pnt):
-        pass
-        # #the time_db_pnt must to be appended to the global data
+        #update the time_db_global dictionary
+        for k,v in pnt.time_db_pnt.items():
+            cls.time_db_global[k]=v
+        
+        #update the time_db_global_overview dataframe
+        cls.time_db_global_overview=pd.concat([cls.time_db_global_overview,pnt.time_db_pnt_overview]).drop_duplicates("DATE",keep="last").sort_values(by=["DATE"]).reset_index(drop=True)
+        
+
     
     
     #returns the time_db_global
@@ -597,6 +606,20 @@ class Project:
         with open("{}\{}.pkl".format(Project.filepath,Project.filename),"wb") as f:
             pickle.dump(project_list_0,f)   
         print("Projects saved")
+    
+    def get_time_db_global(self,type_db,d_ini,d_end):
+        d_ini=datetime.strptime(d_ini,"%Y-%m-%d %H:%M:%S")
+        d_end=datetime.strptime(d_end,"%Y-%m-%d %H:%M:%S")        
+        if type_db=="overview":
+            d0=Point.time_db_global_overview["DATE"]>=d_ini
+            d1=Point.time_db_global_overview["DATE"]<=d_end
+            return Point.time_db_global_overview[d0 & d1]
+        elif type_db=="original":
+            time_db_selected={k:v for k,v in Point.time_db_global.items() if k>=d_ini and k<=d_end}
+            return time_db_selected
+            
+    def get_dbnames(self):
+        return Experiment.db_names
     
     @classmethod
     def get_numberprojects(cls):

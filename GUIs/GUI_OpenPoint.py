@@ -15,6 +15,7 @@ from datetime import datetime
 # import Classes_Backend as KCbckend
 from . import GUI_MessageBoxKC as msgbox
 from . import GUI_LinkDataPoint as gui_linkdatapoint
+from . import GUI_ViewData as gui_viewdata
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     
@@ -213,6 +214,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.table_DataLinked = QtWidgets.QTableWidget(self.centralwidget)
         self.table_DataLinked.setGeometry(QtCore.QRect(50, 260, 531, 221))
         self.table_DataLinked.setColumnCount(len(self.table_col_headers))
+        self.table_DataLinked.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
 
         #Label Data available
@@ -257,6 +259,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         self.Button_ViewData = QtWidgets.QPushButton(self.centralwidget)
         self.Button_ViewData.setGeometry(QtCore.QRect(50, 500, 100, 40))
+        self.Button_ViewData.clicked.connect(self.view_data)
         
         #Button Add new data (after selecting data TYPE)
         self.Button_LinkData = QtWidgets.QPushButton(self.centralwidget)
@@ -471,11 +474,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             item = self.table_DataLinked.horizontalHeaderItem(c_i)
             item.setText(c)
         
-        self.table_info={k:[] for k in self.exp_selected.get_dbnames()}
+        self.table_info=[]#{k:[] for k in self.exp_selected.get_dbnames()}
         if self.table_DataLinked.rowCount()>0:
             r_i=0
             for k,v in self.point_selected.data_added.items():                    
-                for db in v:
+                for db_i,db in enumerate(v):
                     item=QtWidgets.QTableWidgetItem()
                     self.table_DataLinked.setVerticalHeaderItem(r_i,item)
                     item = self.table_DataLinked.verticalHeaderItem(r_i)
@@ -483,16 +486,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                     d_ini=db[0].strftime("%Y-%m-%d %H:%M:%S")#self.point_selected.data_added[k][0].strftime("%Y-%m-%d %H:%M:%S")
                     d_end=db[1].strftime("%Y-%m-%d %H:%M:%S")#self.point_selected.data_added[k][1].strftime("%Y-%m-%d %H:%M:%S")
                     delay=str(db[2])
-                    print(delay)
+                    # print(delay)
                     # delaystr=[str(elem) if len(str(elem))>1 else "0"+str(elem) for elem in delay_db[k]]
                   
-                    self.table_info[k].append([r_i,k,d_ini,d_end,delay,db[3]]) #table_info will have information about the index in the table for a particular data linked to the point 
+                    #self.table_info[k].append([r_i,k,d_ini,d_end,delay,db[3]]) #table_info will have information about the index in the table for a particular data linked to the point 
+                    self.table_info.append([r_i,k,d_ini,d_end,delay,db[3],db_i]) #table_info will have information about the index in the table for a particular data linked to the point 
                     #print(self.table_info)
                     for c_i in range(len(self.table_col_headers)):
                         item=QtWidgets.QTableWidgetItem()
                         self.table_DataLinked.setItem(r_i, c_i, item)
                         item=self.table_DataLinked.item(r_i, c_i)
-                        item.setText(str(self.table_info[k][-1][c_i]))
+                        item.setText(str(self.table_info[-1][c_i]))
                     r_i+=1    
         
       
@@ -585,8 +589,36 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 t_box.setEnabled(True)                    
         
     def delete_data(self):
-        pass
+        try:
+            ind_data_selected=int(self.table_DataLinked.selectedItems()[0].text())
+            # print(ind_data_selected)
+        except:
+            msgbox.Message_popup("Error","Error","Please select an entry from table")
+        else:
+            # print(f"this is the selected: {ind_data_selected}")
+            yesorno=msgbox.Message_popup("YesorNo","Unlink Data", "Are you sure you want to unlink the selected data Note: All data uploaded to this entry will be deleted (not the files)")
+            if yesorno.response=="Yes":
+                d_type=self.table_info[ind_data_selected][1]
+                d_type_ind=self.table_info[ind_data_selected][-1]
+                del self.point_selected.data_added[d_type][d_type_ind]
+                self.populate_linkeddatatable()
 
+
+    def view_data(self):
+        time_db=self.project_selected.get_time_db_global("overview",self.point_selected.date_ini,self.point_selected.date_end)
+        
+        ui_viewdata=gui_viewdata.Ui_MainWindow(time_db,self.project_selected.get_dbnames())
+        ui_viewdata.setupUi()
+        ui_viewdata.show()
+
+        while ui_viewdata.finish_window==False:
+            QtCore.QCoreApplication.processEvents()
+            time.sleep(0.05)          
+
+    def cancel_button(self):
+        self.project_selected.save_allprojects(self.Pr_list)
+        self.finish_window=True
+        self.close()
 
     def cancel_button(self):
         self.project_selected.save_allprojects(self.Pr_list)
