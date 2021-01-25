@@ -77,6 +77,14 @@ class Point:
         #self.point_route=point_route#it is a string with the indexes of Project/Season/experiment/point 
         
         delay_db={k:[0,0,0] for k in ["SCADA","GC1","INFERNO","SPA"]} #all delays are set as zero
+        # if time_type=="GC":#if the time is the time of the GC file then the SCADA must to be read at time-delay from scada file. (however the point date will be always the scada time)           
+        #     delay_db["SCADA"]=-delay #it is negative because the SCADA is the real time
+        #     date_i=date_i-delay #the point date will be always the scada time
+        #     date_e=date_e-delay #the point date will be always the scada time
+        # elif time_type=="SCADA":#if the time is the one of the SCADA file then the GC and inferno must to be read at time+delay             
+        #     delay_db["GC1"]=delay_db["INFERNO"]=delay_db["SPA"]=delay
+        #     date_i=date_i
+        #     date_e=date_e
 
         #always will be SCADA
         if len(collect_data)>1:
@@ -167,7 +175,15 @@ class Point:
                         
                     if len(SPA_samples)>0:
                         Nentries[k]+=1
+                    #else:
+                        #as the times t_spa are sorted within the db_experiment["SPA"] it must to be found the time t_spa within the interval [t0,t1]
+                        #print(f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
+                        # msgbox.Message_popup("Error","time error",
+                        #                      f"there is no data within the interval {str(t0)} and {str(t1)}\n in any of the {len(db_experiment[k])} databases added in the experiment.\n Please check the SPA dates")
 
+                        #continue                            
+                    #else:
+                    #    tk.message.showinfo("No SPA Added","No data of SPA was added at time t_i=. Please check the SPA dates")
             
             #Add the log of the database added to show it in the table of the databases added in the Add_point window
             #data_added[k]=[database date_ini,database date_end,delay,Nentries]
@@ -493,12 +509,30 @@ class Project:
         self.fuel_type="ND" ##this depends on the fuel type of the seasons
         self.seasons=[]#this should be a dictionary?? (maybe not because we are saving classes)
         self.project_route=Project.Totalnumberprojects #this corresponds with the project_index
-               
-       
+        
+        # ui=gui_project
+        #self.date_ini=date_ini 
+        #self.date_end=date_end
+        #self.fuel_type=fuel_type #can this change for the same project and season?
+        #self.season=season #can this change for the same project? if it does, this should be worked through a method called addseason}
+        #is the fuel_type a sub set of the season? (or the other way around?). If it is then it should be displayed within the window of add_season a button that allows to add_fuel and add_timeinterval
+        #actually The fuel_type and timeinterval should be at the same level and within a specific season
+        #the season could be a different class with attributes (description, fuel type and time interval (the list of timeintervals must to be on this class instead))
+        
+        #list of the different timeintervals were the project was running in (should it be a dictionary instead and with the season as the keys?)
+        #also the fuel_type can change for the same project and even for the same season
+        #self.timeintervals=[]      
+        #self.seasons=[] #check how it is done for the employees - managers example
+        
         Project.Totalnumberprojects+=1 #updates the total number of projects by on (this can be used to compare with the length of "projects" list)
 
     
-    #add new season instance       
+        
+    #this method will come after a window is displayed (where all the seasons are shown) and the button "add season" be pressed
+    #after that a window should display where the fields: season_name,season_description="", date_ini and date_end must be there to introduce the information 
+    #once give click in ok then it should appear in the season list the new season created (rigth now the season is empty)
+    #after this there should be a button "add experiment" where the dates (ini,end) and the fuel type is introduced
+    #another button, "show experiments", opens a list with the different experiments done on each season
     def add_Season(self,season_name,season_description=""):
         newseason_route=str(self.project_route)+"/"+str(len(self.seasons))
         new_Season=Season(season_name,season_description,newseason_route)
@@ -605,4 +639,71 @@ class Project:
             cls.filepath=new_value[0]
             cls.filename=new_value[1]
             
+# def randomclasses(a,b):
+#     global seed
+#     seed+=1
+#     random.seed(17*seed)
+#     return random.randint(a,b)
+
+# seed=10
+
+# Projects_list=[]
+# N_P=randomclasses(1,5)
+# P=list(range(N_P))
+# for p in range(0,N_P):
+#     P[p]=Project(f"Proj{p}",f"this is project {p}")
+#     for s in range(0,randomclasses(1,5)):
+#         P[p].add_Season(f"Ses_p{p}_s{s}",f"this is season p{p}_s{s}")
+# #    P1.add_Season("Ses1_2","this is season 1_2") #check that the names are not the same
+# #    P1.add_Season("Ses1_3","this is season 1_3")
+#         for e in range(0,randomclasses(1,10)):
+#             d_0="11:00"#"2020-10-18"
+#             d_1="13:00"#"2020-10-20"
+#             descrp=["added some moisture","the bed was with iron"]
+#             ind=random.randint(0,1)
+#             P[p].seasons[s].add_Experiment(d_0,d_1,"Polyethylene",descrp[ind])
+#         #P1.seasons[0].add_Experiment("2020-10-21","2020-10-23","Polyethylene","the bed was with iron")  
+#     Projects_list.append(P[p])
+
+
+
+# In[1]:
+
+
+
+# P={}
+# P[0]=Project("Proj1","This is the test project 1","Sam")
+# P[0].add_Season("Season 2020-11","This is the 2020_11 test season")
+# P[0].seasons[0].add_Experiment("Exp 1","2019-02-01 08:00:00","2019-02-01 17:00:00","Polyethylene","Olevine","this was the first experiment") #if the date is in HH:MM add the == for the seconds
+# P[0].seasons[0].experiments[0].add_data("SCADA","190201 trend.XLS","00:00:00")
+# P[0].seasons[0].experiments[0].add_data("GC1","190201_mGC.xlsx","00:03:00")
+# P[0].seasons[0].experiments[0].add_data("SPA","430_190201_G_190201.xls","00:03:00")
+# P[0].seasons[0].experiments[0].add_Point("Point 1A","this was the point 1 and we used gas bags")
+# # In[1]:
+# #link_point_data(self,point_route,data_type,time_type,date_ini,date_end,delay,db_experiment)
+# pnt_route=P[0].project_name+"/"+P[0].seasons[0].season_name+"/"+P[0].seasons[0].experiments[0].exp_name+"/"+P[0].seasons[0].experiments[0].points[0].point_name
+# db_exp=P[0].seasons[0].experiments[0].data_experiment
+# P[0].seasons[0].experiments[0].points[0].link_point_data(Experiment.db_names,"SCADA","2019-02-01 11:55:00","2019-02-01 12:27:00",3,db_exp)
+
+#type (ExcelRead)
+#print(ExcelRead)
+#win_new_experiment()
+#print(entry)
+
+
+    
+#db="SCADA"
+#P[0].seasons[0].experiments[0].add_results_database(db,define_file(db))
+
+# In[1]:
+# k="SCADA"
+# date_i=datetime.strptime("2019-02-01 16:55:00","%Y-%m-%d %H:%M:%S")#P[0].seasons[0].experiments[0].points[0].date_ini
+# date_e=datetime.strptime("2019-02-01 17:00:00","%Y-%m-%d %H:%M:%S")#P[0].seasons[0].experiments[0].points[0].date_end
+# delay_db={i:0 for i in ["SCADA","GC1","INFERNO","SPA"]}
+# delay_db["GC1"]=delay_db["INFERNO"]=delay_db["SPA"]=P[0].seasons[0].experiments[0].points[0].delay
+# db=db_exp[k][0]
+# d_t0=db[Experiment.name_timecolumn[k]]>=date_i+timedelta(minutes=delay_db[k]) 
+# d_t1=db[Experiment.name_timecolumn[k]]<=date_e+timedelta(minutes=delay_db[k])
+# a=db[d_t0 & d_t1]
+
 
