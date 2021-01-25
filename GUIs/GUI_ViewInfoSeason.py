@@ -14,13 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
-    def __init__(self,project_selected,season_selected):
+    def __init__(self,project_selected,ind_season_selected):
         super(Ui_MainWindow,self).__init__()
         #info need
         self.project_selected=project_selected
         #self.ind_season_selected=ind_season_selected  
         print(self.project_selected)
-        self.season=self.project_selected.seasons[season_selected]
+        self.season_selected=self.project_selected.seasons[ind_season_selected]
 
 
         self.finish_window=False
@@ -135,7 +135,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "Information Season"+" "+self.season.season_name))
+        self.setWindowTitle(_translate("MainWindow", "Information Season"+" "+self.season_selected.season_name))
 
         #labels-------------------------------------------------------------------
         self.Title_ViewInfoSeason.setText(_translate("MainWindow", "View info Season X"))
@@ -145,29 +145,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_description.setText(_translate("MainWindow", "Description"))
 
         #tex boxes---------------------------------------------------------------------
-        self.text_DateStart.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_DateEnd.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
-        self.text_description.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        
+        self.text_DateStart.setText(self.season_selected.date_ini)
+        self.text_DateEnd.setText(self.season_selected.date_end)
+        self.text_description.setText(self.season_selected.season_name)
         #list-------------------------------------------------------------
         __sortingEnabled = self.list_experiments.isSortingEnabled()
         self.list_experiments.setSortingEnabled(False)
-        for i in self.season:
-            item = self.list_experiments.item(i)
-            item.setText(_translate("MainWindow", self.season[i]))
+        for e_i,e in enumerate(self.season_selected.experiments):
+            item = self.list_experiments.item(e_i)
+            item.setText(_translate("MainWindow", e.exp_name))
         #item = self.list_experiments.item(1)
         #item.setText(_translate("MainWindow", "Exp B: Low temperature"))
         #item = self.list_experiments.item(2)

@@ -469,11 +469,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def modify_info_project(self):
         print('modify')
         if self.Textbox_Description.isEnabled()==True:
-            self.project_selected.project_description=(self.Textbox_Description.toPlainText())
+            self.project_selected.project_description=self.Textbox_Description.toPlainText()
             print(self.project_selected.project_description)
             self.Textbox_Description.setEnabled(False)
         if self.Text_Responsible.isEnabled()==True:
-            self.Text_Responsible=(self.Text_Responsible.toPlainText())
+            self.project_selected.project_responsible=self.Text_Responsible.toPlainText()
             print(self.project_selected.project_responsible)
             self.Text_Responsible.setEnabled(False)
 
@@ -511,28 +511,28 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def delete_season(self):
         # print('delete data')
         try:
-            ind_season_selected=exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+            ind_season_selected=int(self.treeWidget.selectedIndexes()[-1].data())
         except:
             msgbox.Message_popup("Error","Error","Please select a Season row")
         else:
-            season_selected=int(exp_selected.split("/")[0])
+            # ind_season_selected=int(exp_selected.split("/")[0])
            
             yesorno=msgbox.Message_popup("YesorNo","Delete Season", "Are you sure you want to delete the selected season? Note: All data associated to this season will be deleted (but not the files)")
             if yesorno.response=="Yes":
-                del self.Pr_list[self.ind_pr_selected].seasons[season_selected]
+                del self.Pr_list[self.ind_pr_selected].seasons[ind_season_selected]
                 self.populate_tree()
      
 
     #Opens the season information window
     def view_infoseason(self):
         try:
-            ind_season_selected=exp_selected=self.treeWidget.selectedIndexes()[-1].data()
+            ind_season_selected=int(self.treeWidget.selectedIndexes()[-1].data())
             print(ind_season_selected)
         except:
             msgbox.Message_popup("Error","Error","Please select an Season row")
         else:
-            season_selected=int(exp_selected.split("/")[0])
-            ui_viewinfoseason=gui_viewinfoseason.Ui_MainWindow(self.project_selected,season_selected)
+            # ind_season_selected=int(ind_season_selected.split("/")[0])
+            ui_viewinfoseason=gui_viewinfoseason.Ui_MainWindow(self.project_selected,ind_season_selected)
             ui_viewinfoseason.setupUi()
             ui_viewinfoseason.show()
 
