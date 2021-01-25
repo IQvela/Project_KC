@@ -229,15 +229,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Table_Project_list.setColumnCount(len(self.Table_Project_headers)) #number of columns
         self.Table_Project_list.setRowCount(len(self.Pr_list)) #number of rows --- need to change by list length
         
-        # #vertical headers
-        # for i in range(len(Pr)+1):            
-        #     item = QtWidgets.QTableWidgetItem()
-        #     self.Table_Project_list.setVerticalHeaderItem(i, item)
-
-        #horizontal header
-        # for i in range(self.Table_Project_list.columnCount()):
-        #     item = QtWidgets.QTableWidgetItem()
-        #     self.Table_Project_list.setHorizontalHeaderItem(i, item)
 
         #other table defs
         self.Table_Project_list.horizontalHeader().setMinimumSectionSize(36)
@@ -337,26 +328,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if len(project_attributes)>0:
             self.Pr_list.append(KCbckend.Project(project_attributes[0],project_attributes[1],project_attributes[2]))
             self.populate_projecttable()
-        # attr={}
-        # attr[0]=str(len(Pr)-1)
-        # attr[1]=Pr[-1].project_name
-        # attr[3]=Pr[-1].project_description
-        # attr[4]=Pr[-1].project_responsible
-        # # print(attr)
-        # self.Table_Project_list.setRowCount(len(Pr))
-        # item = QtWidgets.QTableWidgetItem()
-        # i=self.Table_Project_list.rowCount()-1
-        # # print(i)
-        # self.Table_Project_list.setVerticalHeaderItem(i, item)        
-        # item = self.Table_Project_list.verticalHeaderItem(i)
-        # item.setText(str(int(attr[0])+1))
-            
-        # for j,v in attr.items():
-        #     item = QtWidgets.QTableWidgetItem()
-        #     self.Table_Project_list.setItem(i, j, item)
-        #     item=self.Table_Project_list.item(i,j)
-        #     item.setText(v)
-        # print("done")
+
         
     def open_project(self):
         
