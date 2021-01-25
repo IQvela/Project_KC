@@ -68,13 +68,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         #Text Boxes------------------------------------------------------------
         self.text_DateStart = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateStart.setGeometry(QtCore.QRect(130, 110, 121, 31))
+        self.text_DateStart.setGeometry(QtCore.QRect(120, 110, 150, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateStart.setFont(font)
         
         self.text_DateEnd = QtWidgets.QTextEdit(self.centralwidget)
-        self.text_DateEnd.setGeometry(QtCore.QRect(410, 110, 131, 31))
+        self.text_DateEnd.setGeometry(QtCore.QRect(400, 110, 150, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.text_DateEnd.setFont(font)

@@ -258,6 +258,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #table info definition
         #vertical header names
         if self.Table_Project_list.rowCount()>0:
+            for p in list(self.Pr_list):
+                temp=p.get_dates_total()
             self.populate_projecttable()
 
     def populate_projecttable(self):
@@ -274,17 +276,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             item.setText(n)
         
         if len(self.Pr_list)>0:
+            
             for i in range(len(self.Pr_list)):
                 item = QtWidgets.QTableWidgetItem()
                 self.Table_Project_list.setVerticalHeaderItem(i, item)                         
                 item = self.Table_Project_list.verticalHeaderItem(i)
                 item.setText("")#f"{i}")
                 item=self.Table_Project_list.item(i,0)
+
+            for p in list(self.Pr_list):
+                temp=p.get_dates_total()
             
             attr={}
             for i,p in list(enumerate(self.Pr_list)):
                 attr[0]=str(i)
                 attr[1]=p.project_name
+                attr[2]=p.date_ini + "-" + p.date_end
                 attr[3]=p.project_description
                 attr[4]=p.project_responsible
                 # print(attr)
@@ -332,24 +339,27 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
     def open_project(self):
         
-        #app=QtWidgets.QApplication(sys.argv)
-        self.ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
-        #print(f"this is the selected: {p_selected}")
-        ui_openproject=gui_openproject.Ui_MainWindow(self.Pr_list,self.ind_pr_selected)
-        ui_openproject.setupUi() #introduces the selected project into the ui_open project to open the respective project
-        ui_openproject.show()
-        #sys.exit(app.exec())
+        try:
+            self.ind_pr_selected=int(self.Table_Project_list.selectedItems()[0].text())
+            #print(f"this is the selected: {p_selected}")
+        except:
+            msgbox.Message_popup("Error","No project","Please select a Project")
+        else:
+            ui_openproject=gui_openproject.Ui_MainWindow(self.Pr_list,self.ind_pr_selected)
+            ui_openproject.setupUi() #introduces the selected project into the ui_open project to open the respective project
+            ui_openproject.show()
+    
+            while ui_openproject.finish_window==False:# and ui_openproject.isVisible()==True:
+                QtCore.QCoreApplication.processEvents()
+                time.sleep(0.05)    
 
-        while ui_openproject.finish_window==False:# and ui_openproject.isVisible()==True:
-            QtCore.QCoreApplication.processEvents()
-            time.sleep(0.05)    
+            if ui_openproject.finish_window==True:
+                print("window OpenProject is closed")
+                
+            self.populate_projecttable()
             
-        if ui_openproject.finish_window==True:
-            print("window OpenProject is closed")
-            
-        # if ui_openproject.isVisible()==False:
-        #     ui_openproject.finish_window==False
-            #print("window OpenProject is closed")
+
+
 
 
     def load_allprojects(self):
